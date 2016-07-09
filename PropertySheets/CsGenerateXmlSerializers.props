@@ -1,0 +1,40 @@
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Target Name="AfterBuild" DependsOnTargets="AssignTargetPaths;Compile;ResolveKeySource" Inputs="$(MSBuildAllProjects);@(IntermediateAssembly)" Outputs="$(OutputPath)$(_SGenDllName)">
+   <!-- Delete the file because I can't figure out how to force the SGen task. -->
+   <Delete
+     Files="$(TargetDir)$(TargetName).XmlSerializers.dll"
+     ContinueOnError="true" />
+   <SGen Condition="'$(Platform)'=='x86'"
+     BuildAssemblyName="$(TargetFileName)"
+     BuildAssemblyPath="$(OutputPath)"
+     References="@(ReferencePath)"
+     ShouldGenerateSerializer="true"
+     UseProxyTypes="false"
+     KeyContainer="$(KeyContainerName)"
+     KeyFile="$(KeyOriginatorFile)"
+     DelaySign="$(DelaySign)"
+     ToolPath="$(WindowsSDK_ExecutablePath_x86)"
+     Platform="$(Platform)">
+      <Output
+       TaskParameter="SerializationAssembly"
+       ItemName="SerializationAssembly" />
+   </SGen>
+   <!-- screws up on 64 bit build, need to add the SGEN 64 bit path to the target info directly..
+   <SGen Condition="'$(Platform)'=='x64'"
+     BuildAssemblyName="$(TargetFileName)"
+     BuildAssemblyPath="$(OutputPath)"
+     References="@(ReferencePath)"
+     ShouldGenerateSerializer="true"
+     UseProxyTypes="false"
+     KeyContainer="$(KeyContainerName)"
+     KeyFile="$(KeyOriginatorFile)"
+     DelaySign="$(DelaySign)"
+     ToolPath="$(WindowsSDK_ExecutablePath_x64)"
+     Platform="$(Platform)">
+      <Output
+       TaskParameter="SerializationAssembly"
+       ItemName="SerializationAssembly" />
+   </SGen>
+   -->
+</Target>
+</Project>

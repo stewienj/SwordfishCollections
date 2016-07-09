@@ -15,7 +15,7 @@ using System.Collections.ObjectModel;
 using System.Collections;
 
 namespace Swordfish.NET.Collections {
-  public class MostRecentlyUsedDictionary<TKey, TValue> {
+  public class MostRecentlyUsedDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> {
 
     // ************************************************************************
     // Nested Classes
@@ -147,12 +147,13 @@ namespace Swordfish.NET.Collections {
     /// <param name="value">
     /// The object to use as the value of the element to add.
     /// </param>
-    public virtual void Add(TKey key, TValue value) {
+    public virtual TValue Add(TKey key, TValue value) {
       DictionaryNode node = new DictionaryNode(key, value, _firstNode);
       _keyToIndex.Add(key, node);
       _firstNode = node;
       if(_lastNode == null)
         _lastNode = node;
+      return value;
     }
 
     /// <summary>
@@ -164,7 +165,7 @@ namespace Swordfish.NET.Collections {
     /// <returns>
     /// True if the IDictionary<TKey, TValue> contains an element with the key; otherwise, false.
     /// </returns>
-    public bool ContainsKey(TKey key) {
+    public virtual bool ContainsKey(TKey key) {
       return _keyToIndex.ContainsKey(key);
     }
 
@@ -177,30 +178,12 @@ namespace Swordfish.NET.Collections {
     /// <returns>
     /// True if the element is successfully removed; otherwise, false. This method also returns false if key was not found in the original IDictionary<TKey, TValue>.
     /// </returns>
-    public bool Remove(TKey key) {
+    public virtual bool Remove(TKey key) {
       DictionaryNode node;
       if (_keyToIndex.TryGetValue(key, out node)){
         RemoveNode(node);
       }
       return _keyToIndex.Remove(key);
-    }
-
-    private void RemoveNode(DoubleLinkListDictionaryNode<TKey, TValue> node) {
-      if(node == _lastNode) {
-        _lastNode = node.Previous;
-      }
-      if(node == _firstNode) {
-        _firstNode = node.Next;
-      }
-
-      if(node.Next != null) {
-        node.Next.Previous = node.Previous;
-      }
-      if(node.Previous != null) {
-        node.Previous.Next = node.Next;
-      }
-      node.Next = null;
-      node.Previous = null;
     }
 
     /// <summary>
@@ -215,7 +198,7 @@ namespace Swordfish.NET.Collections {
     /// <returns>
     /// True if the object that implements IDictionary<TKey, TValue> contains an element with the specified key; otherwise, false.
     /// </returns>
-    public bool TryGetValue(TKey key, out TValue value) {
+    public virtual bool TryGetValue(TKey key, out TValue value) {
       DictionaryNode node;
       if (_keyToIndex.TryGetValue(key, out node)) {
         value = node.Value;
@@ -236,7 +219,7 @@ namespace Swordfish.NET.Collections {
     /// <returns>
     /// The element with the specified key.
     /// </returns>
-    public TValue this[TKey key] {
+    public virtual TValue this[TKey key] {
       get {
         DictionaryNode node = _keyToIndex[key];
         Touch(node);
@@ -255,6 +238,25 @@ namespace Swordfish.NET.Collections {
 
     #endregion Subset of IDictionary<TKey, TValue> Members
 
+    private void RemoveNode(DoubleLinkListDictionaryNode<TKey, TValue> node) {
+      if(node == _lastNode) {
+        _lastNode = node.Previous;
+      }
+      if(node == _firstNode) {
+        _firstNode = node.Next;
+      }
+
+      if(node.Next != null) {
+        node.Next.Previous = node.Previous;
+      }
+      if(node.Previous != null) {
+        node.Previous.Next = node.Next;
+      }
+      node.Next = null;
+      node.Previous = null;
+    }
+
+
     private void Touch(DictionaryNode node) {
       RemoveNode(node);
       node.Next = _firstNode;
@@ -263,7 +265,7 @@ namespace Swordfish.NET.Collections {
       _firstNode = node;
     }
 
-    public TValue LeastRecentlyUsed {
+    public virtual TValue LeastRecentlyUsed {
       get {
         if(_lastNode != null) {
           return _lastNode.Value;
@@ -273,7 +275,7 @@ namespace Swordfish.NET.Collections {
       }
     }
 
-    public void TrimLeastRecentlyUsed() {
+    public virtual void TrimLeastRecentlyUsed() {
       if(_lastNode != null) {
         _keyToIndex.Remove(_lastNode.Key);
         RemoveNode(_lastNode);
@@ -282,7 +284,7 @@ namespace Swordfish.NET.Collections {
     /// <summary>
     /// Removes all items from the ICollection<T>.
     /// </summary>
-    public void Clear() {
+    public virtual void Clear() {
       _keyToIndex.Clear();
       _lastNode = null;
     }
@@ -290,10 +292,18 @@ namespace Swordfish.NET.Collections {
     /// <summary>
     /// Gets the number of elements contained in the ICollection<T>.
     /// </summary>
-    public int Count {
+    public virtual int Count {
       get {
         return _keyToIndex.Count;
       }
+    }
+
+    public virtual IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
+      return _keyToIndex.Values.Select((x) => new KeyValuePair<TKey, TValue>(x.Key, x.Value)).GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() {
+      return GetEnumerator();
     }
   }
 }

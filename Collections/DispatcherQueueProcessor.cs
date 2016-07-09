@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -82,39 +83,57 @@ namespace Swordfish.NET.Collections {
       }
     }
 
+    private object _actionWaitingLock = new object();
+
     /// <summary>
     /// Adds an action to the processing queue
     /// </summary>
     /// <param name="action"></param>
     public void Add(Action action) {
 
-      // If we are running on the dispatcher thread, we could call the
-      // action directly, but then we've got the problem with queue
-      // jumping. It's desirable to immediately update the view model,
-      // as if we don't the code that added the item won't see it
-      // if an iteration is done over the collection, which would confuse
-      // the person using this collection.
-      //
-      // So, we need to add it to the queue and then process the queue
-      // so the view is consistent with the Add action.
+      //// If we are running on the dispatcher thread, we could call the
+      //// action directly, but then we've got the problem with queue
+      //// jumping. It's desirable to immediately update the view model,
+      //// as if we don't the code that added the item won't see it
+      //// if an iteration is done over the collection, which would confuse
+      //// the person using this collection.
+      ////
+      //// So, we need to add it to the queue and then process the queue
+      //// so the view is consistent with the Add action.
 
-      _actionQueue.Add(action);
+      // We're on a background thread
+      if (!IsDispatcherThread)
+      {
+        // Just add action to queue.
+        _actionQueue.Add(action);
+      }
+      else // We're on UI thread
+      {
+        lock (_actionWaitingLock)
+        {
+          // Add action to queue
+          _actionQueue.Add(action);
 
-      if(IsDispatcherThread) {
+          // Background thread might have set next action to execute.
+          if (_actionWaiting != null)
+          {
+            _actionWaiting();
+            _actionWaiting = null;
+          }
 
-        // Use this semaphore to prevent race conditions on _actionWaiting
-        _actionWaitingSemaphore.WaitOne();
+          // Clear the more of the action queue, up to 100 items at a time.
+          // Batch up processing into lots of 100 so as to give some
+          // responsiveness if the collection is being bombarded.
+          int countDown = 300;
+          Action nextCommand = null;
 
-        if(_actionWaiting != null) {
-          _actionWaiting();
-          _actionWaiting = null;
+          // Note that countDown must be tested first, otherwise we throw away a queue item
+          while (countDown > 0 && _actionQueue.TryTake(out nextCommand))
+          {
+            --countDown;
+            nextCommand();
+          }
         }
-
-        Action nextCommand = null;
-        while(_actionQueue.TryTake(out nextCommand)) {
-          nextCommand();
-        }
-        _actionWaitingSemaphore.Release(1);
       }
     }
 
@@ -207,6 +226,7 @@ namespace Swordfish.NET.Collections {
           if(_dispatcher == null) {
             if(Application.Current != null) {
               _dispatcher = Application.Current.Dispatcher;
+              _dispatcher.ShutdownStarted += (s, e) => _dispatcher = null;
               if(_dispatcher != null) {
                 StartQueueProcessing();
               }
@@ -216,6 +236,7 @@ namespace Swordfish.NET.Collections {
         }
       }
     }
+
 
     /// <summary>
     /// Starts the thread that processes the queue of actions that are to be
@@ -233,46 +254,68 @@ namespace Swordfish.NET.Collections {
       }
       keys = null;
 
-      Thread actionThread = new Thread(new ThreadStart(() => {
-        try {
-          foreach(Action action in _actionQueue.GetConsumingEnumerable()) {
-
-            // Set the current action waiting then allow access to _actionWaiting
-            _actionWaiting = action;
-            _actionWaitingSemaphore.Release(1);
-
+      Task.Factory.StartNew(() =>
+      {
+        try
+        {
+          while (!_actionQueue.IsCompleted)
+          {
+            // Get action from queue in this background thread.
+            while (true)
+            {
+              lock (_actionWaitingLock)
+              {
+                try
+                {
+                  Action action = null;
+                  if (_actionQueue.TryTake(out action, 1))
+                  {
+                    _actionWaiting = action;
+                    break;
+                  }
+                }
+                catch (InvalidOperationException) { }
+              }
+              try { Thread.Sleep(1); }
+              catch (Exception) { }
+            }
 
             // Wait to join to the dispatcher thread
-            _dispatcher.Invoke((Action)(() => {
+            _dispatcher?.Invoke((Action)(() =>
+            {
+              lock (_actionWaitingLock)
+              {
+                // Action might have already been executed by UI thread in Add method.
+                if (_actionWaiting != null)
+                {
+                  _actionWaiting();
+                  _actionWaiting = null;
+                }
 
-              // _actionWaiting may have been executed, and cleared on the
-              // dispatcher thread inside the Add(action) method.
-              if(_actionWaiting != null) {
-                _actionWaiting();
-                _actionWaiting = null;
-              }
+                // Clear the more of the action queue, up to 100 items at a time.
+                // Batch up processing into lots of 100 so as to give some
+                // responsiveness if the collection is being bombarded.
+                int countDown = 100;
+                Action nextCommand = null;
 
-              // Clear the more of the action queue, up to 100 items at a time.
-              // Batch up processing into lots of 100 so as to give some
-              // responsiveness if the collection is being bombarded.
-              int countDown = 100;
-              Action nextCommand = null;
-
-              // Note that countDown must be tested first, otherwise we throw away a queue item
-              while(countDown > 0 && _actionQueue.TryTake(out nextCommand)) {
-                --countDown;
-                nextCommand();
+                // Note that countDown must be tested first, otherwise we throw away a queue item
+                while (countDown > 0 && _actionQueue.TryTake(out nextCommand))
+                {
+                  --countDown;
+                  nextCommand();
+                }
               }
             }));
-            _actionWaitingSemaphore.WaitOne();
           }
-        } catch(Exception) {
+        }
+        catch (Exception)
+        {
           // TODO: Some diagnostics
           // Assume render thread is dead, so exit
         }
-      }));
-      actionThread.IsBackground = true;
-      actionThread.Start();
+      });
+
+ 
     }
 
     #endregion Private Methods
@@ -299,7 +342,7 @@ namespace Swordfish.NET.Collections {
         if(!CheckIfDispatcherCreated()) {
           return false;
         } else {
-          return _dispatcher.Thread == Thread.CurrentThread;
+          return _dispatcher.CheckAccess();
         }
       }
     }

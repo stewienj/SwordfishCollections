@@ -67,12 +67,24 @@ namespace Swordfish.NET.Collections {
     /// <param name="key2"></param>
     /// <returns></returns>
     private int Compare(TKey key1, TKey key2) {
-      if (_comparer != null) {
+      // First use the comparer if it is set
+      if(_comparer != null) {
         return _comparer.Compare(key1, key2);
-      } else {
-        return string.Compare(key1.ToString(), key2.ToString(), StringComparison.InvariantCultureIgnoreCase);
       }
+
+      // Then try using the default Collections comparer, only try this once, then skip it following tries
+      if(!_defaultCompareFailed) {
+        try {
+          return System.Collections.Comparer.Default.Compare(key1, key2);
+        } catch(Exception) {
+          _defaultCompareFailed = true;
+        }
+      }
+
+      // Last resort do a string compare
+      return string.Compare(key1.ToString(), key2.ToString(), StringComparison.InvariantCultureIgnoreCase);
     }
+    private bool _defaultCompareFailed = false;
 
     /// <summary>
     /// Searches for the index of the insertion point for the key passed in such that

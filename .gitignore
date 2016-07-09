@@ -1,0 +1,6 @@
+#Build directories
+/Bin/
+/Intermediate/
+/Lib/
+/.vs
+/Packages

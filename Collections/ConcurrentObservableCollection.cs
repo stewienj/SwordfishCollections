@@ -115,7 +115,14 @@ namespace Swordfish.NET.Collections {
 
     public void CopyTo(T[] array, int arrayIndex) {
       DoBaseRead(() => {
-        ReadCollection.CopyTo(array, arrayIndex);
+        if (array.Count() >= ReadCollection.Count)
+        {
+          ReadCollection.CopyTo(array, arrayIndex);
+        }
+        else
+        {
+          Console.Out.WriteLine("ConcurrentObservableCollection attempting to copy into wrong sized array (array.Count < ReadCollection.Count)");
+        }
       });
     }
 

@@ -26,7 +26,6 @@ namespace Swordfish.NET.Collections {
   /// </summary>
   /// <typeparam name="T"></typeparam>
   /// <remarks>
-  /// TODO: Use ReaderWriterLockSlim instead of ReaderWriterLock
   /// </remarks>
   [Serializable]
   public abstract class ConcurrentObservableBase<T> :

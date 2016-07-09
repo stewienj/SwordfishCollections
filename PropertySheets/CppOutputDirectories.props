@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+    Notes:
+    
+    GraphicsMagick may cause some issues. The DLLs are precompiled as well as the .lib files. Currently
+    this project has a ConfigurationType of Utility.
+    
+    Should add this to all and make sure each project uses it:
+    <AdditionalLibraryDirectories>;$(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  -->
+  <!-- Temporary Condition until all bugs worked out -->
+  <PropertyGroup>
+    <OutDir Condition="'$(Platform)|$(ConfigurationType)'=='Win32|Application'">$(SolutionDir)Bin\$(Configuration)_x86\</OutDir>
+    <OutDir Condition="'$(Platform)|$(ConfigurationType)'=='x64|Application'">$(SolutionDir)Bin\$(Configuration)_$(Platform)\</OutDir>
+    <OutDir Condition="'$(Platform)|$(ConfigurationType)'=='Win32|DynamicLibrary'">$(SolutionDir)Bin\$(Configuration)_x86\</OutDir>
+    <OutDir Condition="'$(Platform)|$(ConfigurationType)'=='x64|DynamicLibrary'">$(SolutionDir)Bin\$(Configuration)_$(Platform)\</OutDir>
+    <OutDir Condition="'$(Platform)|$(ConfigurationType)'=='Win32|Utility'">$(SolutionDir)Bin\$(Configuration)_x86\</OutDir>
+    <OutDir Condition="'$(Platform)|$(ConfigurationType)'=='x64|Utility'">$(SolutionDir)Bin\$(Configuration)_$(Platform)\</OutDir>
+    <OutDir Condition="'$(Platform)|$(ConfigurationType)'=='Win32|StaticLibrary'">$(SolutionDir)Lib\$(Configuration)_x86\</OutDir>
+    <OutDir Condition="'$(Platform)|$(ConfigurationType)'=='x64|StaticLibrary'">$(SolutionDir)Lib\$(Configuration)_$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\$(ProjectName)\$(Configuration)_$(Platform)\</IntDir>
+    <AdditionalLibraryDirectories Condition="'$(Platform)'=='x64'">$(SolutionDir)\Lib\$(Configuration)_$(Platform)\;$(SolutionDir)Bin\$(Configuration)_$(Platform)\;$(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32'">$(SolutionDir)\Lib\$(Configuration)_$(Platform)\;$(SolutionDir)Bin\$(Configuration)_x86\;$(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <ClCompile>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
+    </ClCompile>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions Condition="'$(USERDOMAIN)'=='DSTO-CNET'">SECRET_BUILD</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>

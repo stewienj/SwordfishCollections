@@ -133,10 +133,8 @@ namespace Swordfish.NET.Collections {
         case NotifyCollectionChangedAction.Move:
           break;
         case NotifyCollectionChangedAction.Remove: {
-            int startIndex = command.OldStartingIndex;
-            foreach(var item in command.OldItems) {
-              RemoveAt(startIndex);
-            }
+            foreach (T item in command.OldItems)
+              Remove(item);
           }
           break;
         case NotifyCollectionChangedAction.Replace: {
