@@ -26,6 +26,7 @@ namespace Swordfish.NET.Collections {
   /// dispatcher from the event listener(s).
   /// </summary>
   /// <typeparam name="T"></typeparam>
+  [Serializable]
   public class ConcurrentObservableCollection<T> : 
     ConcurrentObservableBase<T>,
     IList<T>, 

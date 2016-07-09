@@ -20,6 +20,7 @@ namespace Swordfish.NET.Collections {
   /// not the GUI thread. The notify event is thrown using the dispatcher
   /// from the event listener(s).
   /// </summary>
+  [Serializable]
   public class ConcurrentObservableSortedDictionary<TKey, TValue> : ConcurrentObservableDictionary<TKey, TValue> {
 
     // ************************************************************************

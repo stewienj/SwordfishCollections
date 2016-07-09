@@ -17,6 +17,7 @@ namespace Swordfish.NET.Collections {
   /// <summary>
   /// This class provides a functional immutable collection
   /// </summary>
+  [Serializable]
   public class ImmutableCollection<T> : ImmutableCollectionBase<T> {
 
     // ************************************************************************

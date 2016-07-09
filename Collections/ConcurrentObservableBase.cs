@@ -28,6 +28,7 @@ namespace Swordfish.NET.Collections {
   /// <remarks>
   /// TODO: Use ReaderWriterLockSlim instead of ReaderWriterLock
   /// </remarks>
+  [Serializable]
   public abstract class ConcurrentObservableBase<T> :
     IObservable<NotifyCollectionChangedEventArgs>,
     INotifyCollectionChanged,

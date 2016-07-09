@@ -14,10 +14,12 @@ using System.Text;
 using System.Collections;
 
 namespace Swordfish.NET.Collections {
+
   /// <summary>
   /// This class provides a sorted collection that can be bound to
   /// a WPF control.
   /// </summary>
+  [Serializable]
   public class ObservableSortedDictionary<TKey, TValue> : ObservableDictionary<TKey, TValue> {
 
     // ************************************************************************

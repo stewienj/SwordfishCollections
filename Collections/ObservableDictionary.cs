@@ -21,6 +21,7 @@ namespace Swordfish.NET.Collections {
   /// <summary>
   /// This class provides a dictionary that can be bound to a WPF control.
   /// </summary>
+  [Serializable]
   public class ObservableDictionary<TKey, TValue> :
     INotifyCollectionChanged,
     IDictionary<TKey, TValue>,

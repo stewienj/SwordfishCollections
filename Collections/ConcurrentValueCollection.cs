@@ -17,6 +17,7 @@ namespace Swordfish.NET.Collections {
   /// <summary>
   /// This holds a collection of values that belong to a concurrent dictionary
   /// </summary>
+  [Serializable]
   public class ConcurrentValueCollection<TKey, TValue> : ImmutableCollectionBase<TValue> {
 
     // ************************************************************************

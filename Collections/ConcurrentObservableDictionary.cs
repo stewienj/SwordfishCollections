@@ -31,6 +31,7 @@ namespace Swordfish.NET.Collections {
   /// TODO: Implement all of the methods offered by the framework
   /// ConcurrentDictionary.
   /// </remarks>
+  [Serializable]
   public class ConcurrentObservableDictionary<TKey, TValue> :
     ConcurrentObservableBase<KeyValuePair<TKey, TValue>>,
     IDictionary<TKey, TValue>,

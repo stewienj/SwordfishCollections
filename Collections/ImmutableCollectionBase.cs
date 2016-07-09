@@ -18,6 +18,7 @@ namespace Swordfish.NET.Collections {
   /// <summary>
   /// This class provides the base restrictions for an immutable collection
   /// </summary>
+  [Serializable]
   public abstract class ImmutableCollectionBase<T> : ICollection<T>, IEnumerable<T>, ICollection, IEnumerable {
 
     /// <summary>

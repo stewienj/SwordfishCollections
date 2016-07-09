@@ -14,10 +14,12 @@ using System.Text;
 using System.Collections;
 
 namespace Swordfish.NET.Collections {
+
   /// <summary>
   /// Provides an immutable value collection as an interface to the keys
   /// stored in an observable dictionary
   /// </summary>
+  [Serializable]
   public class ValueCollection<TKey, TValue> : ImmutableCollectionBase<TValue> {
 
     // ************************************************************************

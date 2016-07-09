@@ -18,6 +18,7 @@ namespace Swordfish.NET.Collections {
   /// Provides an immutable key collection as an interface to the keys
   /// stored in an observable dictionary
   /// </summary>
+  [Serializable]
   public class KeyCollection<TKey, TValue> : ImmutableCollectionBase<TKey> {
 
     // ************************************************************************
