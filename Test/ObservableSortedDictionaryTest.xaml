@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="Swordfish.NET.Test.ObservableSortedDictionaryTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dt="clr-namespace:Swordfish.NET.Test">
+  <TabControl>
+    <TabItem Header="Unsorted">
+    <dt:DictionaryTester x:Name="UnsortedView"/>
+    </TabItem>
+    <TabItem Header="Sorted">
+      <dt:DictionaryTester x:Name="SortedView"/>
+    </TabItem>
+    <TabItem Header="Concurrent Unsorted">
+      <dt:DictionaryTester x:Name="ConcurrentUnsortedView"/>
+    </TabItem>
+    <TabItem Header="Concurrent Sorted">
+      <dt:DictionaryTester x:Name="ConcurrentSortedView"/>
+    </TabItem>
+  </TabControl>
+</UserControl>

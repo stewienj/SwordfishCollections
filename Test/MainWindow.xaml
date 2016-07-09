@@ -1,0 +1,13 @@
+﻿<Window x:Class="Swordfish.NET.Test.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dt="clr-namespace:Swordfish.NET.Test"
+        Title="Swordfish.NET Test Appllication" Height="480" Width="640">
+    <Grid>
+    <TabControl>
+      <TabItem Header="Observable Dictionary Tester">
+        <dt:ObservableSortedDictionaryTest/>
+      </TabItem>
+    </TabControl>
+  </Grid>
+</Window>
