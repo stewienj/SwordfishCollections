@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Swordfish.NET</RootNamespace>
-    <AssemblyName>Swordfish.NET</AssemblyName>
+    <AssemblyName>Swordfish.NET.Collections.Concurrent3</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
