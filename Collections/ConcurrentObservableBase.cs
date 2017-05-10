@@ -17,6 +17,7 @@ using System.Threading;
 using System.Windows.Threading;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 
 namespace Swordfish.NET.Collections {
 
@@ -42,6 +43,7 @@ namespace Swordfish.NET.Collections {
     /// <summary>
     /// The lock that controls read/write access to the base collection
     /// </summary>
+    [NonSerialized]
     private ReaderWriterLockSlim _readWriteLock = new ReaderWriterLockSlim();
     /// <summary>
     /// The underlying base enumerable that is used to store the items,
@@ -59,35 +61,42 @@ namespace Swordfish.NET.Collections {
     /// Flag indicating that a write has occured, so anything that depends on
     /// taking a snapshot of the collection needs to be updated.
     /// </summary>
+    [NonSerialized]
     private bool _newSnapshotRequired = false;
     /// <summary>
     /// The enumerable lock to prevent threading conflicts on allocating
     /// the enumerable of the fixed collection
     /// </summary>
+    [NonSerialized]
     private ReaderWriterLockSlim _snapshotLock = new ReaderWriterLockSlim();
     /// <summary>
     /// The collection used for generating an enumerable that iterates
     /// over a snapshot of the base collection
     /// </summary>
+    [NonSerialized]
     private ImmutableCollectionBase<T> _baseSnapshot;
 
     /// <summary>
     /// A list of observers
     /// </summary>
+    [NonSerialized]
     private Dictionary<int, IObserver<NotifyCollectionChangedEventArgs>> _subscribers;
     /// <summary>
     /// The key for new observers, incremented with each new observer
     /// </summary>
+    [NonSerialized]
     private int _subscriberKey;
     /// <summary>
     /// Flag indicating this collection is disposed
     /// </summary>
+    [NonSerialized]
     private bool _isDisposed;
     /// <summary>
     /// The view model that is used to allow this collection to be bound to the UI.
     /// Relevant methods determine if they are being called on the UI thread, and if
     /// so then the view model is used.
     /// </summary>
+    [NonSerialized]
     private ObservableCollectionViewModel<T> _viewModel;
 
     #endregion Private Fields
@@ -110,22 +119,7 @@ namespace Swordfish.NET.Collections {
       _subscribers = new Dictionary<int, IObserver<NotifyCollectionChangedEventArgs>>();
       
       _baseCollection = new ObservableCollection<T>(enumerable);
-      _baseSnapshot = new ImmutableCollection<T>(enumerable);
-
-      // subscribers must be initialized befor calling this as it may
-      // subscribe immediately
-      _viewModel = new ObservableCollectionViewModel<T>(this);
-
-      // Handle when the base collection changes. Event will be passed through
-      // the IObservable.OnNext method.
-      _baseCollection.CollectionChanged += HandleBaseCollectionChanged;
-
-      // Bubble up the notify collection changed event from the view model
-      _viewModel.CollectionChanged += (sender, e) => {
-        if(CollectionChanged != null) {
-          CollectionChanged(sender, e);
-        }
-      };
+      OnCreated(enumerable);
     }
 
     ~ConcurrentObservableBase() {
@@ -516,7 +510,35 @@ namespace Swordfish.NET.Collections {
       return GetEnumerator();
     }
 
-    #endregion IEnumerable<T> Implementation
+        #endregion IEnumerable<T> Implementation
 
+    // ************************************************************************
+    // SerializableAttribute 
+    // ************************************************************************
+    #region SerializableAttribute 
+    [OnDeserialized]
+    private void OnDeserialized(StreamingContext context){
+      _readWriteLock = new ReaderWriterLockSlim();
+      _newSnapshotRequired = false;
+      _snapshotLock = new ReaderWriterLockSlim();
+      OnCreated(_baseCollection);
+    }
+    private void OnCreated(IEnumerable<T> enumerable){
+      _subscribers = new Dictionary<int, IObserver<NotifyCollectionChangedEventArgs>>();
+
+      _baseSnapshot = new ImmutableCollection<T>(enumerable);
+
+      // subscribers must be initialized befor calling this as it may
+      // subscribe immediately
+      _viewModel = new ObservableCollectionViewModel<T>(this);
+
+      // Handle when the base collection changes. Event will be passed through
+      // the IObservable.OnNext method.
+      _baseCollection.CollectionChanged += HandleBaseCollectionChanged;
+
+      // Bubble up the notify collection changed event from the view model
+      _viewModel.CollectionChanged += (sender, e) => CollectionChanged?.Invoke(sender, e);
+    }
+    #endregion
   }
 }
