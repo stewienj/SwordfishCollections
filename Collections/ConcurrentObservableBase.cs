@@ -478,7 +478,7 @@ namespace Swordfish.NET.Collections {
     // INotifyCollectionChanged Implementation
     // ************************************************************************
     #region INotifyCollectionChanged Implementation
-
+    [field:NonSerialized]
     public event NotifyCollectionChangedEventHandler CollectionChanged;
 
     #endregion INotifyCollectionChanged Implementation
