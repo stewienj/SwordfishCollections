@@ -47,9 +47,7 @@
     <Compile Include="ConcurrentObservableCollection.cs" />
     <Compile Include="ConcurrentObservableDictionary.cs" />
     <Compile Include="ConcurrentObservableExtensions.cs" />
-    <Compile Include="ConcurrentObservableFilter.cs" />
     <Compile Include="ConcurrentObservableSortedDictionary.cs" />
-    <Compile Include="DelayedChangeObservableCollection.cs" />
     <Compile Include="DoubleLinkListDictionaryNode.cs" />
     <Compile Include="ImmutableDictionaryListPair.cs" />
     <Compile Include="KeyValuePair.cs" />
@@ -60,7 +58,6 @@
     <Compile Include="ObservableCollectionBridger.cs" />
     <Compile Include="ObservableCollectionDeduplicator.cs" />
     <Compile Include="ObservableCollectionDeduplicatorFactory.cs" />
-    <Compile Include="ObservableConcurrentBag.cs" />
     <Compile Include="ObservableDictionaryNode.cs" />
     <Compile Include="ObservableSortedCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

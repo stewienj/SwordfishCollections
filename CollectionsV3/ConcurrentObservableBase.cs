@@ -160,7 +160,7 @@ namespace Swordfish.NET.Collections
     {
       add
       {
-        if (value.Target is System.Windows.Data.CollectionView)
+        if (value.Target?.GetType().FullName == "System.Windows.Data.CollectionView")
         {
           throw new ApplicationException($"Collection type={typeof(T).Name}, don't bind directly to {nameof(ConcurrentObservableCollection<T>)}, instead bind to {nameof(ConcurrentObservableCollection<T>)}.CollectionView");
           // Try binding to CollectionView instead
