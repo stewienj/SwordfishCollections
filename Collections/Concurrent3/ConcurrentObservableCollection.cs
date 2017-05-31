@@ -33,9 +33,7 @@ namespace Swordfish.NET.Collections.Concurrent3
     // Private Fields
     // ************************************************************************
     #region Private Fields
-
-    private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+            
     /// <summary>
     /// The lock that controls read/write access to the base collection when it's been initialized as thread safe.
     /// Allows updating the collection from multiple threads.
