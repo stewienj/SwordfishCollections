@@ -483,56 +483,7 @@ namespace Swordfish.NET.General
         enumAttr = (TAttr)Attribute.GetCustomAttribute(fieldInfo, typeof(TAttr));
       return enumAttr;
     }
-
-    /// <summary>
-    /// Converts a description back to an enumerated type. Slight pain
-    /// that we can't constrain T to be type Enum in .NET 4.0, so use
-    /// the dynamic keyword to get around that little issue.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="description"></param>
-    /// <returns></returns>
-    public static Enum DescriptionToEnum<T>(this string description)
-    {
-
-      object retVal = DescriptionToEnum(description, typeof(T));
-      if (retVal is T)
-      {
-        return retVal as Enum;
-      }
-      else
-      {
-        return default(T) as Enum;
-      }
-    }
-
-    public static object DescriptionToEnum(this string description, Type t)
-    {
-      // Check that we've pre-created a converter, and if not then
-      // create a new one.
-      if (!enumTypeToConverters.ContainsKey(t))
-      {
-        var dictionary = new Dictionary<string, object>();
-        enumTypeToConverters[t] = dictionary;
-        foreach (dynamic g in Enum.GetValues(t))
-        {
-          dictionary[GetEnumDescription(g)] = g;
-        }
-      }
-
-      var converter = enumTypeToConverters[t];
-
-      object value;
-      if (converter.TryGetValue(description, out value))
-      {
-        return value;
-      }
-      else
-      {
-        return null;
-      }
-    }
-
+    
     //--------------------------------------------------------------------------------------------
 
     public static T XmlSerializeClone<T>(this T source)

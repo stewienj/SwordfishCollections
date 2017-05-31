@@ -70,18 +70,7 @@ namespace Swordfish.NET.General {
       PropertyChanged?.Invoke(this, new ExtendedPropertyChangedEventArgs(propertyName, oldValue, newValue));
     }
 
-    /// <summary>
-    /// Triggers PropertyChanged event in a way that it can be handled
-    /// by controls on a different thread.
-    /// </summary>
-    /// <param name="propertyName"></param>
-    protected void OnPropertyChangedWithDispatcher(params string[] propertyNames) {
-      if (PropertyChanged != null) {
-        foreach (string propertyName in propertyNames) {
-          EventHelpers.DispatchPropertyChanged(this, new PropertyChangedEventArgs(propertyName), PropertyChanged);
-        }
-      }
-    }
+  
 
     #region INotifyPropertyChanged Members
 

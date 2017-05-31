@@ -68,22 +68,8 @@ namespace Swordfish.NET.Collections
         /// </summary>
         private void FireCollectionReset()
         {
-          //NotifyCollectionChangedEventArgs e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-          //OnCollectionChanged(e);
-          NotifyCollectionChangedEventHandler h = CollectionChanged;
-          if (h != null)
-          {
-            foreach (var handler in h.GetInvocationList())
-            {
-              if (handler.Target is ICollectionView)
-              {
-                ((ICollectionView)handler.Target).Refresh();
-              }
-              else {
-                //(Action<object,NotifyCollectionChangedEventArgs>)handler(this, e);
-              }
-            }
-          }
+          NotifyCollectionChangedEventArgs e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+          OnCollectionChanged(e);
         }
 
         #endregion
