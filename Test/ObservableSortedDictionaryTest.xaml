@@ -15,5 +15,8 @@
     <TabItem Header="Concurrent Sorted">
       <dt:DictionaryTester x:Name="ConcurrentSortedView"/>
     </TabItem>
+    <TabItem Header="Serialization Test">
+      <dt:SerializationTest x:Name="SerializationTestView"/>
+    </TabItem>
   </TabControl>
 </UserControl>
