@@ -26,17 +26,6 @@ namespace Swordfish.NET.Collections {
   /// <typeparam name="T"></typeparam>
   public class VirtualizingCollection<T> : NotifyPropertyChanged, IList<VirtualizingCollectionDataWrapper<T>>, IList where T : class {
 
-    /// <summary>
-    /// Creates a logger for use in this class
-    /// </summary>
-    /// <remarks>
-    /// NOTE that using System.Reflection.MethodBase.GetCurrentMethod().DeclaringType
-    /// is equivalent to typeof(LoggingExample) but is more portable
-    /// i.e. you can copy the code directly into another class without
-    // needing to edit the code.
-    /// </remarks>-
-    private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
     #region Constructors
 
     /// <summary>
@@ -163,7 +152,7 @@ namespace Swordfish.NET.Collections {
           else
           {
             // Was an error causing an exception, fixed it but keep this check in place
-            _log.Error("page size too small");
+            System.Diagnostics.Debug.WriteLine("page size too small");
             return null;
           }
         } finally {
@@ -417,7 +406,6 @@ namespace Swordfish.NET.Collections {
 
           if (removePage) {
             _pages.Remove(key);
-            _log.Info("Removed Page: " + key);
           }
         }
       }
@@ -436,7 +424,6 @@ namespace Swordfish.NET.Collections {
         int pageLength = this.PageSize;// Math.Min(this.PageSize, this.Count - pageIndex * this.PageSize);
         VirtualizingCollectionDataPage<T> page = new VirtualizingCollectionDataPage<T>(pageIndex * this.PageSize, pageLength);
         _pages.Add(pageIndex, page);
-        _log.Info("Added page: " + pageIndex);
         LoadPage(pageIndex, pageLength);
       } else {
         _pages[pageIndex].TouchTime = DateTime.Now;
@@ -449,7 +436,6 @@ namespace Swordfish.NET.Collections {
     /// <param name="pageIndex">Index of the page.</param>
     /// <param name="page">The page.</param>
     protected virtual void PopulatePage(int pageIndex, IList<T> dataItems) {
-      _log.Info("Page populated: " + pageIndex);
       VirtualizingCollectionDataPage<T> page;
       if (_pages.TryGetValue(pageIndex, out page)) {
         page.Populate(dataItems);

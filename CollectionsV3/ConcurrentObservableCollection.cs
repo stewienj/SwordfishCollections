@@ -26,14 +26,6 @@ namespace Swordfish.NET.Collections
     IList<T>,
     IList
   {
-    // ************************************************************************
-    // Private Fields
-    // ************************************************************************
-    #region Private Fields
-
-    private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-    #endregion Private Fields
 
     public ConcurrentObservableCollection() : this(true)
     {

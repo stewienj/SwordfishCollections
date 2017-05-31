@@ -25,16 +25,6 @@ namespace Swordfish.NET.Collections
     IDictionary<TKey, TValue>,
     ICollection
   {
-    // ************************************************************************
-    // Private Fields
-    // ************************************************************************
-    #region Private Fields
-
-    private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-
-    #endregion Private Fields
-
     public ConcurrentObservableDictionary() : this(true)
     {
     }
