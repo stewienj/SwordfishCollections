@@ -33,6 +33,7 @@
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -45,13 +46,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collections\Concurrent3\AssemblyInfo.cs" />
-    <Compile Include="Collections\Concurrent3\ConcurrentObservableCollection.cs" />
     <Compile Include="General\AnonDisposable.cs" />
+    <Compile Include="General\BigRational.cs" />
     <Compile Include="General\EventHelpers.cs" />
     <Compile Include="General\ExtendedPropertyChangedEventArgs.cs" />
+    <Compile Include="General\Extensions.cs" />
+    <Compile Include="General\FastDirectoryEnumerator.cs" />
     <Compile Include="General\NotifyPropertyChanged.cs" />
     <Compile Include="General\ThrottledAction.cs" />
+    <Compile Include="General\Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

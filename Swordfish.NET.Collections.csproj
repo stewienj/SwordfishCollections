@@ -8,8 +8,8 @@
     <ProjectGuid>{F2E1680E-1B15-4CF2-BAB0-54B8C8F6ABDF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Swordfish.NET</RootNamespace>
-    <AssemblyName>Swordfish.NET</AssemblyName>
+    <RootNamespace>Swordfish.NET.Collections</RootNamespace>
+    <AssemblyName>Swordfish.NET.Collections</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

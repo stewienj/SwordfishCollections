@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Swordfish.NET.Test</RootNamespace>
     <AssemblyName>Swordfish.NET.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -122,6 +122,10 @@
     <ProjectReference Include="..\Swordfish.NET.Collections.csproj">
       <Project>{f2e1680e-1b15-4cf2-bab0-54b8c8f6abdf}</Project>
       <Name>Swordfish.NET.Collections</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Swordfish.NET.csproj">
+      <Project>{e463c873-7fc1-451e-8d13-eddda939e443}</Project>
+      <Name>Swordfish.NET</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
