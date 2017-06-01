@@ -44,7 +44,9 @@
     <Compile Include="General\ExtendedPropertyChangedEventArgs.cs" />
     <Compile Include="General\Extensions.cs" />
     <Compile Include="General\FastDirectoryEnumerator.cs" />
+    <Compile Include="General\LazySingleton.cs" />
     <Compile Include="General\NotifyPropertyChanged.cs" />
+    <Compile Include="General\PeHeaderReader.cs" />
     <Compile Include="General\ThrottledAction.cs" />
     <Compile Include="General\Utils.cs" />
   </ItemGroup>

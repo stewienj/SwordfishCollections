@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="Swordfish.NET.WPF.Controls.BigTextFileViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sf="clr-namespace:Swordfish.NET.WPF.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             >
+  <Grid  DataContext="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type UserControl}}, Path=ViewModel}">
+    <DockPanel LastChildFill="True">
+      <Grid DockPanel.Dock="Top" x:Name="buttonsGrid">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="200"/>
+          <ColumnDefinition Width="200"/>
+          <ColumnDefinition Width="200"/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="0" Click="LoadFile_Click">Load File</Button>
+        <Button Grid.Column="1" Click="RefitColumns_Click">Refit Column Widths</Button>
+        <Button Grid.Column="2" Command="{Binding ColumnSelectorCommand}" Content="{Binding ColumnSelectorStatus}"/>
+        <CheckBox Grid.Column="3" IsChecked="{Binding FileHasHeader}" VerticalAlignment="Center" Margin="8,0">Use First Row As Column Headers</CheckBox>
+        <CheckBox Grid.Column="4" IsChecked="{Binding BinaryMode}" VerticalAlignment="Center" Margin="8,0">View As Binary</CheckBox>
+        <TextBlock Grid.Column="5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="8,0">RowCount: <TextBlock Text="{Binding RowCount, Converter={x:Static sf:IntToFormattedStringConverter.Instance}}"/></TextBlock>
+      </Grid>
+      <Grid>
+        <Grid.Resources>
+          <Style TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+          </Style>
+        </Grid.Resources>
+        <ListView x:Name="lvLineList" ItemsSource="{Binding FileLines}" IsSynchronizedWithCurrentItem="True" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" AllowDrop="True" PreviewDragEnter="InputFileDragEnter" PreviewDragOver="InputFileDragOver" DragDrop.Drop="InputFileDrop" AlternationCount="2" SelectionMode="Single">
+          <ListView.ItemContainerStyle>
+            <Style TargetType="{x:Type ListViewItem}">
+              <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+              <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                  <Setter Property="Background" Value="#FFFFFFF0"></Setter>
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                  <Setter Property="Background" Value="#FFF0F0FF"></Setter>
+                </Trigger>
+              </Style.Triggers>
+            </Style>
+          </ListView.ItemContainerStyle>
+          <ListView.View>
+            <GridView x:Name="_gridViewControl">
+              <GridViewColumn>
+                <GridViewColumn.Header>
+                  <TextBlock>Row Number</TextBlock>
+                </GridViewColumn.Header>
+                <GridViewColumn.CellTemplate>
+                  <DataTemplate>
+                    <Grid Background="#11000000" Margin="-8,-2,-6,-2">
+                      <TextBlock Text="{Binding ItemNumber}" Margin="8,2,6,2" TextAlignment="Center" HorizontalAlignment="Stretch"/>
+                    </Grid>
+                  </DataTemplate>
+                </GridViewColumn.CellTemplate>
+              </GridViewColumn>
+            </GridView>
+          </ListView.View>
+        </ListView>
+        <Grid Background="#A0FFFFFF" Visibility="{Binding LongTaskMessage, Converter={x:Static sf:StringValidVisibilityConverter.Instance}}">
+          <StackPanel VerticalAlignment="Center" Background="White">
+            <TextBlock Text="{Binding LongTaskMessage}" TextAlignment="Center" HorizontalAlignment="Center"/>
+            <ProgressBar Value="{Binding LongTaskProgress, Mode=OneWay}" Height="30" Minimum="0" Maximum="1"/>
+          </StackPanel>
+        </Grid>
+      </Grid>
+    </DockPanel>
+  </Grid>
+</UserControl>

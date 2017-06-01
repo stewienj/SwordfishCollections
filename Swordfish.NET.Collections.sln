@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET", "Swordfish.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET.CollectionsV3", "CollectionsV3\Swordfish.NET.CollectionsV3.csproj", "{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{CEF5CE51-FB33-4634-A168-7CAD4505FFF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigCsvFileViewer", "Examples\BigCsvFileViewer\BigCsvFileViewer.csproj", "{974C23F3-A63D-479E-A1CD-7657A2822ACB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,8 +71,23 @@ Global
 		{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}.Release|x64.Build.0 = Release|x64
 		{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}.Release|x86.ActiveCfg = Release|x86
 		{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}.Release|x86.Build.0 = Release|x86
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Debug|x64.ActiveCfg = Debug|x64
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Debug|x64.Build.0 = Debug|x64
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Debug|x86.ActiveCfg = Debug|x86
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Debug|x86.Build.0 = Debug|x86
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Release|x64.ActiveCfg = Release|x64
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Release|x64.Build.0 = Release|x64
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Release|x86.ActiveCfg = Release|x86
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{974C23F3-A63D-479E-A1CD-7657A2822ACB} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
 	EndGlobalSection
 EndGlobal
