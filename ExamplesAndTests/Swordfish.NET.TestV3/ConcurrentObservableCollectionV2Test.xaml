@@ -1,0 +1,139 @@
+﻿<UserControl x:Class="Swordfish.NET.Demo.Tests.ConcurrentObservableCollectionV2Test"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Swordfish.NET.Demo.Tests"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+  <TabControl DataContext="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}">
+    <TabItem Header="Collection">
+      <Grid DataContext="{Binding CollectionViewModel}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="1*"/>
+          <ColumnDefinition Width="1*"/>
+          <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!-- The big button at the bottom of control -->
+        <Button Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" Command="{Binding RunTestScript}">Run Test Script</Button>
+
+        <!-- Normal Collection view-->
+        <TextBlock Grid.Column="0" Grid.Row="0">Normal</TextBlock>
+        <ListView Grid.Column="0" Grid.Row="1" ItemsSource="{Binding NormalCollection}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
+        <TextBlock Grid.Column="0" Grid.Row="2" DockPanel.Dock="Top">Count: <TextBlock Text="{Binding NormalCollection.Count}"/></TextBlock>
+
+        <!-- Concurrent Collection view-->
+        <TextBlock Grid.Column="1" Grid.Row="0">Concurrent</TextBlock>
+        <ListView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding TestCollection.CollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
+        <TextBlock Grid.Column="1" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+
+        <!-- The Messages List -->
+        <TextBlock Grid.Column="2" Grid.Row="0">Log</TextBlock>
+        <ListView Grid.Column="2" Grid.Row="1"  ItemsSource="{Binding Messages.CollectionView}"/>
+        <Button Grid.Column="2" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
+      </Grid>
+    </TabItem>
+    <TabItem Header="Dictionary">
+      <Grid DataContext="{Binding DictionaryViewModel}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="2*"/>
+          <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!-- The big button at the bottom of control -->
+        <Button Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" Command="{Binding RunTestScript}">Run Test Script</Button>
+
+        <!-- Concurrent Collection view-->
+        <TextBlock Grid.Column="1" Grid.Row="0">Concurrent</TextBlock>
+        <ListView SizeChanged="DictionaryListView_SizeChanged" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding TestCollection.CollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+          <ListView.View>
+            <GridView>
+              <GridViewColumn Header="Key" DisplayMemberBinding="{Binding Key}"/>
+              <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
+            </GridView>
+          </ListView.View>
+        </ListView>
+        <TextBlock Grid.Column="1" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+
+        <!-- The Messages List -->
+        <TextBlock Grid.Column="2" Grid.Row="0">Log</TextBlock>
+        <ListView Grid.Column="2" Grid.Row="1"  ItemsSource="{Binding Messages.CollectionView}"/>
+        <Button Grid.Column="2" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
+      </Grid>
+    </TabItem>
+    <TabItem Header="Sorted Dictionary">
+      <Grid DataContext="{Binding SortedDictionaryViewModel}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="2*"/>
+          <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!-- The big button at the bottom of control -->
+        <Button Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" Command="{Binding RunTestScript}">Run Test Script</Button>
+
+        <!-- Concurrent Collection view-->
+        <TextBlock Grid.Column="1" Grid.Row="0">Concurrent</TextBlock>
+        <ListView SizeChanged="DictionaryListView_SizeChanged" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding TestCollection.CollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+          <ListView.View>
+            <GridView>
+              <GridViewColumn Header="Key" DisplayMemberBinding="{Binding Key}"/>
+              <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
+            </GridView>
+          </ListView.View>
+        </ListView>
+        <TextBlock Grid.Column="1" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+
+        <!-- The Messages List -->
+        <TextBlock Grid.Column="2" Grid.Row="0">Log</TextBlock>
+        <ListView Grid.Column="2" Grid.Row="1"  ItemsSource="{Binding Messages.CollectionView}"/>
+        <Button Grid.Column="2" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
+      </Grid>
+    </TabItem>
+    <TabItem Header="Manual Tests">
+      <Grid DataContext="{Binding ManualCollectionViewModel}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="0"/>
+          <ColumnDefinition Width="2*"/>
+          <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!-- The big button at the bottom of control -->
+        <Button Grid.Column="1" Grid.Row="3" Command="{Binding AddItemsCommand}">Add 10 Items</Button>
+        <Button Grid.Column="2" Grid.Row="3" Command="{Binding RemoveLastCommand}">Remove Last</Button>
+
+        <!-- Concurrent Collection view-->
+        <TextBlock Grid.Column="1" Grid.Row="0">Concurrent</TextBlock>
+        <ListBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding TestCollection.CollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" SelectionChanged="ListView_SelectionChanged" />
+        <TextBlock Grid.Column="1" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+
+        <!-- The Messages List -->
+        <TextBlock Grid.Column="2" Grid.Row="0">Log</TextBlock>
+        <ListView Grid.Column="2" Grid.Row="1"  ItemsSource="{Binding Messages.CollectionView}"/>
+        <Button Grid.Column="2" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
+      </Grid>
+    </TabItem>
+  </TabControl>
+</UserControl>

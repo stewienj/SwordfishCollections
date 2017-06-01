@@ -119,11 +119,11 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Swordfish.NET.Collections.csproj">
+    <ProjectReference Include="..\..\Swordfish.NET.Collections.csproj">
       <Project>{f2e1680e-1b15-4cf2-bab0-54b8c8f6abdf}</Project>
       <Name>Swordfish.NET.Collections</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Swordfish.NET.csproj">
+    <ProjectReference Include="..\..\Swordfish.NET.csproj">
       <Project>{e463c873-7fc1-451e-8d13-eddda939e443}</Project>
       <Name>Swordfish.NET</Name>
     </ProjectReference>
