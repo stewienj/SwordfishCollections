@@ -34,28 +34,27 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collections\BinarySorter.cs" />
-    <Compile Include="Collections\ConcurrentObservableBase.cs" />
-    <Compile Include="Collections\ConcurrentObservableCollection.cs" />
-    <Compile Include="Collections\ConcurrentObservableDictionary.cs" />
-    <Compile Include="Collections\ConcurrentKeyCollection.cs" />
-    <Compile Include="Collections\ConcurrentValueCollection.cs" />
-    <Compile Include="Collections\ConcurrentObservableSortedDictionary.cs" />
-    <Compile Include="Collections\DispatcherQueueProcessor.cs" />
-    <Compile Include="Collections\DoubleLinkListDictionaryNode.cs" />
-    <Compile Include="Collections\ImmutableCollection.cs" />
-    <Compile Include="Collections\ImmutableCollectionBase.cs" />
-    <Compile Include="Collections\MostRecentlyUsedDictionary.cs" />
-    <Compile Include="Collections\ObservableCollectionViewModel.cs" />
-    <Compile Include="Collections\ValueCollection.cs" />
-    <Compile Include="Collections\DoubleLinkListIndexNode.cs" />
-    <Compile Include="Collections\KeyCollection.cs" />
-    <Compile Include="Collections\ObservableDictionary.cs" />
-    <Compile Include="Collections\ObservableSortedDictionary.cs" />
+    <Compile Include="BinarySorter.cs" />
+    <Compile Include="ConcurrentObservableBase.cs" />
+    <Compile Include="ConcurrentObservableCollection.cs" />
+    <Compile Include="ConcurrentObservableDictionary.cs" />
+    <Compile Include="ConcurrentKeyCollection.cs" />
+    <Compile Include="ConcurrentValueCollection.cs" />
+    <Compile Include="ConcurrentObservableSortedDictionary.cs" />
+    <Compile Include="DispatcherQueueProcessor.cs" />
+    <Compile Include="DoubleLinkListDictionaryNode.cs" />
+    <Compile Include="ImmutableCollection.cs" />
+    <Compile Include="ImmutableCollectionBase.cs" />
+    <Compile Include="MostRecentlyUsedDictionary.cs" />
+    <Compile Include="ObservableCollectionViewModel.cs" />
+    <Compile Include="ValueCollection.cs" />
+    <Compile Include="DoubleLinkListIndexNode.cs" />
+    <Compile Include="KeyCollection.cs" />
+    <Compile Include="ObservableDictionary.cs" />
+    <Compile Include="ObservableSortedDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Swordfish.NET.Collections.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Swordfish.NET.Collections")]
+[assembly: AssemblyTitle("Swordfish.NET")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Swordfish.NET.Collections")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2016")]
+[assembly: AssemblyCompany("Swordfish Computing Pty Ltd")]
+[assembly: AssemblyProduct("Swordfish.NET")]
+[assembly: AssemblyCopyright("Creative Commons")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f81dcc72-46a8-4efe-aa39-13c7f1fa129b")]
+[assembly: Guid("7533dbb9-5b51-4c8e-8419-dbf235c51c79")]
 
 // Version information for an assembly consists of the following four values:
 //

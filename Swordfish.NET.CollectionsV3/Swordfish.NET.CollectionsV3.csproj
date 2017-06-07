@@ -65,7 +65,7 @@
     <Compile Include="WeakDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Swordfish.NET.csproj">
+    <ProjectReference Include="..\Swordfish.NET\Swordfish.NET.csproj">
       <Project>{e463c873-7fc1-451e-8d13-eddda939e443}</Project>
       <Name>Swordfish.NET</Name>
     </ProjectReference>

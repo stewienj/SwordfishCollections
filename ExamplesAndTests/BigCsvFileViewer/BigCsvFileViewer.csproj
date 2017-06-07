@@ -107,11 +107,11 @@
     <Resource Include="BigCsvFileViewer.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CollectionsV3\Swordfish.NET.CollectionsV3.csproj">
+    <ProjectReference Include="..\..\Swordfish.NET.CollectionsV3\Swordfish.NET.CollectionsV3.csproj">
       <Project>{f81dcc72-46a8-4efe-aa39-13c7f1fa129b}</Project>
       <Name>Swordfish.NET.CollectionsV3</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Swordfish.NET.csproj">
+    <ProjectReference Include="..\..\Swordfish.NET\Swordfish.NET.csproj">
       <Project>{e463c873-7fc1-451e-8d13-eddda939e443}</Project>
       <Name>Swordfish.NET</Name>
     </ProjectReference>

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET.Collections", "Swordfish.NET.Collections.csproj", "{F2E1680E-1B15-4CF2-BAB0-54B8C8F6ABDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET.Collections", "Swordfish.NET.Collections\Swordfish.NET.Collections.csproj", "{F2E1680E-1B15-4CF2-BAB0-54B8C8F6ABDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET", "Swordfish.NET.csproj", "{E463C873-7FC1-451E-8D13-EDDDA939E443}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET", "Swordfish.NET\Swordfish.NET.csproj", "{E463C873-7FC1-451E-8D13-EDDDA939E443}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET.CollectionsV3", "CollectionsV3\Swordfish.NET.CollectionsV3.csproj", "{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET.CollectionsV3", "Swordfish.NET.CollectionsV3\Swordfish.NET.CollectionsV3.csproj", "{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExamplesAndTests", "ExamplesAndTests", "{CEF5CE51-FB33-4634-A168-7CAD4505FFF6}"
 EndProject
