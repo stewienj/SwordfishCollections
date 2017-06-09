@@ -44,7 +44,6 @@
     <Compile Include="DoubleLinkListDictionaryNode.cs" />
     <Compile Include="ImmutableDictionaryListPair.cs" />
     <Compile Include="KeyValuePair.cs" />
-    <Compile Include="ListSelect.cs" />
     <Compile Include="MostRecentlyUsedDictionary.cs" />
     <Compile Include="MostRecentlyUsedDictionaryGuarded.cs" />
     <Compile Include="ObservableCollectionAggregator.cs" />
