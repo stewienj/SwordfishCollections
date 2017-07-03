@@ -7,6 +7,9 @@
     <authors>John Stewien</authors>
     <projectUrl>https://github.com/stewienj/SwordfishCollections</projectUrl>
     <licenseUrl>https://github.com/stewienj/SwordfishCollections/blob/master/LICENSE</licenseUrl>
+    <dependencies>
+      <dependency id="System.Collections.Immutable" version="1.3.1"/>
+    </dependencies>
   </metadata>
   <files>
     <file src="..\bin\Release_AnyCPU\Swordfish.NET.CollectionsV3.dll" target="lib\net45"/>
