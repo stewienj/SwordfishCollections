@@ -20,6 +20,9 @@
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <DocumentationFile>..\Bin\Release_AnyCPU\Swordfish.NET.Collections.xml</DocumentationFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -55,9 +58,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Swordfish.NET.Collections.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(SolutionDir)packages\NuGet.CommandLine.4.1.0\tools\NuGet.exe" pack "$(SolutionDir)Swordfish.NET.Collections\Swordfish.NET.Collections.csproj" -IncludeReferencedProjects -properties "Configuration=Release;Platform=Any CPU;OutputPath=$(SolutionDir)Bin\Release_AnyCPU"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
