@@ -42,6 +42,7 @@
     </ApplicationDefinition>
     <Compile Include="General\RelayCommand.cs" />
     <Compile Include="ViewModels\ConcurrentObservableCollectionManualTestViewModel.cs" />
+    <Compile Include="ViewModels\ConcurrentObservableCollectionStressTestViewModel.cs" />
     <Compile Include="ViewModels\ConcurrentObservableCollectionTestViewModel.cs" />
     <Compile Include="ViewModels\ConcurrentObservableDictionaryTestViewModel.cs" />
     <Compile Include="ViewModels\ConcurrentObservableSortedDictionaryTestViewModel.cs" />

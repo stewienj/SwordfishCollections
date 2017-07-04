@@ -30,6 +30,8 @@ namespace Swordfish.NET.Demo.Tests
     public ConcurrentObservableDictionaryTestViewModel DictionaryViewModel { get; } = new ConcurrentObservableDictionaryTestViewModel();
     public ConcurrentObservableSortedDictionaryTestViewModel SortedDictionaryViewModel { get; } = new ConcurrentObservableSortedDictionaryTestViewModel();
     public ConcurrentObservableCollectionManualTestViewModel ManualCollectionViewModel { get; } = new ConcurrentObservableCollectionManualTestViewModel();
+    public ConcurrentObservableCollectionStressTestViewModel StressTestViewModel { get; } = new ConcurrentObservableCollectionStressTestViewModel();
+
 
 
     private void DictionaryListView_SizeChanged(object sender, SizeChangedEventArgs e)
