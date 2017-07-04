@@ -12,6 +12,7 @@
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="1*"/>
           <ColumnDefinition Width="1*"/>
+          <ColumnDefinition Width="1*"/>
           <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -33,10 +34,15 @@
         <ListView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding TestCollection.CollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
         <TextBlock Grid.Column="1" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
 
+        <!-- Concurrent No CollectionView view-->
+        <TextBlock Grid.Column="2" Grid.Row="0">No CollectionView</TextBlock>
+        <ListView Grid.Column="2" Grid.Row="1" ItemsSource="{Binding TestCollection}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
+        <TextBlock Grid.Column="2" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+        
         <!-- The Messages List -->
-        <TextBlock Grid.Column="2" Grid.Row="0">Log</TextBlock>
-        <ListView Grid.Column="2" Grid.Row="1"  ItemsSource="{Binding Messages.CollectionView}"/>
-        <Button Grid.Column="2" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
+        <TextBlock Grid.Column="3" Grid.Row="0">Log</TextBlock>
+        <ListView Grid.Column="3" Grid.Row="1"  ItemsSource="{Binding Messages.CollectionView}"/>
+        <Button Grid.Column="3" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
       </Grid>
     </TabItem>
     <TabItem Header="Dictionary">

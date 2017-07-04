@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Swordfish.NET.Collections
 {
@@ -43,7 +44,12 @@ namespace Swordfish.NET.Collections
     {
       _lock = isMultithreaded ? new ReaderWriterLockSlim() : null;
       _internalCollection = initialCollection;
-      _viewChanged = new ThrottledAction(() => OnPropertyChanged(nameof(CollectionView), nameof(Count)), TimeSpan.FromMilliseconds(20));
+      _viewChanged = new ThrottledAction(() => 
+      {
+        OnPropertyChanged(nameof(CollectionView), nameof(Count));
+        foreach (var item in _collectionChangedHandlers)
+          ((DispatcherObject)item.Target).Dispatcher.BeginInvoke((Action)(() => item.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset))));
+      }, TimeSpan.FromMilliseconds(20));
     }
 
     /// <summary>
@@ -156,22 +162,22 @@ namespace Swordfish.NET.Collections
     }
 
     private event NotifyCollectionChangedEventHandler _collectionChanged;
+    private List<NotifyCollectionChangedEventHandler> _collectionChangedHandlers = new List<NotifyCollectionChangedEventHandler>(1);
     public event NotifyCollectionChangedEventHandler CollectionChanged
     {
       add
       {
-        if (value.Target?.GetType().FullName == "System.Windows.Data.CollectionView")
-        {
-          throw new ApplicationException($"Collection type={typeof(T).Name}, don't bind directly to {nameof(ConcurrentObservableCollection<T>)}, instead bind to {nameof(ConcurrentObservableCollection<T>)}.CollectionView");
-          // Try binding to CollectionView instead
-          // Note that if you do comment out the above you'll get an inconsistent
-          // collection exception if you update the collection while the gui is updating.
-        }
-        _collectionChanged += value;
+        if(value.Target is DispatcherObject)
+          _collectionChangedHandlers.Add(value);
+        // Note that if you do comment out the above you'll get an inconsistent
+        // collection exception if you update the collection while the gui is updating.
+        else
+          _collectionChanged += value;
       }
       remove
       {
-        _collectionChanged -= value;
+        if(!_collectionChangedHandlers.Remove(value))
+          _collectionChanged -= value;
       }
     }
 
