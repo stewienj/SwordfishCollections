@@ -48,8 +48,7 @@ namespace Swordfish.NET.Collections
       _internalCollectionForDispatcher = initialCollection;
       _viewChanged = new ThrottledAction(() =>
       {
-        OnPropertyChanged(nameof(CollectionView), nameof(Count));
-        (_collectionChangedHandlers.FirstOrDefault()?.Target as DispatcherObject)?.Dispatcher.BeginInvoke((Action)(() =>
+        var update = (Action)(() =>
         {
           // Store the current collection state for the dispatcher thread
           // as the collection can't change while the GUI is being updated
@@ -58,7 +57,17 @@ namespace Swordfish.NET.Collections
           {
             item.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
           }
-        }));
+        });
+
+        OnPropertyChanged(nameof(CollectionView), nameof(Count));
+        if (SynchronizationContext.Current != null)
+        {
+          update();
+        }
+        else
+        {
+          System.Windows.Application.Current.Dispatcher.BeginInvoke(update);
+        }
       }, TimeSpan.FromMilliseconds(20));
     }
 
