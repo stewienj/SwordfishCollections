@@ -34,6 +34,7 @@ namespace Swordfish.NET.Collections
     /// </summary>
     protected TInternalCollection _internalCollection;
 
+    protected TInternalCollection _internalCollectionForDispatcher;
     /// <summary>
     /// A throttle for the "CollectionView" PropertyChanged event. Experimented with using throttling / not using throttling, and
     /// found there was a 25% performance gain from using throttling.
@@ -44,11 +45,20 @@ namespace Swordfish.NET.Collections
     {
       _lock = isMultithreaded ? new ReaderWriterLockSlim() : null;
       _internalCollection = initialCollection;
-      _viewChanged = new ThrottledAction(() => 
+      _internalCollectionForDispatcher = initialCollection;
+      _viewChanged = new ThrottledAction(() =>
       {
         OnPropertyChanged(nameof(CollectionView), nameof(Count));
-        foreach (var item in _collectionChangedHandlers)
-          ((DispatcherObject)item.Target).Dispatcher.BeginInvoke((Action)(() => item.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset))));
+        (_collectionChangedHandlers.FirstOrDefault()?.Target as DispatcherObject)?.Dispatcher.BeginInvoke((Action)(() =>
+        {
+          // Store the current collection state for the dispatcher thread
+          // as the collection can't change while the GUI is being updated
+          _internalCollectionForDispatcher = _internalCollection;
+          foreach (var item in _collectionChangedHandlers)
+          {
+            item.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+          }
+        }));
       }, TimeSpan.FromMilliseconds(20));
     }
 
@@ -82,7 +92,16 @@ namespace Swordfish.NET.Collections
       }
       _lock?.ExitWriteLock();
       _lock?.ExitUpgradeableReadLock();
-      _viewChanged.InvokeAction();
+
+      // Test if we are on a dispatcher thread and if so then fire the change event synchronously
+      if (SynchronizationContext.Current != null)
+      {
+        _viewChanged.InvokeActionSync();
+      }
+      else
+      {
+        _viewChanged.InvokeAction();
+      }
       return readValue;
     }
 

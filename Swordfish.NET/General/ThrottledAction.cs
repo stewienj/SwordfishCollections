@@ -33,5 +33,10 @@ namespace Swordfish.NET.General
         });
       }
     }
+
+    public void InvokeActionSync()
+    {
+      _action();
+    }
   }
 }

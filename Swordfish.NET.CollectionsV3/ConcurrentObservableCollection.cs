@@ -209,7 +209,15 @@ namespace Swordfish.NET.Collections
     {
       get
       {
-        return ImmutableList.Count;
+        // If we are on the dispatcher thread then use the collection the GUI expects
+        if (SynchronizationContext.Current != null)
+        {
+          return _internalCollectionForDispatcher.Count;
+        }
+        else
+        {
+          return ImmutableList.Count;
+        }
       }
     }
 
@@ -327,7 +335,15 @@ namespace Swordfish.NET.Collections
     {
       get
       {
-        return this[index];
+        // If we are on the dispatcher thread then use the collection the GUI expects
+        if (SynchronizationContext.Current != null)
+        {
+            return _internalCollectionForDispatcher[index];
+        }
+        else
+        {
+          return this[index];
+        }
       }
       set
       {
