@@ -17,11 +17,11 @@ using System.Windows.Shapes;
 namespace Swordfish.NET.Demo.Tests
 {
   /// <summary>
-  /// Interaction logic for ConcurrentObservableCollectionV2Test.xaml
+  /// Interaction logic for ConcurrentObservableCollectionV3Test.xaml
   /// </summary>
-  public partial class ConcurrentObservableCollectionV2Test : UserControl
+  public partial class ConcurrentObservableCollectionV3Test : UserControl
   {
-    public ConcurrentObservableCollectionV2Test()
+    public ConcurrentObservableCollectionV3Test()
     {
       InitializeComponent();
     }

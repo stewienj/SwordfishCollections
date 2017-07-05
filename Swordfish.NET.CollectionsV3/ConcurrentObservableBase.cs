@@ -60,6 +60,8 @@ namespace Swordfish.NET.Collections
       _internalCollectionForDispatcher = initialCollection;
       _viewChanged = new ThrottledAction(() =>
       {
+        OnPropertyChanged(nameof(CollectionView), nameof(Count));
+
         var update = (Action)(() =>
         {
           // Store the current collection state for the dispatcher thread
@@ -71,8 +73,7 @@ namespace Swordfish.NET.Collections
           }
         });
 
-        OnPropertyChanged(nameof(CollectionView), nameof(Count));
-        if (_collectionViewNotRequired)
+        if (_collectionViewNotRequired && _collectionChangedHandlers.Count>0)
         {
           if (SynchronizationContext.Current != null)
           {
@@ -82,6 +83,10 @@ namespace Swordfish.NET.Collections
           {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(update);
           }
+        }
+        else
+        {
+          _internalCollectionForDispatcher = _internalCollection;
         }
       }, TimeSpan.FromMilliseconds(20));
     }
@@ -118,7 +123,7 @@ namespace Swordfish.NET.Collections
       _lock?.ExitUpgradeableReadLock();
 
       // Test if we are on a dispatcher thread and if so then fire the change event synchronously
-      if (_collectionViewNotRequired && SynchronizationContext.Current != null)
+      if (GuiViewRequired)
       {
         _viewChanged.InvokeActionSync();
       }
@@ -186,6 +191,13 @@ namespace Swordfish.NET.Collections
       get;
     }
 
+    protected bool GuiViewRequired
+    {
+      get
+      {
+        return _collectionViewNotRequired && _collectionChangedHandlers.Count > 0 && SynchronizationContext.Current != null;
+      }
+    }
 
     // ************************************************************************
     // INotifyCollectionChanged Implementation

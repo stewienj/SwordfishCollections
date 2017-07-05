@@ -47,7 +47,7 @@
     <Compile Include="ViewModels\ConcurrentObservableDictionaryTestViewModel.cs" />
     <Compile Include="ViewModels\ConcurrentObservableSortedDictionaryTestViewModel.cs" />
     <Compile Include="ViewModels\ConcurrentObservableTestBaseViewModel.cs" />
-    <Page Include="ConcurrentObservableCollectionV2Test.xaml">
+    <Page Include="ConcurrentObservableCollectionV3Test.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -59,8 +59,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ConcurrentObservableCollectionV2Test.xaml.cs">
-      <DependentUpon>ConcurrentObservableCollectionV2Test.xaml</DependentUpon>
+    <Compile Include="ConcurrentObservableCollectionV3Test.xaml.cs">
+      <DependentUpon>ConcurrentObservableCollectionV3Test.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

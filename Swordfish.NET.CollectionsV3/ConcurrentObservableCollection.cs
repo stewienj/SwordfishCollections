@@ -27,7 +27,7 @@ namespace Swordfish.NET.Collections
     IList
   {
 
-    public ConcurrentObservableCollection() : this(true,false)
+    public ConcurrentObservableCollection() : this(true,true)
     {
     }
 
@@ -39,7 +39,7 @@ namespace Swordfish.NET.Collections
     /// and its CollectionView property. You can just bind to the collection if you set collectionViewNotRequired = true, however
     /// there is a performance hit of up to 50x for updating from the collection from the GUI thread.
     /// </param>
-    public ConcurrentObservableCollection(bool collectionViewNotRequired) : this(true, collectionViewNotRequired)
+    public ConcurrentObservableCollection(bool collectionViewNotRequired) : this(true, true)
     {
     }
 
@@ -52,7 +52,9 @@ namespace Swordfish.NET.Collections
     /// <param name="collectionViewNotRequired">
     /// When binding to this class in Xaml you have to do Binding="{collectionName.CollectionView}" where you bind to the collection
     /// and its CollectionView property. You can just bind to the collection if you set collectionViewNotRequired = true, however
-    /// there is a performance hit of up to 50x for updating from the collection from the GUI thread.
+    /// there is a performance hit of up to 50x for updating from the collection from the GUI thread if you bind directly to the collection.
+    /// There's also an issue where if you read the collection on the GUI thread just after updating from a non gui thread that the collection
+    /// won't have updated if you have a binding directly to the collection.
     /// </param>
     public ConcurrentObservableCollection(bool isMultithreaded, bool collectionViewNotRequired) : base(isMultithreaded, ImmutableList<T>.Empty, collectionViewNotRequired)
     {
@@ -227,7 +229,7 @@ namespace Swordfish.NET.Collections
       get
       {
         // If we are on the dispatcher thread then use the collection the GUI expects
-        if (_collectionViewNotRequired && SynchronizationContext.Current != null)
+        if (GuiViewRequired)
         {
           return _internalCollectionForDispatcher.Count;
         }
@@ -353,7 +355,7 @@ namespace Swordfish.NET.Collections
       get
       {
         // If we are on the dispatcher thread then use the collection the GUI expects
-        if (_collectionViewNotRequired && SynchronizationContext.Current != null)
+        if (GuiViewRequired)
         {
             return _internalCollectionForDispatcher[index];
         }

@@ -10,6 +10,6 @@
     <Border BorderThickness="1" BorderBrush="Red" DockPanel.Dock="Top" CornerRadius="2" Padding="2" Margin="2">
       <TextBlock Background="Cornsilk" TextAlignment="Center">This does some large operations on the GUI thread so it may freeze up for a few minutes at a time.</TextBlock>
     </Border>
-    <local:ConcurrentObservableCollectionV2Test/>
+    <local:ConcurrentObservableCollectionV3Test/>
   </DockPanel>
 </Window>
