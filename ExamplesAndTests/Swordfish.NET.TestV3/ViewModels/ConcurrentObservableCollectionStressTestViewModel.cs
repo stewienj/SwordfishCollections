@@ -17,8 +17,8 @@ namespace Swordfish.NET.Demo.ViewModels
     {
     }
 
-    public ConcurrentObservableCollection<string> StressTestCollection1 { get; } = new ConcurrentObservableCollection<string>();
-    public ConcurrentObservableCollection<string> StressTestCollection2 { get; } = new ConcurrentObservableCollection<string>();
+    public ConcurrentObservableCollection<string> StressTestCollection1 { get; } = new ConcurrentObservableCollection<string>(false);
+    public ConcurrentObservableCollection<string> StressTestCollection2 { get; } = new ConcurrentObservableCollection<string>(true);
 
     private RelayCommandFactory _startStressTestCommand1 = new RelayCommandFactory();
     public ICommand StartStressTestCommand1

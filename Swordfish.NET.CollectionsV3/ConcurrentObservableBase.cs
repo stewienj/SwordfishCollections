@@ -30,20 +30,32 @@ namespace Swordfish.NET.Collections
     private ReaderWriterLockSlim _lock;
 
     /// <summary>
-    /// The internal collection that holds all the keys, but the keys then point to linklist node which holds the values.
+    /// The internal collection which is nominally an immutable list.
     /// </summary>
     protected TInternalCollection _internalCollection;
 
+    /// <summary>
+    /// The internal collection that is presented on the Dispatcher thread
+    /// </summary>
     protected TInternalCollection _internalCollectionForDispatcher;
+
+    /// <summary>
+    /// A flag indicating if the GUI has to bind to the CollectionView property. This class is more performant when this
+    /// is enforced, however it is convenient to not require this as then the ConcurrentObservableCollection class can
+    /// directly replace the framework ObservableCollection class.
+    /// </summary>
+    protected bool _collectionViewNotRequired;
+
     /// <summary>
     /// A throttle for the "CollectionView" PropertyChanged event. Experimented with using throttling / not using throttling, and
     /// found there was a 25% performance gain from using throttling.
     /// </summary>
     private ThrottledAction _viewChanged;
 
-    protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection)
+    protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection, bool collectionViewNotRequired)
     {
       _lock = isMultithreaded ? new ReaderWriterLockSlim() : null;
+      _collectionViewNotRequired = collectionViewNotRequired;
       _internalCollection = initialCollection;
       _internalCollectionForDispatcher = initialCollection;
       _viewChanged = new ThrottledAction(() =>
@@ -60,13 +72,16 @@ namespace Swordfish.NET.Collections
         });
 
         OnPropertyChanged(nameof(CollectionView), nameof(Count));
-        if (SynchronizationContext.Current != null)
+        if (_collectionViewNotRequired)
         {
-          update();
-        }
-        else
-        {
-          System.Windows.Application.Current.Dispatcher.BeginInvoke(update);
+          if (SynchronizationContext.Current != null)
+          {
+            update();
+          }
+          else
+          {
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(update);
+          }
         }
       }, TimeSpan.FromMilliseconds(20));
     }
@@ -103,7 +118,7 @@ namespace Swordfish.NET.Collections
       _lock?.ExitUpgradeableReadLock();
 
       // Test if we are on a dispatcher thread and if so then fire the change event synchronously
-      if (SynchronizationContext.Current != null)
+      if (_collectionViewNotRequired && SynchronizationContext.Current != null)
       {
         _viewChanged.InvokeActionSync();
       }
@@ -195,16 +210,28 @@ namespace Swordfish.NET.Collections
     {
       add
       {
-        if(value.Target is DispatcherObject)
+        if (_collectionViewNotRequired && value.Target is DispatcherObject)
+        {
           _collectionChangedHandlers.Add(value);
+        }
         // Note that if you do comment out the above you'll get an inconsistent
         // collection exception if you update the collection while the gui is updating.
         else
+        {
+          var name = value.Target?.GetType().FullName;
+          if (name == "System.Windows.Data.CollectionView" || name == "System.Windows.Data.ListCollectionView")
+          {
+            throw new ApplicationException($"Collection type={typeof(T).Name}, don't bind directly to {nameof(ConcurrentObservableCollection<T>)}, instead bind to {nameof(ConcurrentObservableCollection<T>)}.CollectionView");
+            // Try binding to CollectionView instead
+            // Note that if you do comment out the above you'll get an inconsistent
+            // collection exception if you update the collection while the gui is updating.
+          }
           _collectionChanged += value;
+        }
       }
       remove
       {
-        if(!_collectionChangedHandlers.Remove(value))
+        if(_collectionViewNotRequired && !_collectionChangedHandlers.Remove(value))
           _collectionChanged -= value;
       }
     }

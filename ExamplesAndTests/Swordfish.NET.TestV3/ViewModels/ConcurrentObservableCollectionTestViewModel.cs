@@ -21,6 +21,8 @@ namespace Swordfish.NET.Demo.ViewModels
     {
     }
 
+    public ConcurrentObservableCollection<string> TestCollectionNoCollectionView { get; } = new ConcurrentObservableCollection<string>(true);
+
     public ConcurrentObservableCollection<string> TestCollection { get; } = new ConcurrentObservableCollection<string>();
 
     public ObservableCollection<string> NormalCollection { get; } = new ObservableCollection<string>();
@@ -65,10 +67,12 @@ namespace Swordfish.NET.Demo.ViewModels
 
           await AddRange(itemsToAdd, NormalCollection, true);
           await AddRange(itemsToAdd, TestCollection, false);
+          await AddRange(itemsToAdd, TestCollectionNoCollectionView, false);
           await CompareCollections(itemsToAdd);
 
           await InsertItems(itemsToInsert, NormalCollection, true);
           await InsertItems(itemsToInsert, TestCollection, false);
+          await InsertItems(itemsToInsert, TestCollectionNoCollectionView, false);
 
           // Backup the current collection
           var allItems = NormalCollection.ToList();
@@ -78,10 +82,12 @@ namespace Swordfish.NET.Demo.ViewModels
 
           await Remove(itemsToRemove, NormalCollection, true);
           await Remove(itemsToRemove, TestCollection, false);
+          await Remove(itemsToRemove, TestCollectionNoCollectionView, false);
           await CompareCollections();
 
           await RemoveAtIndex(NormalCollection, true);
           await RemoveAtIndex(TestCollection, false);
+          await RemoveAtIndex(TestCollectionNoCollectionView, false);
           await CompareCollections();
 
           await Clear(NormalCollection, true);
@@ -89,22 +95,33 @@ namespace Swordfish.NET.Demo.ViewModels
 
           // Do GUI thread tests
           await Clear(TestCollection, true);
+          await Clear(TestCollectionNoCollectionView, true);
           await AddRange(itemsToAdd, TestCollection, true);
+          await AddRange(itemsToAdd, TestCollectionNoCollectionView, true);
           await InsertItems(itemsToInsert, TestCollection, true);
+          await InsertItems(itemsToInsert, TestCollectionNoCollectionView, true);
 
           await CompareCollections(allItems);
 
+          Message("Testing TestCollection");
+
           // Test adding items 1 at a time
           await Clear(TestCollection, false);
+          await Clear(TestCollectionNoCollectionView, false);
           await Add(itemsToAdd, TestCollection, false);
+          await Add(itemsToAdd, TestCollectionNoCollectionView, false);
           await InsertItems(itemsToInsert, TestCollection, false);
+          await InsertItems(itemsToInsert, TestCollectionNoCollectionView, false);
 
           await CompareCollections(allItems);
 
           // Test adding and inserting from multiple threads at once
           await Clear(TestCollection, false);
+          await Clear(TestCollectionNoCollectionView, false);
           await AddItemsParallel(itemsToAdd, TestCollection);
+          await AddItemsParallel(itemsToAdd, TestCollectionNoCollectionView);
           await InsertItemsParallel(itemsToInsert, TestCollection);
+          await InsertItemsParallel(itemsToInsert, TestCollectionNoCollectionView);
           Message($"WARNING: The order of the items is non-determinate");
 
           await CompareCollections(allItems);
@@ -113,6 +130,7 @@ namespace Swordfish.NET.Demo.ViewModels
           var itemsToAssign = itemsToAdd.Concat(itemsToInsert).ToList();
           await Assign(itemsToAssign, NormalCollection, true);
           await Assign(itemsToAssign, TestCollection, false);
+          await Assign(itemsToAssign, TestCollectionNoCollectionView, false);
 
           await CompareCollections(itemsToAssign);
 
@@ -124,7 +142,7 @@ namespace Swordfish.NET.Demo.ViewModels
 
     protected virtual Task CompareCollections(params ICollection<string>[] collections)
     {
-      var allCollections = collections.Concat(new[] { NormalCollection, TestCollection, TestCollection.CollectionView }).ToArray();
+      var allCollections = collections.Concat(new[] { NormalCollection, TestCollectionNoCollectionView, TestCollection, TestCollection.CollectionView }).ToArray();
 
       return CompareCollectionsBase(allCollections);
     }

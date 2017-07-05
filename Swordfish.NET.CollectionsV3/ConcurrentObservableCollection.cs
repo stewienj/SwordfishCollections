@@ -27,7 +27,34 @@ namespace Swordfish.NET.Collections
     IList
   {
 
-    public ConcurrentObservableCollection() : this(true)
+    public ConcurrentObservableCollection() : this(true,false)
+    {
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="collectionViewNotRequired">
+    /// When binding to this class in Xaml you have to do Binding="{collectionName.CollectionView}" where you bind to the collection
+    /// and its CollectionView property. You can just bind to the collection if you set collectionViewNotRequired = true, however
+    /// there is a performance hit of up to 50x for updating from the collection from the GUI thread.
+    /// </param>
+    public ConcurrentObservableCollection(bool collectionViewNotRequired) : this(true, collectionViewNotRequired)
+    {
+    }
+
+    /// <summary>
+    /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
+    /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
+    /// it the default.
+    /// </summary>
+    /// <param name="isMultithreaded"></param>
+    /// <param name="collectionViewNotRequired">
+    /// When binding to this class in Xaml you have to do Binding="{collectionName.CollectionView}" where you bind to the collection
+    /// and its CollectionView property. You can just bind to the collection if you set collectionViewNotRequired = true, however
+    /// there is a performance hit of up to 50x for updating from the collection from the GUI thread.
+    /// </param>
+    public ConcurrentObservableCollection(bool isMultithreaded, bool collectionViewNotRequired) : base(isMultithreaded, ImmutableList<T>.Empty, collectionViewNotRequired)
     {
     }
 
@@ -37,16 +64,6 @@ namespace Swordfish.NET.Collections
       {
         return (ImmutableList<T>)_internalCollection;
       }
-    }
-
-    /// <summary>
-    /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
-    /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
-    /// it the default.
-    /// </summary>
-    /// <param name="isThreadSafe"></param>
-    public ConcurrentObservableCollection(bool isMultithreaded) : base(isMultithreaded, ImmutableList<T>.Empty)
-    {
     }
 
     public T RemoveLast()
@@ -210,7 +227,7 @@ namespace Swordfish.NET.Collections
       get
       {
         // If we are on the dispatcher thread then use the collection the GUI expects
-        if (SynchronizationContext.Current != null)
+        if (_collectionViewNotRequired && SynchronizationContext.Current != null)
         {
           return _internalCollectionForDispatcher.Count;
         }
@@ -336,7 +353,7 @@ namespace Swordfish.NET.Collections
       get
       {
         // If we are on the dispatcher thread then use the collection the GUI expects
-        if (SynchronizationContext.Current != null)
+        if (_collectionViewNotRequired && SynchronizationContext.Current != null)
         {
             return _internalCollectionForDispatcher[index];
         }
