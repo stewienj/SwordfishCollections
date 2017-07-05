@@ -37,6 +37,7 @@ namespace Swordfish.NET.Demo.ViewModels
         {
           Stopwatch sw = new Stopwatch();
           ClearMessages();
+          TestCollectionNoCollectionView.Clear();
           TestCollection.Clear();
           NormalCollection.Clear();
 
@@ -136,6 +137,38 @@ namespace Swordfish.NET.Demo.ViewModels
 
           Message("");
           Message("-- Finished Testing --");
+        });
+      }
+    }
+
+    private RelayCommandFactory _runNoCollectionViewTestScript = new RelayCommandFactory();
+    public ICommand RunNoCollectionViewTestScript
+    {
+      get
+      {
+        return _runNoCollectionViewTestScript.GetCommandAsync(async () =>
+        {
+          Stopwatch sw = new Stopwatch();
+          ClearMessages();
+          TestCollectionNoCollectionView.Clear();
+          TestCollection.Clear();
+          NormalCollection.Clear();
+
+          // Create the items to add and insert
+          Message($"Creating 10,000 items to add ...");
+          sw.Restart();
+          var itemsToAdd = await Task.Run(() =>
+            Enumerable.Range(0, 10000).
+            Select(x => $"Add {x}").ToList());
+          sw.Stop();
+          Message("", sw.Elapsed);
+          Message("");
+
+          await Add(itemsToAdd, TestCollectionNoCollectionView, false);
+          var count = TestCollectionNoCollectionView.Count;
+          var internalCount = TestCollectionNoCollectionView.InternalCount;
+          Message($"Count on Gui Thread = {count}, internal count = {internalCount}");
+
         });
       }
     }

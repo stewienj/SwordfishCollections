@@ -44,8 +44,12 @@ namespace Swordfish.NET.Collections
     /// is enforced, however it is convenient to not require this as then the ConcurrentObservableCollection class can
     /// directly replace the framework ObservableCollection class.
     /// </summary>
-    protected bool _collectionViewNotRequired;
+    private bool _collectionViewNotRequired;
 
+    /// <summary>
+    /// Flag to indicate that we are inside the CollectionChanged event on the GUI thread
+    /// </summary>
+    private bool _insideCollectionChangedEventOnGUI = false;
     /// <summary>
     /// A throttle for the "CollectionView" PropertyChanged event. Experimented with using throttling / not using throttling, and
     /// found there was a 25% performance gain from using throttling.
@@ -64,6 +68,7 @@ namespace Swordfish.NET.Collections
 
         var update = (Action)(() =>
         {
+          _insideCollectionChangedEventOnGUI = true;
           // Store the current collection state for the dispatcher thread
           // as the collection can't change while the GUI is being updated
           _internalCollectionForDispatcher = _internalCollection;
@@ -71,6 +76,7 @@ namespace Swordfish.NET.Collections
           {
             item.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
           }
+          _insideCollectionChangedEventOnGUI = false;
         });
 
         if (_collectionViewNotRequired && _collectionChangedHandlers.Count>0)
@@ -195,7 +201,20 @@ namespace Swordfish.NET.Collections
     {
       get
       {
-        return _collectionViewNotRequired && _collectionChangedHandlers.Count > 0 && SynchronizationContext.Current != null;
+        bool guiViewRequired = _collectionViewNotRequired && _collectionChangedHandlers.Count > 0 && SynchronizationContext.Current != null;
+        if (guiViewRequired && _insideCollectionChangedEventOnGUI)
+        {
+          return guiViewRequired;
+        }
+        else
+        {
+          // We are on the GUI thread doing a read. The gui collection might be out of date, if so then update it.
+          if (_internalCollectionForDispatcher != _internalCollection)
+          {
+            _viewChanged.InvokeActionSync();
+          }
+          return guiViewRequired;
+        }
       }
     }
 

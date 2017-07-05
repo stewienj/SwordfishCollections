@@ -141,26 +141,68 @@
         <Button Grid.Column="2" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
       </Grid>
     </TabItem>
-    <TabItem Header="Stress Test Remove Items">
-      <Grid DataContext="{Binding StressTestViewModel}">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto"/>
-          <RowDefinition />
-          <RowDefinition Height="Auto"/>
-          <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition/>
-          <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <TextBlock HorizontalAlignment="Center" Grid.Column="0">Bound To Collection View</TextBlock>
-        <TextBlock HorizontalAlignment="Center" Grid.Column="1">Bound To Collection</TextBlock>
-        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{Binding StressTestCollection1.CollectionView}"/>
-        <ListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding StressTestCollection2}"/>
-        <Button Grid.Row="2" Grid.Column="0" Command="{Binding StartStressTestCommand1}">Start Stress Test</Button>
-        <Button Grid.Row="2" Grid.Column="1" Command="{Binding StartStressTestCommand2}">Start Stress Test</Button>
-        <Button Grid.Row="3" Grid.ColumnSpan="2" Command="{Binding StopStressTestCommand}">Stop Stress Test</Button>
-      </Grid>
+    <TabItem Header="Binding Directly To Collection Tests">
+      <TabControl>
+        <TabItem Header="Stress Test Remove Items">
+          <Grid DataContext="{Binding StressTestViewModel}">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition />
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition/>
+              <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock HorizontalAlignment="Center" Grid.Column="0">Bound To Collection View</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Grid.Column="1">Bound To Collection</TextBlock>
+            <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{Binding StressTestCollection1.CollectionView}"/>
+            <ListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding StressTestCollection2}"/>
+            <Button Grid.Row="2" Grid.Column="0" Command="{Binding StartStressTestCommand1}">Start Stress Test</Button>
+            <Button Grid.Row="2" Grid.Column="1" Command="{Binding StartStressTestCommand2}">Start Stress Test</Button>
+            <Button Grid.Row="3" Grid.ColumnSpan="2" Command="{Binding StopStressTestCommand}">Stop Stress Test</Button>
+          </Grid>
+        </TabItem>
+        <TabItem Header="Test Consistency">
+          <Grid DataContext="{Binding CollectionViewModel}">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="1*"/>
+              <ColumnDefinition Width="1*"/>
+              <ColumnDefinition Width="1*"/>
+              <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <!-- The big button at the bottom of control -->
+            <Button Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" Command="{Binding RunNoCollectionViewTestScript}">Run Test Script</Button>
+
+            <!-- Normal Collection view-->
+            <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center">Normal</TextBlock>
+            <ListView Grid.Column="0" Grid.Row="1" ItemsSource="{Binding NormalCollection}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
+            <TextBlock Grid.Column="0" Grid.Row="2" DockPanel.Dock="Top">Count: <TextBlock Text="{Binding NormalCollection.Count}"/></TextBlock>
+
+            <!-- Concurrent Collection view-->
+            <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center">Concurrent</TextBlock>
+            <ListView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding TestCollection.CollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
+            <TextBlock Grid.Column="1" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+
+            <!-- Concurrent No CollectionView view-->
+            <TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center">No CollectionView</TextBlock>
+            <ListView Grid.Column="2" Grid.Row="1" ItemsSource="{Binding TestCollectionNoCollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
+            <TextBlock Grid.Column="2" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+
+            <!-- The Messages List -->
+            <TextBlock Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center">Log</TextBlock>
+            <ListView Grid.Column="3" Grid.Row="1"  ItemsSource="{Binding Messages.CollectionView}"/>
+            <Button Grid.Column="3" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
+          </Grid>
+        </TabItem>
+      </TabControl>
     </TabItem>
   </TabControl>
 </UserControl>

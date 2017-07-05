@@ -60,6 +60,17 @@ namespace Swordfish.NET.Collections
     {
     }
 
+    /// <summary>
+    /// Used for debugging consistency issues on the GUI thread. Hopefully all issues now solved.
+    /// </summary>
+    public int InternalCount
+    {
+      get
+      {
+        return ImmutableList.Count;
+      }
+    }
+
     private ImmutableList<T> ImmutableList
     {
       get
