@@ -240,7 +240,7 @@ namespace Swordfish.NET.Collections
       get
       {
         // If we are on the dispatcher thread then use the collection the GUI expects
-        if (GuiViewRequired)
+        if (GuiViewRequired(true))
         {
           return _internalCollectionForDispatcher.Count;
         }
@@ -366,7 +366,7 @@ namespace Swordfish.NET.Collections
       get
       {
         // If we are on the dispatcher thread then use the collection the GUI expects
-        if (GuiViewRequired)
+        if (GuiViewRequired(false))
         {
             return _internalCollectionForDispatcher[index];
         }

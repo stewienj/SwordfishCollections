@@ -34,7 +34,26 @@ namespace Swordfish.NET.General
       }
     }
 
+
+    /// <summary>
+    /// Invokes the action in the current Synchronization context at the appropriate time in the future
+    /// </summary>
     public void InvokeActionSync()
+    {
+      if (_actionsQueued < 1)
+      {
+        Interlocked.Increment(ref _actionsQueued);
+        var taskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        _actionTask = _actionTask.ContinueWith((t) =>
+        {
+          Interlocked.Decrement(ref _actionsQueued);
+          Task.Factory.StartNew(_action, CancellationToken.None, TaskCreationOptions.DenyChildAttach, taskScheduler).Wait();
+          Thread.Sleep(_timeBetweenInvokations);
+        });
+      }
+    }
+
+    public void InvokeImmediately()
     {
       _action();
     }

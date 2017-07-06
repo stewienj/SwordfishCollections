@@ -44,7 +44,7 @@ namespace Swordfish.NET.Collections
     /// is enforced, however it is convenient to not require this as then the ConcurrentObservableCollection class can
     /// directly replace the framework ObservableCollection class.
     /// </summary>
-    private bool _collectionViewNotRequired;
+    private bool _collectionViewNotManadatory;
 
     /// <summary>
     /// A throttle for the "CollectionView" PropertyChanged event. Experimented with using throttling / not using throttling, and
@@ -52,43 +52,18 @@ namespace Swordfish.NET.Collections
     /// </summary>
     private ThrottledAction _viewChanged;
 
-    protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection, bool collectionViewNotRequired)
+    /// <summary>
+    /// The dispatcher to be used for in
+    /// </summary>
+    private TaskScheduler _dispatcherScheduler = null;
+
+    protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection, bool collectionViewNotManadatory)
     {
       _lock = isMultithreaded ? new ReaderWriterLockSlim() : null;
-      _collectionViewNotRequired = collectionViewNotRequired;
+      _collectionViewNotManadatory = collectionViewNotManadatory;
       _internalCollection = initialCollection;
       _internalCollectionForDispatcher = initialCollection;
-      _viewChanged = new ThrottledAction(() =>
-      {
-        OnPropertyChanged(nameof(CollectionView), nameof(Count));
-
-        var update = (Action)(() =>
-        {
-          // Store the current collection state for the dispatcher thread
-          // as the collection can't change while the GUI is being updated
-          _internalCollectionForDispatcher = _internalCollection;
-          foreach (var item in _collectionChangedHandlers)
-          {
-            item.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-          }
-        });
-
-        if (_collectionViewNotRequired && _collectionChangedHandlers.Count>0)
-        {
-          if (SynchronizationContext.Current != null)
-          {
-            update();
-          }
-          else
-          {
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(update);
-          }
-        }
-        else
-        {
-          _internalCollectionForDispatcher = _internalCollection;
-        }
-      }, TimeSpan.FromMilliseconds(20));
+      _viewChanged = new ThrottledAction(() => UpdateView(), TimeSpan.FromMilliseconds(20));
     }
 
     /// <summary>
@@ -104,6 +79,37 @@ namespace Swordfish.NET.Collections
       });
     }
 
+    private void UpdateView()
+    {
+      OnPropertyChanged(nameof(CollectionView), nameof(Count));
+
+      var update = (Action)(() =>
+      {
+        // Store the current collection state for the dispatcher thread
+        // as the collection can't change while the GUI is being updated
+        _internalCollectionForDispatcher = _internalCollection;
+        foreach (var item in _collectionChangedHandlers)
+        {
+          item.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+      });
+
+      if (_collectionChangedHandlers.Count > 0)
+      {
+        if (SynchronizationContext.Current != null)
+        {
+          update();
+        }
+        else
+        {
+          Task.Factory.StartNew(update, CancellationToken.None, TaskCreationOptions.DenyChildAttach, _dispatcherScheduler).Wait();
+        }
+      }
+      else
+      {
+        _internalCollectionForDispatcher = _internalCollection;
+      }
+    }
 
     protected void DoWriteNotify(Func<TInternalCollection> write, Func<NotifyCollectionChangedEventArgs> change)
     {
@@ -123,9 +129,9 @@ namespace Swordfish.NET.Collections
       _lock?.ExitUpgradeableReadLock();
 
       // Test if we are on a dispatcher thread and if so then fire the change event synchronously
-      if (GuiViewRequired)
+      if (GuiViewRequired(false))
       {
-        _viewChanged.InvokeActionSync();
+        _viewChanged.InvokeImmediately();
       }
       else
       {
@@ -191,12 +197,9 @@ namespace Swordfish.NET.Collections
       get;
     }
 
-    protected bool GuiViewRequired
+    protected bool GuiViewRequired(bool allowUpdate)
     {
-      get
-      {
-        return _collectionChangedHandlers.Count > 0 && SynchronizationContext.Current != null;
-      }
+      return _collectionChangedHandlers.Count > 0 && SynchronizationContext.Current != null;
     }
 
     // ************************************************************************
@@ -222,28 +225,30 @@ namespace Swordfish.NET.Collections
     {
       add
       {
-        if (_collectionViewNotRequired && value.Target is DispatcherObject)
+        var name = value.Target?.GetType().FullName;
+        if (name == "System.Windows.Data.CollectionView" || name == "System.Windows.Data.ListCollectionView")
         {
-          _collectionChangedHandlers.Add(value);
-        }
-        // Note that if you do comment out the above you'll get an inconsistent
-        // collection exception if you update the collection while the gui is updating.
-        else
-        {
-          var name = value.Target?.GetType().FullName;
-          if (name == "System.Windows.Data.CollectionView" || name == "System.Windows.Data.ListCollectionView")
+          if (_collectionViewNotManadatory)
           {
-            throw new ApplicationException($"Collection type={typeof(T).Name}, don't bind directly to {nameof(ConcurrentObservableCollection<T>)}, instead bind to {nameof(ConcurrentObservableCollection<T>)}.CollectionView");
-            // Try binding to CollectionView instead
+            _collectionChangedHandlers.Add(value);
+            _dispatcherScheduler = _dispatcherScheduler ?? TaskScheduler.FromCurrentSynchronizationContext();
             // Note that if you do comment out the above you'll get an inconsistent
             // collection exception if you update the collection while the gui is updating.
           }
+          else
+          {
+            throw new ApplicationException($"Collection type={typeof(T).Name}, don't bind directly to {nameof(ConcurrentObservableCollection<T>)}, instead bind to {nameof(ConcurrentObservableCollection<T>)}.CollectionView");
+            // Try binding to CollectionView instead
+          }
+        }
+        else
+        {
           _collectionChanged += value;
         }
       }
       remove
       {
-        if(_collectionViewNotRequired && !_collectionChangedHandlers.Remove(value))
+        if (_collectionViewNotManadatory && !_collectionChangedHandlers.Remove(value))
           _collectionChanged -= value;
       }
     }
