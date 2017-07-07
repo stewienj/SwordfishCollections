@@ -37,7 +37,7 @@
         <!-- Concurrent No CollectionView view-->
         <TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center">No CollectionView</TextBlock>
         <ListView Grid.Column="2" Grid.Row="1" ItemsSource="{Binding TestCollectionNoCollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
-        <TextBlock Grid.Column="2" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+        <TextBlock Grid.Column="2" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollectionNoCollectionView.Count}"/></TextBlock>
         
         <!-- The Messages List -->
         <TextBlock Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center">Log</TextBlock>
@@ -194,7 +194,7 @@
             <!-- Concurrent No CollectionView view-->
             <TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center">No CollectionView</TextBlock>
             <ListView Grid.Column="2" Grid.Row="1" ItemsSource="{Binding TestCollectionNoCollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
-            <TextBlock Grid.Column="2" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+            <TextBlock Grid.Column="2" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollectionNoCollectionView.Count}"/></TextBlock>
 
             <!-- The Messages List -->
             <TextBlock Grid.Column="3" Grid.Row="0" HorizontalAlignment="Center">Log</TextBlock>

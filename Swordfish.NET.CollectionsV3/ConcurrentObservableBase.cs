@@ -20,6 +20,18 @@ namespace Swordfish.NET.Collections
     IConcurrentObservableBase<T>
     where TInternalCollection : class 
   {
+    private enum GuiUpdateStateType
+    {
+      Initial,
+      UpdatingFromGui,
+      UpdatedFromGui,
+      UpdatingFromNonGui,
+      UpdatedFromNonGui,
+      ReadFromGui
+    }
+
+    private GuiUpdateStateType _guiUpdateState = GuiUpdateStateType.Initial;
+
     /// <summary>
     /// The lock that controls read/write access to the base collection when it's been initialized as thread safe.
     /// Allows updating the collection from multiple threads.
@@ -29,7 +41,7 @@ namespace Swordfish.NET.Collections
     /// <summary>
     /// The internal collection which is nominally an immutable list.
     /// </summary>
-    protected TInternalCollection _internalCollection;
+    protected volatile TInternalCollection _internalCollection;
 
     /// <summary>
     /// The internal collection that is presented on the Dispatcher thread
@@ -95,11 +107,22 @@ namespace Swordfish.NET.Collections
       {
         if (SynchronizationContext.Current != null)
         {
+          _guiUpdateState = GuiUpdateStateType.UpdatingFromGui;
           update();
+          _guiUpdateState = GuiUpdateStateType.UpdatedFromGui;
         }
         else
         {
-          Task.Factory.StartNew(update, CancellationToken.None, TaskCreationOptions.DenyChildAttach, _dispatcherScheduler).Wait();
+          Task.Factory.StartNew(
+            () =>
+            {
+              _guiUpdateState = GuiUpdateStateType.UpdatingFromNonGui;
+              update();
+              _guiUpdateState = GuiUpdateStateType.UpdatedFromNonGui;
+            },
+            CancellationToken.None,
+            TaskCreationOptions.DenyChildAttach,
+            _dispatcherScheduler).Wait();
         }
       }
       else
@@ -196,7 +219,17 @@ namespace Swordfish.NET.Collections
 
     protected bool GuiViewRequired(bool allowUpdate)
     {
-      return _collectionChangedHandlers.Count > 0 && SynchronizationContext.Current != null;
+      var guiViewRequired = _collectionChangedHandlers.Count > 0 && SynchronizationContext.Current != null;
+      if (guiViewRequired)
+      {
+        if (_guiUpdateState == GuiUpdateStateType.UpdatedFromNonGui)
+        {
+          // This is still causing errors
+          //_internalCollectionForDispatcher = _internalCollection;
+        }
+        _guiUpdateState = GuiUpdateStateType.ReadFromGui;
+      }
+      return guiViewRequired;
     }
 
     // ************************************************************************
