@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Runtime.Serialization;
 
 namespace Swordfish.NET.Collections
 {
@@ -19,12 +20,14 @@ namespace Swordfish.NET.Collections
   /// bind directly this this class it will throw an exception.
   /// </summary>
   /// <typeparam name="T"></typeparam>
+  [Serializable]
   public class ConcurrentObservableCollection<T> :
     // Use IList<T> as the internal collection type parameter, not ImmutableList
     // otherwise everything that uses this needs to reference the corresponding assembly
     ConcurrentObservableBase<T, IList<T>>, 
     IList<T>,
-    IList
+    IList,
+    ISerializable
   {
 
     public ConcurrentObservableCollection() : this(true)
@@ -336,5 +339,21 @@ namespace Swordfish.NET.Collections
     }
 
     #endregion IList Implementation
+
+    // ************************************************************************
+    // ISerializable Implementation
+    // ************************************************************************
+    #region ISerializable Implementation
+    protected override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      base.GetObjectData(info, context);
+      info.AddValue("children", _internalCollection.ToArray());
+    }
+
+    protected ConcurrentObservableCollection(SerializationInfo information, StreamingContext context) : base(information, context)
+    {
+      _internalCollection = System.Collections.Immutable.ImmutableList.CreateRange((T[])information.GetValue("children", typeof(T[])));
+    }
+    #endregion
   }
 }

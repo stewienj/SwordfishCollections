@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,9 +18,11 @@ namespace Swordfish.NET.Collections
     int Count { get; }
   }
 
+  [Serializable]
   public abstract class ConcurrentObservableBase<T,TInternalCollection> :
     NotifyPropertyChanged,
-    IConcurrentObservableBase<T>
+    IConcurrentObservableBase<T>,
+    ISerializable
     where TInternalCollection : class 
   {
     /// <summary>
@@ -45,7 +48,7 @@ namespace Swordfish.NET.Collections
       _internalCollection = initialCollection;
       _viewChanged = new ThrottledAction(() => OnPropertyChanged(nameof(CollectionView), nameof(Count)), TimeSpan.FromMilliseconds(20));
     }
-
+        
     /// <summary>
     /// Freezes updates if the collection was created as multithreaded. To resume updates dispose of the returned IDisposable.
     /// </summary>
@@ -177,5 +180,24 @@ namespace Swordfish.NET.Collections
     }
 
     #endregion INotifyCollectionChanged Implementation
+    
+    #region ISerializable Implementation
+    protected virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      info.AddValue("isMultithreaded", _lock != null);
+    }
+    
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      if (info == null)
+        throw new ArgumentNullException("info");
+      GetObjectData(info, context);
+    }
+
+    protected ConcurrentObservableBase(SerializationInfo information, StreamingContext context) : this(information.GetBoolean("isMultithreaded"), null)
+    {
+      
+    }
+    #endregion
   }
 }

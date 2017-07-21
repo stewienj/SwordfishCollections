@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Runtime.Serialization;
 
 namespace Swordfish.NET.Collections
 {
@@ -19,11 +20,13 @@ namespace Swordfish.NET.Collections
   /// bind directly this this class it will throw an exception.
   /// </summary>
   /// <typeparam name="T"></typeparam>
+  [Serializable]
   public class ConcurrentObservableDictionary<TKey, TValue> :
     ConcurrentObservableBase< KeyValuePair<TKey, TValue> , ImmutableDictionaryListPair<TKey, TValue> >,
     ICollection<KeyValuePair<TKey, TValue>>,
     IDictionary<TKey, TValue>,
-    ICollection
+    ICollection,
+    ISerializable
   {
     public ConcurrentObservableDictionary() : this(true)
     {
@@ -352,6 +355,26 @@ namespace Swordfish.NET.Collections
         throw new NotImplementedException();
       }
     }
+        
+    // ************************************************************************
+    // ISerializable Implementation
+    // ************************************************************************
+    #region ISerializable Implementation
+    protected override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      base.GetObjectData(info, context);
+      var internalCollection = _internalCollection;
+      var children = new KeyValuePair<TKey,TValue>[internalCollection.Count];
+      for (int i = 0; i < internalCollection.Count; i++)
+        children[i] = internalCollection.GetItem(i);
+      info.AddValue("children", children);
+    }
 
+    protected ConcurrentObservableDictionary(SerializationInfo information, StreamingContext context) : base(information, context)
+    {
+      var children = (KeyValuePair<TKey, TValue>[])information.GetValue("children",typeof(KeyValuePair<TKey, TValue>[]));
+      _internalCollection = ImmutableDictionaryListPair<TKey, TValue>.Empty.AddRange(children);
+    }
+    #endregion
   }
 }
