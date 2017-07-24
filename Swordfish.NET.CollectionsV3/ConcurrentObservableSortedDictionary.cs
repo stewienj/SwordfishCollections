@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections
 {
-  public class ConcurrentObservableSortedDictionary<TKey, TValue> : ConcurrentObservableDictionary<TKey, TValue>
+  [Serializable]
+  public class ConcurrentObservableSortedDictionary<TKey, TValue> : ConcurrentObservableDictionary<TKey, TValue>, ISerializable
   {
     private BinarySorter<TKey> _sorter;
 
@@ -103,6 +105,21 @@ namespace Swordfish.NET.Collections
           (itemAndIndex) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, pair, itemAndIndex.Item, itemAndIndex.Index));
       }
     }
+
+    // ************************************************************************
+    // ISerializable Implementation
+    // ************************************************************************
+    #region ISerializable Implementation
+    protected override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+      base.GetObjectData(info, context);
+    }
+
+    protected ConcurrentObservableSortedDictionary(SerializationInfo information, StreamingContext context) : base(information, context)
+    {
+      
+    }
+    #endregion
   }
 }
 
