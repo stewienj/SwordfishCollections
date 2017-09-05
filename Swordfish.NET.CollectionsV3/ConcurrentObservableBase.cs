@@ -140,6 +140,12 @@ namespace Swordfish.NET.Collections
       get;
     }
 
+    /// <summary>
+    /// This allows direct binding to the view, however if you bind directly to a CollectionView, 
+    /// and you update this collection from a non Dispatcher thread, then CollectionView will throw
+    /// an exception.
+    /// </summary>
+    public bool AllowDirectBindingToView { get; set; } = false;
 
     // ************************************************************************
     // INotifyCollectionChanged Implementation
@@ -163,10 +169,13 @@ namespace Swordfish.NET.Collections
     {
       add
       {
-        var name = value.Target?.GetType().FullName;
-        if (name == "System.Windows.Data.CollectionView" || name == "System.Windows.Data.ListCollectionView")
+        if (!AllowDirectBindingToView)
         {
-          throw new ApplicationException($"Collection type={typeof(T).Name}, don't bind directly to {nameof(ConcurrentObservableCollection<T>)}, instead bind to {nameof(ConcurrentObservableCollection<T>)}.CollectionView");
+          var name = value.Target?.GetType().FullName;
+          if (name == "System.Windows.Data.CollectionView" || name == "System.Windows.Data.ListCollectionView")
+          {
+            throw new ApplicationException($"Collection type={typeof(T).Name}, don't bind directly to {nameof(ConcurrentObservableCollection<T>)}, instead bind to {nameof(ConcurrentObservableCollection<T>)}.CollectionView");
+          }
           // Try binding to CollectionView instead
           // Note that if you do comment out the above you'll get an inconsistent
           // collection exception if you update the collection while the gui is updating.
