@@ -29,6 +29,7 @@ namespace Swordfish.NET.Demo.Tests
     public ConcurrentObservableCollectionTestViewModel CollectionViewModel { get; } = new ConcurrentObservableCollectionTestViewModel();
     public ConcurrentObservableDictionaryTestViewModel DictionaryViewModel { get; } = new ConcurrentObservableDictionaryTestViewModel();
     public ConcurrentObservableSortedDictionaryTestViewModel SortedDictionaryViewModel { get; } = new ConcurrentObservableSortedDictionaryTestViewModel();
+    public ConcurrentObservableSortedCollectionTestViewModel SortedCollectionViewModel { get; } = new ConcurrentObservableSortedCollectionTestViewModel();
     public ConcurrentObservableCollectionManualTestViewModel ManualCollectionViewModel { get; } = new ConcurrentObservableCollectionManualTestViewModel();
     public ConcurrentObservableCollectionStressTestViewModel StressTestViewModel { get; } = new ConcurrentObservableCollectionStressTestViewModel();
 

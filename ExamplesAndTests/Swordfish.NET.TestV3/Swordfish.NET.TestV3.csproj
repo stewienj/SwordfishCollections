@@ -47,6 +47,7 @@
     <Compile Include="ViewModels\ConcurrentObservableCollectionStressTestViewModel.cs" />
     <Compile Include="ViewModels\ConcurrentObservableCollectionTestViewModel.cs" />
     <Compile Include="ViewModels\ConcurrentObservableDictionaryTestViewModel.cs" />
+    <Compile Include="ViewModels\ConcurrentObservableSortedCollectionTestViewModel.cs" />
     <Compile Include="ViewModels\ConcurrentObservableSortedDictionaryTestViewModel.cs" />
     <Compile Include="ViewModels\ConcurrentObservableTestBaseViewModel.cs" />
     <Page Include="ConcurrentObservableCollectionV2Test.xaml">

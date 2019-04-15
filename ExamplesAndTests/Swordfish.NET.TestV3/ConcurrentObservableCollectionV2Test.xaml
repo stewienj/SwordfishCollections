@@ -39,6 +39,38 @@
         <Button Grid.Column="2" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
       </Grid>
     </TabItem>
+    <TabItem Header="SortedCollection">
+      <Grid DataContext="{Binding SortedCollectionViewModel}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="1*"/>
+          <ColumnDefinition Width="1*"/>
+          <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!-- The big button at the bottom of control -->
+        <Button Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" Command="{Binding RunTestScript}">Run Test Script</Button>
+
+        <!-- Normal Collection view-->
+        <TextBlock Grid.Column="0" Grid.Row="0">Normal</TextBlock>
+        <ListView Grid.Column="0" Grid.Row="1" ItemsSource="{Binding NormalCollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
+        <TextBlock Grid.Column="0" Grid.Row="2" DockPanel.Dock="Top">Count: <TextBlock Text="{Binding NormalCollectionView.Count}"/></TextBlock>
+
+        <!-- Concurrent Collection view-->
+        <TextBlock Grid.Column="1" Grid.Row="0">Concurrent</TextBlock>
+        <ListView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding TestCollection.CollectionView}" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" />
+        <TextBlock Grid.Column="1" Grid.Row="2">Count: <TextBlock Text="{Binding TestCollection.Count}"/></TextBlock>
+
+        <!-- The Messages List -->
+        <TextBlock Grid.Column="2" Grid.Row="0">Log</TextBlock>
+        <ListView Grid.Column="2" Grid.Row="1"  ItemsSource="{Binding Messages.CollectionView}"/>
+        <Button Grid.Column="2" Grid.Row="2" Command="{Binding CopyLogCommand}">Copy Log</Button>
+      </Grid>
+    </TabItem>
     <TabItem Header="Dictionary">
       <Grid DataContext="{Binding DictionaryViewModel}">
         <Grid.ColumnDefinitions>
