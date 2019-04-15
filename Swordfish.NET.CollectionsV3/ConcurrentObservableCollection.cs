@@ -24,7 +24,7 @@ namespace Swordfish.NET.Collections
   public class ConcurrentObservableCollection<T> :
     // Use IList<T> as the internal collection type parameter, not ImmutableList
     // otherwise everything that uses this needs to reference the corresponding assembly
-    ConcurrentObservableBase<T, IList<T>>, 
+    ConcurrentObservableBase<T, IList<T>>,
     IList<T>,
     IList,
     ISerializable
@@ -34,12 +34,21 @@ namespace Swordfish.NET.Collections
     {
     }
 
-    private ImmutableList<T> ImmutableList
+    protected ImmutableList<T> ImmutableList
     {
       get
       {
         return (ImmutableList<T>)_internalCollection;
       }
+    }
+
+    protected virtual int IListAdd(T item)
+    {
+      return DoReadWriteNotify(
+        () => ImmutableList.Count,
+        (index) => ImmutableList.Add(item),
+        (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index)
+      );
     }
 
     /// <summary>
@@ -55,7 +64,7 @@ namespace Swordfish.NET.Collections
     public T RemoveLast()
     {
       return DoReadWriteNotify(
-        () => new { Index = ImmutableList.Count - 1, Item = ImmutableList.LastOrDefault()},
+        () => new { Index = ImmutableList.Count - 1, Item = ImmutableList.LastOrDefault() },
         (indexAndItem) => indexAndItem.Index < 0 ? ImmutableList : ImmutableList.RemoveAt(indexAndItem.Index),
         (indexAndItem) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, indexAndItem.Item)
       ).Item;
@@ -65,7 +74,7 @@ namespace Swordfish.NET.Collections
     /// Adds a range of items to the end of the collection. Quicker than adding them individually,
     /// but the view doesn't update until the last item has been added.
     /// </summary>
-    public void AddRange(IList<T> items)
+    public virtual void AddRange(IList<T> items)
     {
       DoReadWriteNotify(
         () => ImmutableList.Count,
@@ -78,7 +87,7 @@ namespace Swordfish.NET.Collections
     /// Inserts a range of items at the position specified. *Much quicker* than adding them
     /// individually, but the view doesn't update until the last item has been inserted.
     /// </summary>
-    public void InsertRange(int index, IList<T> items)
+    public virtual void InsertRange(int index, IList<T> items)
     {
       DoWriteNotify(
         () => ImmutableList.InsertRange(index, items),
@@ -92,9 +101,9 @@ namespace Swordfish.NET.Collections
     public void RemoveRange(int index, int count)
     {
       DoReadWriteNotify(
-        ()=> ImmutableList.GetRange(index, count),
-        (items)=> ImmutableList.RemoveRange(index, count),
-        (items)=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items, index)
+        () => ImmutableList.GetRange(index, count),
+        (items) => ImmutableList.RemoveRange(index, count),
+        (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items, index)
       );
     }
 
@@ -104,13 +113,33 @@ namespace Swordfish.NET.Collections
         () => ImmutableList.RemoveRange(items),
         () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items)
       );
-    } 
+    }
+
+    public void Reset(IList<T> items)
+    {
+      DoReadWriteNotify(
+        () => ImmutableList.ToArray(),
+        (oldItems) => ImmutableList<T>.Empty.AddRange(items),
+        (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)oldItems, 0),
+        (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)items, 0)
+      );
+    }
+
+    public T[] ToArray()
+    {
+      return ImmutableList.ToArray();
+    }
+
+    public List<T> ToList()
+    {
+      return ImmutableList.ToList();
+    }
 
     public override string ToString()
     {
       return $"{{Items : {Count}}}";
     }
-    
+
 
     // ************************************************************************
     // IEnumerable<T> Implementation
@@ -140,24 +169,24 @@ namespace Swordfish.NET.Collections
       return ImmutableList.IndexOf(item);
     }
 
-    public void Insert(int index, T item)
+    public virtual void Insert(int index, T item)
     {
       DoWriteNotify(
         () => ImmutableList.Insert(index, item),
-        () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item , index)
+        () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index)
       );
     }
 
     public void RemoveAt(int index)
     {
       DoReadWriteNotify(
-        ()=> ImmutableList[index],
-        (item)=> ImmutableList.RemoveAt(index),
-        (item)=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item , index)
+        () => ImmutableList[index],
+        (item) => ImmutableList.RemoveAt(index),
+        (item) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index)
       );
     }
 
-    public T this[int index]
+    public virtual T this[int index]
     {
       get
       {
@@ -182,11 +211,7 @@ namespace Swordfish.NET.Collections
 
     public void Add(T item)
     {
-      DoReadWriteNotify(
-        ()=> ImmutableList.Count,
-        (index)=> ImmutableList.Add(item),
-        (index)=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index)
-      );
+      IListAdd(item);
     }
 
     public void Clear()
@@ -203,9 +228,33 @@ namespace Swordfish.NET.Collections
       return ImmutableList.Contains(item);
     }
 
+
+    // There's some interplay between Count and CopyTo where an array/list is created
+    // and copied to. Unfortunately the collection can change between these two calls.
+    // So we take a snapshot that can be used to copy from.
+    private ConcurrentDictionary<Thread, ImmutableList<T>> _collectionAtlastCount = new ConcurrentDictionary<Thread, ImmutableList<T>>();
+    int ICollection<T>.Count
+    {
+      get
+      {
+        var list = ImmutableList;
+        _collectionAtlastCount[Thread.CurrentThread] = list;
+        return list.Count;
+      }
+    }
+
     public void CopyTo(T[] array, int arrayIndex)
     {
-      ImmutableList.CopyTo(array, arrayIndex);
+      ImmutableList<T> oldList = null;
+      if (!_collectionAtlastCount.TryRemove(Thread.CurrentThread, out oldList))
+      {
+        oldList = ImmutableList;
+      }
+      int copyCount = Math.Min(array.Length - arrayIndex, oldList.Count);
+      for (int i = 0; i < copyCount; ++i)
+      {
+        array[i + arrayIndex] = oldList[i];
+      }
     }
 
     public override int Count
@@ -278,33 +327,31 @@ namespace Swordfish.NET.Collections
 
     int IList.Add(object value)
     {
-      return DoReadWriteNotify(
-        ()=> ImmutableList.Count,
-        (index)=> ImmutableList.Add((T)value),
-        (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index)
-      );
+      return (value is T item) ?
+       IListAdd(item) :
+       -1;
     }
 
     bool IList.Contains(object value)
     {
-        return ((IList)ImmutableList).Contains(value);
+      return ((IList)ImmutableList).Contains(value);
     }
 
     int IList.IndexOf(object value)
     {
-        return ((IList)ImmutableList).IndexOf(value);
+      return ((IList)ImmutableList).IndexOf(value);
     }
 
     void IList.Insert(int index, object value)
     {
-      this.Insert(index, (T)value);
+      Insert(index, (T)value);
     }
 
     bool IList.IsFixedSize
     {
       get
       {
-          return ((IList)ImmutableList).IsFixedSize;
+        return ((IList)ImmutableList).IsFixedSize;
       }
     }
 
@@ -312,18 +359,18 @@ namespace Swordfish.NET.Collections
     {
       get
       {
-          return ((IList)ImmutableList).IsReadOnly;
+        return ((IList)ImmutableList).IsReadOnly;
       }
     }
 
     void IList.Remove(object value)
     {
-      this.Remove((T)value);
+      Remove((T)value);
     }
 
     void IList.RemoveAt(int index)
     {
-      this.RemoveAt(index);
+      RemoveAt(index);
     }
 
     object IList.this[int index]

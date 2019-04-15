@@ -60,6 +60,7 @@
     <Compile Include="ConcurrentObservableCollection.cs" />
     <Compile Include="ConcurrentObservableDictionary.cs" />
     <Compile Include="ConcurrentObservableExtensions.cs" />
+    <Compile Include="ConcurrentObservableSortedCollection.cs" />
     <Compile Include="ConcurrentObservableSortedDictionary.cs" />
     <Compile Include="DoubleLinkListDictionaryNode.cs" />
     <Compile Include="ImmutableDictionaryListPair.cs" />

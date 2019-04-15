@@ -48,7 +48,7 @@ namespace Swordfish.NET.Collections
       _internalCollection = initialCollection;
       _viewChanged = new ThrottledAction(() => OnPropertyChanged(nameof(CollectionView), nameof(Count)), TimeSpan.FromMilliseconds(20));
     }
-        
+
     /// <summary>
     /// Freezes updates if the collection was created as multithreaded. To resume updates dispose of the returned IDisposable.
     /// </summary>
@@ -68,14 +68,17 @@ namespace Swordfish.NET.Collections
       DoReadWriteNotify(() => 0, n => write(), n => change());
     }
 
-    private TRead BodyReadWriteNotify<TRead>(TRead readValue, Func<TRead, TInternalCollection> write, Func<TRead, NotifyCollectionChangedEventArgs> change)
+    private TRead BodyReadWriteNotify<TRead>(TRead readValue, Func<TRead, TInternalCollection> write, params Func<TRead, NotifyCollectionChangedEventArgs>[] changes)
     {
       _lock?.EnterWriteLock();
       _internalCollection = write(readValue);
-      var changeValue = change(readValue);
-      if (changeValue != null)
+      foreach (var change in changes)
       {
-        OnCollectionChanged(changeValue);
+        var changeValue = change(readValue);
+        if (changeValue != null)
+        {
+          OnCollectionChanged(changeValue);
+        }
       }
       _lock?.ExitWriteLock();
       _lock?.ExitUpgradeableReadLock();
@@ -83,11 +86,11 @@ namespace Swordfish.NET.Collections
       return readValue;
     }
 
-    protected TRead DoReadWriteNotify<TRead>(Func<TRead> read, Func<TRead, TInternalCollection> write, Func<TRead, NotifyCollectionChangedEventArgs> change)
+    protected TRead DoReadWriteNotify<TRead>(Func<TRead> read, Func<TRead, TInternalCollection> write, params Func<TRead, NotifyCollectionChangedEventArgs>[] changes)
     {
       _lock?.EnterUpgradeableReadLock();
       TRead readValue = read();
-      return BodyReadWriteNotify(readValue, write, change);
+      return BodyReadWriteNotify(readValue, write, changes);
     }
 
     protected bool DoTestReadWriteNotify<TRead>(Func<bool> test, Func<TRead> read, Func<TRead, TInternalCollection> write, Func<TRead, NotifyCollectionChangedEventArgs> change)
