@@ -37,7 +37,6 @@
     <Compile Include="General\BigRational.cs" />
     <Compile Include="General\ExtendedPropertyChangedEventArgs.cs" />
     <Compile Include="General\Extensions.cs" />
-    <Compile Include="General\FastDirectoryEnumerator.cs" />
     <Compile Include="General\LazySingleton.cs" />
     <Compile Include="General\NotifyPropertyChanged.cs" />
     <Compile Include="General\PeHeaderReader.cs" />

@@ -1,10 +1,6 @@
-﻿using Swordfish.NET.General;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections
 {
@@ -82,7 +78,7 @@ namespace Swordfish.NET.Collections
         }
         else
         {
-          return FastDirectoryEnumerator.EnumerateFiles(_watchedDirectoryLocation, Path.GetFileNameWithoutExtension(filename) + extension, SearchOption.AllDirectories).Select(fd => fd.Path).FirstOrDefault();
+          return Directory.EnumerateFiles(_watchedDirectoryLocation, Path.GetFileNameWithoutExtension(filename) + extension, SearchOption.AllDirectories).FirstOrDefault();
         }
       }
     }
