@@ -40,6 +40,13 @@ namespace Swordfish.NET.Collections
     /// <param name="isThreadSafe"></param>
     public ConcurrentObservableDictionary(bool isMultithreaded) : base(isMultithreaded,ImmutableDictionaryListPair<TKey, TValue>.Empty)
     {
+      PropertyChanged += (s, e) =>
+      {
+        if (e.PropertyName == nameof(CollectionView))
+        {
+          OnPropertyChanged(nameof(Keys), nameof(Values));
+        }
+      };
     }
 
     public void Add(TKey key, TValue value)
