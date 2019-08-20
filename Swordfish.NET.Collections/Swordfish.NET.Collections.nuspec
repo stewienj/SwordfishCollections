@@ -9,8 +9,6 @@
     <licenseUrl>https://github.com/stewienj/SwordfishCollections/blob/master/LICENSE</licenseUrl>
   </metadata>
   <files>
-    <file src="..\bin\Release_AnyCPU\Swordfish.NET.Collections.dll" target="lib\net40"/>
-    <file src="..\bin\Release_AnyCPU\Swordfish.NET.Collections.xml" target="lib\net40"/>
     <file src="..\bin\Release_AnyCPU\Swordfish.NET.Collections.pdb" target="lib\net40"/>
   </files>
 </package>

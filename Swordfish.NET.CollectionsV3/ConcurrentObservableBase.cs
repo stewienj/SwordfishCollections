@@ -43,10 +43,13 @@ namespace Swordfish.NET.Collections
     /// </summary>
     private ThrottledAction _viewChanged;
 
+
+#if DEBUG
     /// <summary>
     /// When built as DEBUG, the constructor stores stack frames here which can be used to find an object
     /// </summary>
     private StackFrame[] _stackFrames;
+#endif
 
     protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection)
     {
@@ -183,7 +186,7 @@ namespace Swordfish.NET.Collections
     // ************************************************************************
     // INotifyCollectionChanged Implementation
     // ************************************************************************
-    #region INotifyCollectionChanged Implementation
+#region INotifyCollectionChanged Implementation
 
     protected void OnCollectionChanged(NotifyCollectionChangedEventArgs changes)
     {
@@ -208,11 +211,13 @@ namespace Swordfish.NET.Collections
           if (name == "System.Windows.Data.CollectionView" || name == "System.Windows.Data.ListCollectionView")
           {
             string stackFrame = "";
-            if (_stackFrames!=null)
+#if DEBUG
+                        if (_stackFrames!=null)
             {
               stackFrame = $" List created at line {_stackFrames[0].GetFileLineNumber()} in {_stackFrames[0].GetFileName()}.";
             }
             // Note if you find yourself here in a debug session, you can get the stack call of where this list was created in _stackFrames. You're welcome.
+#endif
             throw new ApplicationException($"Collection type={typeof(T).Name}, don't bind directly to {nameof(ConcurrentObservableCollection<T>)}, instead bind to {nameof(ConcurrentObservableCollection<T>)}.CollectionView. {stackFrame}");
           }
           // Try binding to CollectionView instead
@@ -227,9 +232,9 @@ namespace Swordfish.NET.Collections
       }
     }
 
-    #endregion INotifyCollectionChanged Implementation
+#endregion INotifyCollectionChanged Implementation
     
-    #region ISerializable Implementation
+#region ISerializable Implementation
     protected virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
       info.AddValue("isMultithreaded", _lock != null);
@@ -246,6 +251,6 @@ namespace Swordfish.NET.Collections
     {
       
     }
-    #endregion
+#endregion
   }
 }
