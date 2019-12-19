@@ -60,5 +60,21 @@ namespace Swordfish.NET.TestV3.ViewModels
             for (int i = 0; i < 10; i++)
                 Assert.AreEqual(i, collection["TestItem" + (i + 1).ToString()]);
         }
+
+        [TestMethod]
+        public void ConcurrentObservableHashSetSerializationTest()
+        {
+            var serializer = new BinaryFormatter();
+            var stream = new MemoryStream();
+            var collection = new ConcurrentObservableHashSet<string>();
+            for (int i = 0; i < 10; i++)
+              collection.Add("TestItem" + (i + 1).ToString());
+            serializer.Serialize(stream, collection);
+            stream.Position = 0;
+            collection = serializer.Deserialize(stream) as ConcurrentObservableHashSet<string>;
+            Assert.AreEqual(10, collection.Count);
+            for (int i = 0; i < 10; i++)
+                Assert.IsTrue(collection.Contains("TestItem" + (i + 1).ToString()));
+        }
     }
 }

@@ -58,6 +58,7 @@
     <Compile Include="BinarySorter.cs" />
     <Compile Include="CircularBuffer.cs" />
     <Compile Include="ConcurrentObservableBase.cs" />
+    <Compile Include="ConcurrentObservableHashSet.cs" />
     <Compile Include="ConcurrentObservableCollection.cs" />
     <Compile Include="ConcurrentObservableDictionary.cs" />
     <Compile Include="ConcurrentObservableExtensions.cs" />
