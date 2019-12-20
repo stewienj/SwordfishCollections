@@ -11,7 +11,7 @@ namespace Swordfish.NET.Collections
   public static class ConcurrentObservableExtensions
   {
 
-    public static void MapChildListToAggregate<T, K>(this ConcurrentObservableCollection<T> source, ConcurrentObservableCollection<K> dest, Func<T, ConcurrentObservableCollection<K>> selectChildList)
+    public static void MapChildListToAggregate<T,K>(this ConcurrentObservableCollection<T> source, ConcurrentObservableCollection<K> dest, Func<T, ConcurrentObservableCollection<K>> selectChildList)
     {
       NotifyCollectionChangedEventHandler collectionChangedHander = (s, e) =>
       {
@@ -80,17 +80,17 @@ namespace Swordfish.NET.Collections
       }
     }
 
-    public static ImmutableHashSet<T> AddRange<T>(this ImmutableHashSet<T> dest, IEnumerable<T> source)
+    internal static ImmutableHashSet<T> AddRange<T>(this ImmutableHashSet<T> dest, IEnumerable<T> source)
     {
       var returnValue = dest;
-      foreach(var i in source)
+      foreach (var i in source)
       {
         returnValue = returnValue.Add(i);
       }
       return returnValue;
     }
 
-    public static ImmutableHashSet<T> RemoveRange<T>(this ImmutableHashSet<T> target, IEnumerable<T> source)
+    internal static ImmutableHashSet<T> RemoveRange<T>(this ImmutableHashSet<T> target, IEnumerable<T> source)
     {
       var returnValue = target;
       foreach (var i in source)
@@ -99,6 +99,5 @@ namespace Swordfish.NET.Collections
       }
       return returnValue;
     }
-
   }
 }

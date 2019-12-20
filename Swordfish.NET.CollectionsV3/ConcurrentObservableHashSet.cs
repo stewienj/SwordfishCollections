@@ -22,7 +22,7 @@ namespace Swordfish.NET.Collections
   /// <typeparam name="T"></typeparam>
   [Serializable]
   public class ConcurrentObservableHashSet<T> :
-    ConcurrentObservableBase<T, ImmutableHashSet<T>>,
+    ConcurrentObservableBase<T, ICollection<T>>,
     ICollection<T>,
     ISet<T>,
     ICollection,
@@ -49,7 +49,7 @@ namespace Swordfish.NET.Collections
         () => _internalCollection.Count,
         (index) =>
         {
-          var newCollection =_internalCollection.Add(value);
+          var newCollection =((ImmutableHashSet<T>)_internalCollection).Add(value);
           wasAdded = newCollection != _internalCollection;
           return newCollection;
         },
@@ -66,7 +66,7 @@ namespace Swordfish.NET.Collections
     {
       DoReadWriteNotify(
         () => _internalCollection.Count,
-        (index) => _internalCollection.AddRange(values),
+        (index) => ((ImmutableHashSet<T>)_internalCollection).AddRange(values),
         (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, values, index)
       );
     }
@@ -78,7 +78,7 @@ namespace Swordfish.NET.Collections
         () => _internalCollection.Count,
         (index) =>
         {
-          var newCollection = _internalCollection.Remove(value);
+          var newCollection = ((ImmutableHashSet<T>)_internalCollection).Remove(value);
           wasRemoved = newCollection != _internalCollection;
           return newCollection;
         },
@@ -92,7 +92,7 @@ namespace Swordfish.NET.Collections
     {
       DoReadWriteNotify(
         () => _internalCollection.Count,
-        (index) => _internalCollection.RemoveRange(values),
+        (index) => ((ImmutableHashSet<T>)_internalCollection).RemoveRange(values),
         (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, values, index)
       );
     }

@@ -43,7 +43,6 @@ namespace Swordfish.NET.Collections
     /// </summary>
     private ThrottledAction _viewChanged;
 
-
 #if DEBUG
     /// <summary>
     /// When built as DEBUG, the constructor stores stack frames here which can be used to find an object
@@ -186,7 +185,7 @@ namespace Swordfish.NET.Collections
     // ************************************************************************
     // INotifyCollectionChanged Implementation
     // ************************************************************************
-#region INotifyCollectionChanged Implementation
+    #region INotifyCollectionChanged Implementation
 
     protected void OnCollectionChanged(NotifyCollectionChangedEventArgs changes)
     {
@@ -232,9 +231,9 @@ namespace Swordfish.NET.Collections
       }
     }
 
-#endregion INotifyCollectionChanged Implementation
+    #endregion INotifyCollectionChanged Implementation
     
-#region ISerializable Implementation
+    #region ISerializable Implementation
     protected virtual void GetObjectData(SerializationInfo info, StreamingContext context)
     {
       info.AddValue("isMultithreaded", _lock != null);
@@ -251,6 +250,6 @@ namespace Swordfish.NET.Collections
     {
       
     }
-#endregion
+    #endregion
   }
 }

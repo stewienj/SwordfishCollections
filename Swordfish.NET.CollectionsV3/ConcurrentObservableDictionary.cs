@@ -76,6 +76,45 @@ namespace Swordfish.NET.Collections
     }
 
     /// <summary>
+    /// Adds a value for the key passed in if it isn't already in the dictionary
+    /// </summary>
+    /// <param name="key">
+    /// The object to use as the key of the element to retrieve or add.
+    /// </param>
+    /// <param name="getValue">
+    /// The object factory to use if key doesn't already exist
+    /// </param>
+    /// <returns>true is new item was added, false otherwise</returns>
+    public virtual bool TryAdd(TKey key, Func<TKey, TValue> getValue)
+    {
+      // Make this nullable so it throws an exception if there's a bug in the code
+      KeyValuePair<TKey, TValue>? newPair = null;
+      if (DoTestReadWriteNotify(
+        // Test if already exists, continue if it doesn't
+        () => !_internalCollection.Dictionary.ContainsKey(key),
+        // create new node, similar to add
+        () => _internalCollection.Count,
+        (index) => _internalCollection.Add((newPair = KeyValuePair.Create(key, getValue(key))).Value),
+        (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newPair, index)
+      ))
+      {
+        // new one created and added
+        return true;
+      }
+      else
+      {
+        // key already existed, nothing happened
+        return false;
+      }
+    }
+
+    public bool TryAdd(TKey key, Func<TValue> getValue)
+    {
+      return TryAdd(key, (keyIn) => getValue());
+    }
+
+
+    /// <summary>
     /// Retrives a value for the key passed in if it exists, else
     /// adds the new value passed in.
     /// </summary>
@@ -310,7 +349,7 @@ namespace Swordfish.NET.Collections
       }
       else
       {
-        value = default(TValue);
+        value = default;
         return false;
       }
     }
