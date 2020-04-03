@@ -161,13 +161,19 @@ namespace Swordfish.NET.Collections
       );
     }
 
-    public virtual void RemoveAt(int index)
+    public virtual KeyValuePair<TKey, TValue> RemoveAt(int index)
     {
-      DoReadWriteNotify(
+      KeyValuePair<TKey, TValue> localRemovedItem = default;
+        DoReadWriteNotify(
         () => _internalCollection.GetItem(index),
         (item) => _internalCollection.RemoveAt(index),
-        (item) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index)
+        (item) =>
+        {
+          localRemovedItem = item;
+          return new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index);
+        }
       );
+      return localRemovedItem;
     }
 
     public bool Remove(TKey key)
@@ -200,16 +206,22 @@ namespace Swordfish.NET.Collections
     /// <summary>
     /// Rmoves a range of items by index and count
     /// </summary>
-    public void RemoveRange(int index, int count)
+    public IList<KeyValuePair<TKey, TValue>> RemoveRange(int index, int count)
     {
+      IList<KeyValuePair<TKey, TValue>> localRemovedItems = null;
       DoReadWriteNotify<IList<KeyValuePair<TKey,TValue>>>(
         // Get the list of keys and values from the internal list
         () => _internalCollection.GetRange(index, count),
         // remove the keys from the dictionary, remove the range from the list
         (items) => _internalCollection.RemoveRange(index, count),
         // Notify which items were removed
-        (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, index)
+        (items) =>
+        {
+          localRemovedItems = items;
+          return new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, index);
+        }
       );
+      return localRemovedItems;
     }
 
     public void RemoveRange(IList<TKey> keys)
