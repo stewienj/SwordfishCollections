@@ -26,7 +26,13 @@ jobs:
 
     - name: Setup msbuild
       uses: microsoft/setup-msbuild@v1
+  
+    - name: Setup NuGet.exe for use with actions
+      uses: NuGet/setup-nuget@v1.0.2
     
+    - name: Restore NuGet Packages
+      run: nuget restore Swordfish.NET.Collections.sln
+      
     - name: Build Debug DLL
       run: msbuild Swordfish.NET.Collections.sln /p:Configuration=Debug
 
