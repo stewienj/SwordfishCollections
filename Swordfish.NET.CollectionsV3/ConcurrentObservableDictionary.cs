@@ -202,14 +202,28 @@ namespace Swordfish.NET.Collections
     /// </summary>
     public void RemoveRange(int index, int count)
     {
+      RemoveRange(index, count, out IList<KeyValuePair<TKey, TValue>> removedItems);
+    }
+
+    /// <summary>
+    /// Rmoves a range of items by index and count
+    /// </summary>
+    public void RemoveRange(int index, int count, out IList<KeyValuePair<TKey, TValue>> removedItems)
+    {
+      IList<KeyValuePair<TKey, TValue>> localRemovedItems = null;
       DoReadWriteNotify<IList<KeyValuePair<TKey,TValue>>>(
         // Get the list of keys and values from the internal list
         () => _internalCollection.GetRange(index, count),
         // remove the keys from the dictionary, remove the range from the list
         (items) => _internalCollection.RemoveRange(index, count),
         // Notify which items were removed
-        (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, index)
+        (items) =>
+        {
+          localRemovedItems = items;
+          return new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, index);
+        }
       );
+      removedItems = localRemovedItems;
     }
 
     public void RemoveRange(IList<TKey> keys)
