@@ -28,7 +28,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1
     
     - name: Build Debug DLL
-      run: msbuild Swordfish.NET.Collections.sln /p:Configuration=Debug /p:Platform=AnyCPU
+      run: msbuild Swordfish.NET.Collections.sln /p:Configuration=Debug
 
     - name: Build Release DLL
-      run: msbuild Swordfish.NET.Collections.sln /p:Configuration=Release /p:Platform=AnyCPU
+      run: msbuild Swordfish.NET.Collections.sln /p:Configuration=Release
