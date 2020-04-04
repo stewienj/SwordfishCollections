@@ -37,3 +37,6 @@ jobs:
 
     - name: Build Release DLL
       run: msbuild Swordfish.NET.Collections.sln /p:Configuration=Release
+      
+    - name: Publish Nuget Packages
+      run: dotnet nuget push Bin/Release_AnyCPU/*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
