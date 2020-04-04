@@ -1,12 +1,10 @@
-# Custom workflow to build .NET Framework DLL
+# Custom workflow to build .NET Framework DLL, just does a build, and will run tests in future after I write the tests
 
 name: Build .NET Framework DLL
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 

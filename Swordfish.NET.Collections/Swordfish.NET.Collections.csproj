@@ -59,12 +59,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Swordfish.NET.Collections.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.CommandLine">
+      <Version>4.1.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">"$(SolutionDir)packages\NuGet.CommandLine.4.1.0\tools\NuGet.exe" pack "$(SolutionDir)Swordfish.NET.Collections\Swordfish.NET.Collections.csproj" -IncludeReferencedProjects -properties "Configuration=Release;Platform=Any CPU;OutputPath=$(SolutionDir)Bin\Release_AnyCPU"</PostBuildEvent>
+    <PostBuildEvent Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">"$(PkgNuGet_CommandLine)\tools\NuGet.exe" pack "$(SolutionDir)Swordfish.NET.Collections\Swordfish.NET.Collections.csproj" -IncludeReferencedProjects -properties "Configuration=Release;Platform=Any CPU;OutputPath=$(SolutionDir)Bin\Release_AnyCPU"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
