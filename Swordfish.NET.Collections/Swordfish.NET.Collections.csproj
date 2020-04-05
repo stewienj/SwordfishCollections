@@ -71,7 +71,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">"$(PkgNuGet_CommandLine)\tools\NuGet.exe" pack "$(SolutionDir)Swordfish.NET.Collections\Swordfish.NET.Collections.csproj" -IncludeReferencedProjects -Symbols -SymbolPackageFormat snupkg -properties "Configuration=Release;Platform=Any CPU;OutputPath=$(SolutionDir)Bin\Release_AnyCPU"</PostBuildEvent>
+    <PostBuildEvent Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">"$(PkgNuGet_CommandLine)\tools\NuGet.exe" pack "$(SolutionDir)Swordfish.NET.Collections\Swordfish.NET.Collections.csproj" -IncludeReferencedProjects -Symbols -SymbolPackageFormat snupkg -properties "Configuration=Release;Platform=AnyCPU;OutputPath=$(SolutionDir)Bin\Release_AnyCPU"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

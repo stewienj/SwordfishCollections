@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET.Collections", "Swordfish.NET.Collections\Swordfish.NET.Collections.csproj", "{F2E1680E-1B15-4CF2-BAB0-54B8C8F6ABDF}"
 EndProject
@@ -107,5 +107,8 @@ Global
 		{974C23F3-A63D-479E-A1CD-7657A2822ACB} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
 		{9A04D222-2B52-4E93-9B92-CC6EF54D5848} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
 		{844232DB-E29B-4608-BB1E-A64D541DF107} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CD39B382-7E64-41EF-A56E-9C42E39D784F}
 	EndGlobalSection
 EndGlobal
