@@ -6,9 +6,6 @@
     <description>C# library for Concurrent Observable Collection, Dictionary, and Sorted Dictionary </description>
     <authors>John Stewien</authors>
     <projectUrl>https://github.com/stewienj/SwordfishCollections</projectUrl>
-    <licenseUrl>https://github.com/stewienj/SwordfishCollections/blob/master/LICENSE</licenseUrl>
+	<license type="expression">CC0-1.0</license>
   </metadata>
-  <files>
-    <file src="..\bin\Release_AnyCPU\Swordfish.NET.Collections.pdb" target="lib\net40"/>
-  </files>
 </package>
