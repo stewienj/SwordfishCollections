@@ -37,6 +37,15 @@ jobs:
 
     - name: Build Release DLL
       run: msbuild Swordfish.NET.Collections.sln /p:Configuration=Release
-      
-    - name: Publish Nuget Packages
-      run: dotnet nuget push **/Release_AnyCPU/*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
+    
+    - name: build nuget packages
+      run: msbuild Swordfish.NET.Collections.sln -t:pack -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:Platform="Any CPU" -p:Configuration="Release"
+
+    - name: Publish Swordfish V3 Nuget Package
+      run: dotnet nuget push **/release/Swordfish.NET.3.*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
+
+    - name: Publish V3 Nuget Package
+      run: dotnet nuget push **/release/Swordfish.NET.CollectionsV3.3.*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
+
+    - name: Publish V2 Nuget Package
+      run: dotnet nuget push **/release/Swordfish.NET.Collections.2.*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
