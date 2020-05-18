@@ -42,5 +42,5 @@ jobs:
       run: msbuild Swordfish.NET.Collections.sln -t:pack -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:Platform="Any CPU" -p:Configuration="Release"
       
     - name: Verify nuget package names
-      run: dir /s *.nupkg
+      run: dir -s *.nupkg
 
