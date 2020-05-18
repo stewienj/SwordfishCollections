@@ -9,7 +9,7 @@ using System.Text;
 using System.Collections;
 using System.Diagnostics;
 using System.ComponentModel;
-using Swordfish.NET.General;
+using Swordfish.NET.Collections.Auxiliary;
 
 namespace Swordfish.NET.Collections {
   /// <summary>

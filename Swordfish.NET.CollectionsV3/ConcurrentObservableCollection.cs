@@ -1,4 +1,4 @@
-﻿using Swordfish.NET.General;
+﻿using Swordfish.NET.Collections.Auxiliary;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

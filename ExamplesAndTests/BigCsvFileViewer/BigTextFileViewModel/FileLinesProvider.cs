@@ -1,5 +1,5 @@
 ﻿using Swordfish.NET.Collections;
-using Swordfish.NET.General;
+using Swordfish.NET.Collections.Auxiliary;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

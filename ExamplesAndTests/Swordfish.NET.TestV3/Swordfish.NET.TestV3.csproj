@@ -34,6 +34,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Swordfish.NET.CollectionsV3\Swordfish.NET.CollectionsV3.csproj" />
-    <ProjectReference Include="..\..\Swordfish.NET\Swordfish.NET.csproj" />
   </ItemGroup>
 </Project>

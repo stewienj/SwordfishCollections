@@ -17,7 +17,7 @@ using System.Text;
 
 
 
-namespace Swordfish.NET.General
+namespace Swordfish.NET.Collections.Auxiliary
 {
   /// <summary>
   ///     Contains general purpose extention methods.

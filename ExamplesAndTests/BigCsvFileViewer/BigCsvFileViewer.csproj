@@ -31,7 +31,6 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Swordfish.NET.CollectionsV3\Swordfish.NET.CollectionsV3.csproj"/>
-    <ProjectReference Include="..\..\Swordfish.NET\Swordfish.NET.csproj"/>
+    <ProjectReference Include="..\..\Swordfish.NET.CollectionsV3\Swordfish.NET.CollectionsV3.csproj" />
   </ItemGroup>
 </Project>

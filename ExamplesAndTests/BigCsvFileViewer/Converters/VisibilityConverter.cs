@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Data;
 using System.Windows;
-using Swordfish.NET.General;
+using Swordfish.NET.Collections.Auxiliary;
 
 namespace Swordfish.NET.WPF.Converters
 {

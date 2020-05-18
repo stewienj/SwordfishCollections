@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32;
 
-namespace Swordfish.NET.General {
+namespace Swordfish.NET.Collections.Auxiliary {
   public static class Win32 {
 
     #region Window API enumerations

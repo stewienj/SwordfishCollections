@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swordfish.NET.Collections;
-using Swordfish.NET.General;
+using Swordfish.NET.Collections.Auxiliary;
 using Swordfish.NET.WPF.ViewModel;
 using System;
 using System.Collections.Generic;

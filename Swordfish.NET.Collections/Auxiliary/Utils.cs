@@ -8,7 +8,7 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace Swordfish.NET.General
+namespace Swordfish.NET.Collections.Auxiliary
 {
 	public static class Utils
 	{

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-using Swordfish.NET.General;
+using Swordfish.NET.Collections.Auxiliary;
 
 namespace Swordfish.NET.Collections
 {

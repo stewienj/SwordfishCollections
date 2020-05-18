@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swordfish.NET.General
+namespace Swordfish.NET.Collections.Auxiliary
 {
   public class ExtendedPropertyChangedEventArgs : PropertyChangedEventArgs
   {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using Swordfish.NET.General;
+using Swordfish.NET.Collections.Auxiliary;
 using Swordfish.NET.WPF.Converters;
 using Swordfish.NET.WPF.ViewModel;
 using System;

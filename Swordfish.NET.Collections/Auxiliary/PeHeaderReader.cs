@@ -9,7 +9,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
 
-namespace Swordfish.NET.General {
+namespace Swordfish.NET.Collections.Auxiliary {
   /// <summary>
   /// Reads in the header information of the Portable Executable format.
   /// Provides information such as the date the assembly was compiled.

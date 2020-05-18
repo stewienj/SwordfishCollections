@@ -3,19 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET.Collections", "Swordfish.NET.Collections\Swordfish.NET.Collections.csproj", "{F2E1680E-1B15-4CF2-BAB0-54B8C8F6ABDF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swordfish.NET", "Swordfish.NET\Swordfish.NET.csproj", "{E463C873-7FC1-451E-8D13-EDDDA939E443}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swordfish.NET.Collections", "Swordfish.NET.Collections\Swordfish.NET.Collections.csproj", "{F2E1680E-1B15-4CF2-BAB0-54B8C8F6ABDF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swordfish.NET.CollectionsV3", "Swordfish.NET.CollectionsV3\Swordfish.NET.CollectionsV3.csproj", "{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExamplesAndTests", "ExamplesAndTests", "{CEF5CE51-FB33-4634-A168-7CAD4505FFF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigCsvFileViewer", "ExamplesAndTests\BigCsvFileViewer\BigCsvFileViewer.csproj", "{974C23F3-A63D-479E-A1CD-7657A2822ACB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BigCsvFileViewer", "ExamplesAndTests\BigCsvFileViewer\BigCsvFileViewer.csproj", "{974C23F3-A63D-479E-A1CD-7657A2822ACB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET.Test", "ExamplesAndTests\Swordfish.NET.Test\Swordfish.NET.Test.csproj", "{9A04D222-2B52-4E93-9B92-CC6EF54D5848}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swordfish.NET.Test", "ExamplesAndTests\Swordfish.NET.Test\Swordfish.NET.Test.csproj", "{9A04D222-2B52-4E93-9B92-CC6EF54D5848}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swordfish.NET.TestV3", "ExamplesAndTests\Swordfish.NET.TestV3\Swordfish.NET.TestV3.csproj", "{844232DB-E29B-4608-BB1E-A64D541DF107}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swordfish.NET.TestV3", "ExamplesAndTests\Swordfish.NET.TestV3\Swordfish.NET.TestV3.csproj", "{844232DB-E29B-4608-BB1E-A64D541DF107}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,18 +37,6 @@ Global
 		{F2E1680E-1B15-4CF2-BAB0-54B8C8F6ABDF}.Release|x64.Build.0 = Release|Any CPU
 		{F2E1680E-1B15-4CF2-BAB0-54B8C8F6ABDF}.Release|x86.ActiveCfg = Release|Any CPU
 		{F2E1680E-1B15-4CF2-BAB0-54B8C8F6ABDF}.Release|x86.Build.0 = Release|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Debug|x64.Build.0 = Debug|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Debug|x86.Build.0 = Debug|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Release|x64.ActiveCfg = Release|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Release|x64.Build.0 = Release|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Release|x86.ActiveCfg = Release|Any CPU
-		{E463C873-7FC1-451E-8D13-EDDDA939E443}.Release|x86.Build.0 = Release|Any CPU
 		{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F81DCC72-46A8-4EFE-AA39-13C7F1FA129B}.Debug|x64.ActiveCfg = Debug|Any CPU

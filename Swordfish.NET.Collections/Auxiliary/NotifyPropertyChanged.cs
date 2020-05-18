@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
-namespace Swordfish.NET.General {
+namespace Swordfish.NET.Collections.Auxiliary {
 
   /// <summary>
   /// Provides a INotifyPropertyChanged implementation that uses a dispatcher.

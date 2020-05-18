@@ -7,19 +7,7 @@ using System.Security.Principal;
 using System.Security.AccessControl;
 using System.Runtime.InteropServices;
 
-namespace Swordfish.NET.General {
-  public class Disposable : IDisposable {
-    private Action _dispose;
-    public Disposable(Action dispose = null) {
-      _dispose = dispose;
-    }
-    void IDisposable.Dispose() {
-      if(_dispose != null) {
-        _dispose();
-      }
-    }
-  }
-
+namespace Swordfish.NET.Collections.Auxiliary {
 
   public static class FileAndDirectoryUtilities {
 

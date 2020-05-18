@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Dynamic;
-using Swordfish.NET.General;
+using Swordfish.NET.Collections.Auxiliary;
 using System.Windows.Input;
 using Microsoft.Win32;
 using System.Threading;
