@@ -1,13 +1,13 @@
 # Custom workflow to build .NET Framework DLL
 # Does a build, and will run tests in future after I write the tests, and will publish to nuget once I write that bit
 
-name: Build .NET Framework DLL
+name: Release to Nuget
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
-    branches: [ master ]
+  release:
+    types: [published]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -31,16 +31,12 @@ jobs:
     
     - name: Restore NuGet Packages
       run: nuget restore Swordfish.NET.Collections.sln
-      
-    - name: Build Debug DLL
-      run: msbuild Swordfish.NET.Collections.sln -p:Configuration=Debug
 
-    - name: Build Release DLL
-      run: msbuild Swordfish.NET.Collections.sln -p:Configuration=Release
-    
     - name: Build NuGet Packages
-      run: msbuild Swordfish.NET.Collections.sln -t:pack -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:Platform="Any CPU" -p:Configuration="Release"
-      
-    - name: Verify nuget package names
-      run: dir /s *.nupkg
+      run: msbuild Swordfish.NET.Collections.sln -t:pack -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:Platform="Any CPU" -p:Configuration="Release" -p:PointVersion=${{ github.event.release.tag_name }}
 
+    - name: Publish V3 Nuget Package
+      run: dotnet nuget push **/release/Swordfish.NET.CollectionsV3.3.*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
+
+    - name: Publish V2 Nuget Package
+      run: dotnet nuget push **/release/Swordfish.NET.Collections.2.*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json

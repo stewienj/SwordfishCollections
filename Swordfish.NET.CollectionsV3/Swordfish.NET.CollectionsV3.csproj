@@ -10,7 +10,8 @@
     <Company>Swordfish Computing Pty Ltd</Company>
     <Product>Swordfish.NET.CollectionsV3</Product>
     <Title>Swordfish.NET.CollectionsV3</Title>
-    <Version>3.1.0</Version>
+    <Version Condition=" '$(PointVersion)' == '' ">3.1.0</Version>
+    <Version Condition=" '$(PointVersion)' != '' ">3.$(PointVersion)</Version>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

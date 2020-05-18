@@ -32,7 +32,7 @@ jobs:
       run: nuget restore Swordfish.NET.Collections.sln
       
     - name: Build Debug DLL
-      run: msbuild Swordfish.NET.Collections.sln /p:Configuration=Debug
+      run: msbuild Swordfish.NET.Collections.sln -p:Configuration=Debug
 
     - name: Build Release DLL
-      run: msbuild Swordfish.NET.Collections.sln /p:Configuration=Release
+      run: msbuild Swordfish.NET.Collections.sln -p:Configuration=Release
