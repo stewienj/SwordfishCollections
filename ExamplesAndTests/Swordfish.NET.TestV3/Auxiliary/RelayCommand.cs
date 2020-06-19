@@ -1,14 +1,11 @@
 ﻿using Swordfish.NET.Collections.Auxiliary;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Swordfish.NET.WPF.ViewModel
+namespace Swordfish.NET.TestV3.Auxiliary
 {
   /// <summary>
   /// Preferable to use RelayCommandFactory to generate these
@@ -17,8 +14,8 @@ namespace Swordfish.NET.WPF.ViewModel
   {
     #region Fields
 
-    readonly Action<object> execute;
-    readonly Predicate<object> canExecute;
+    private readonly Action<object> execute;
+    private readonly Predicate<object> canExecute;
 
     #endregion // Fields
 
@@ -113,7 +110,7 @@ namespace Swordfish.NET.WPF.ViewModel
           },
           param =>
           {
-            return !_isRunning && (canExecute!= null ? canExecute(param) : true);
+            return !_isRunning && (canExecute != null ? canExecute(param) : true);
           });
       }
       return _relayCommand;
@@ -190,9 +187,9 @@ namespace Swordfish.NET.WPF.ViewModel
 
   }
 
-  public class RelayCommandTest : NotifyPropertyChanged 
+  public class RelayCommandTest : NotifyPropertyChanged
   {
-    private static Lazy<RelayCommandTest> _instance = new Lazy<RelayCommandTest>(true);
+    private static readonly Lazy<RelayCommandTest> _instance = new Lazy<RelayCommandTest>(true);
     public static RelayCommandTest Instance
     {
       get
@@ -201,7 +198,7 @@ namespace Swordfish.NET.WPF.ViewModel
       }
     }
 
-    private RelayCommandFactory _testCommand = new RelayCommandFactory();
+    private readonly RelayCommandFactory _testCommand = new RelayCommandFactory();
     public ICommand TestCommand
     {
       get

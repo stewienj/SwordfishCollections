@@ -1,18 +1,12 @@
 ﻿using Swordfish.NET.Collections;
 using Swordfish.NET.Collections.Auxiliary;
-using Swordfish.NET.WPF.ViewModel;
+using Swordfish.NET.TestV3.Auxiliary;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Swordfish.NET.Demo.ViewModels
 {
@@ -25,9 +19,6 @@ namespace Swordfish.NET.Demo.ViewModels
     }
 
     public SortedList<string, string> SortedList = new SortedList<string, string>();
-    
-
-
 
     private RelayCommandFactory _runTestScript = new RelayCommandFactory();
     public override ICommand RunTestScript
@@ -36,36 +27,36 @@ namespace Swordfish.NET.Demo.ViewModels
       {
         return _runTestScript.GetCommandAsync(async () =>
         {
-        Stopwatch sw = new Stopwatch();
-        ClearMessages();
-        await Clear(false, TestCollection, NormalDictionary);
+          Stopwatch sw = new Stopwatch();
+          ClearMessages();
+          await Clear(false, TestCollection, NormalDictionary);
 
-        // Show a message
-        Message("Running tests on observable, concurrent, and view collections...");
-        Message("");
+          // Show a message
+          Message("Running tests on observable, concurrent, and view collections...");
+          Message("");
 
-        // Create the items to addd and insert
-        Message($"Creating 1,000,000 items to add ...");
-        sw.Restart();
-        var itemsToAdd = await Task.Run(() =>
-          Enumerable.Range(0, 1000000).
-          Select(x => KeyValuePair.Create($"Key {x}", $"Value {x}")).ToList());
-        sw.Stop();
-        Message("", sw.Elapsed);
+          // Create the items to addd and insert
+          Message($"Creating 1,000,000 items to add ...");
+          sw.Restart();
+          var itemsToAdd = await Task.Run(() =>
+            Enumerable.Range(0, 1000000).
+            Select(x => KeyValuePair.Create($"Key {x}", $"Value {x}")).ToList());
+          sw.Stop();
+          Message("", sw.Elapsed);
 
-        // New collection supports inserts by index, test by starting at 0 and adding 3 each time
+          // New collection supports inserts by index, test by starting at 0 and adding 3 each time
 
-        Message("");
-        Message($"Creating 100,000 items to to insert by index...");
-        sw.Restart();
-        var itemsToInsert = await Task.Run(() =>
-          Enumerable.Range(0, 100000).
-          Select(x => KeyValuePair.Create($"Insert Key {x}", $"Insert Value {x}")).ToList());
-        sw.Stop();
-        Message("", sw.Elapsed);
+          Message("");
+          Message($"Creating 100,000 items to to insert by index...");
+          sw.Restart();
+          var itemsToInsert = await Task.Run(() =>
+            Enumerable.Range(0, 100000).
+            Select(x => KeyValuePair.Create($"Insert Key {x}", $"Insert Value {x}")).ToList());
+          sw.Stop();
+          Message("", sw.Elapsed);
 
 
-        var itemsToRemove = itemsToInsert.Take(1000).ToList();
+          var itemsToRemove = itemsToInsert.Take(1000).ToList();
 
           // Add items to all collections and then compare
           Message("");

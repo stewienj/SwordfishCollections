@@ -1,16 +1,13 @@
 ﻿using Swordfish.NET.Collections;
 using Swordfish.NET.Collections.Auxiliary;
-using Swordfish.NET.WPF.ViewModel;
+using Swordfish.NET.TestV3.Auxiliary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Swordfish.NET.Demo.ViewModels
 {
@@ -73,7 +70,7 @@ namespace Swordfish.NET.Demo.ViewModels
     // ************************************************************************
     protected async Task Clear(bool onGuiThread, params ICollection<T>[] destCollections)
     {
-      foreach(var colection in destCollections)
+      foreach (var colection in destCollections)
       {
         await Clear(colection, onGuiThread);
       }
@@ -105,7 +102,8 @@ namespace Swordfish.NET.Demo.ViewModels
       Message($"Insert() {collectionType}: {itemsToInsert.Count} items 1 at a time {await ThreadText(onGuiThread)}...");
       await TimedAction(
         collectionType,
-        () => {
+        () =>
+        {
           double indexMultiplier = 1.0 / itemsToInsert.Count;
           foreach (var itemAndIndex in itemsToInsert.Select((item, i) => new { Item = item, Index = i }))
           {
@@ -130,14 +128,15 @@ namespace Swordfish.NET.Demo.ViewModels
 
       await TimedAction(
         collectionType,
-        ()=>{
+        () =>
+        {
           double multiplier = 1.0 / itemsToInsert.Count;
           Parallel.ForEach(itemsToInsert.Select((item, i) => new { Item = item, Index = i }), item =>
           {
             insertAction((int)(multiplier * item.Index * destCollection.Count), item.Item);
           });
         },
-        false      
+        false
       );
     }
 
@@ -147,7 +146,7 @@ namespace Swordfish.NET.Demo.ViewModels
 
     protected async Task AddItemsParallel(List<T> itemsToAdd, IList<T> destCollection)
     {
-      Action<List<T>> addBatchAction = (batch)=>destCollection.AddRange(batch);
+      Action<List<T>> addBatchAction = (batch) => destCollection.AddRange(batch);
       await AddItemsParallel(itemsToAdd, destCollection, addBatchAction);
     }
 
@@ -210,7 +209,7 @@ namespace Swordfish.NET.Demo.ViewModels
           {
             destCollection.Add(item);
           }
-        }, 
+        },
         onGuiThread
       );
     }
@@ -220,7 +219,7 @@ namespace Swordfish.NET.Demo.ViewModels
       await Assign(itemsToAssign, destCollection, (index, item) => destCollection[index] = item, onGuiThread);
     }
 
-    protected async Task Assign(List<T> itemsToAssign, ICollection<T> destCollection, Action<int,T> assignAction, bool onGuiThread)
+    protected async Task Assign(List<T> itemsToAssign, ICollection<T> destCollection, Action<int, T> assignAction, bool onGuiThread)
     {
       string collectionType = destCollection.GetType().Name;
 
@@ -260,7 +259,7 @@ namespace Swordfish.NET.Demo.ViewModels
       await RemoveAtIndex(destCollection, (i) => destCollection.RemoveAt(i), onGuiThread);
     }
 
-    protected async Task RemoveAtIndex(IEnumerable<T> destCollection, Action<int> removeAction , bool onGuiThread)
+    protected async Task RemoveAtIndex(IEnumerable<T> destCollection, Action<int> removeAction, bool onGuiThread)
     {
       string collectionType = destCollection.GetType().Name;
       int count = destCollection.Count();
@@ -302,12 +301,12 @@ namespace Swordfish.NET.Demo.ViewModels
 
         // Get all the combinations of all the collections
         var collectionPairs = collectionsAndTypeName
-          .Take(collectionsAndTypeName.Length-1)
+          .Take(collectionsAndTypeName.Length - 1)
           .Select(
             (item1, index) => collectionsAndTypeName
-              .Skip(index+1)
+              .Skip(index + 1)
               .Select(item2 => new { Item1 = item1, Item2 = item2 })
-           ).SelectMany(p=>p);
+           ).SelectMany(p => p);
 
 
         var typeNames = collections.Select(c => c.GetType().Name).ToArray();

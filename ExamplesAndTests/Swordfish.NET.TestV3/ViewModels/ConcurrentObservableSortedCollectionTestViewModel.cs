@@ -1,6 +1,6 @@
 ﻿using Swordfish.NET.Collections;
 using Swordfish.NET.Collections.Auxiliary;
-using Swordfish.NET.WPF.ViewModel;
+using Swordfish.NET.TestV3.Auxiliary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,36 +26,36 @@ namespace Swordfish.NET.Demo.ViewModels
     public ICommand RunTestScript =>
         _runTestScript.GetCommandAsync(async () =>
         {
-        Stopwatch sw = new Stopwatch();
-        ClearMessages();
-        await Clear(false, TestCollection, NormalCollection);
+          Stopwatch sw = new Stopwatch();
+          ClearMessages();
+          await Clear(false, TestCollection, NormalCollection);
 
-        // Show a message
-        Message("Running tests on normal, concurrent, and view collections...");
-        Message("");
+          // Show a message
+          Message("Running tests on normal, concurrent, and view collections...");
+          Message("");
 
-        // Create the items to addd and insert
-        Message($"Creating 1,000,000 items to add ...");
-        sw.Restart();
-        var itemsToAdd = await Task.Run(() =>
-          Enumerable.Range(0, 1000000).
-          Select(x => $"Value {x}").ToList());
-        sw.Stop();
-        Message("", sw.Elapsed);
+          // Create the items to addd and insert
+          Message($"Creating 1,000,000 items to add ...");
+          sw.Restart();
+          var itemsToAdd = await Task.Run(() =>
+            Enumerable.Range(0, 1000000).
+            Select(x => $"Value {x}").ToList());
+          sw.Stop();
+          Message("", sw.Elapsed);
 
-        // New collection supports inserts by index, test by starting at 0 and adding 3 each time
+          // New collection supports inserts by index, test by starting at 0 and adding 3 each time
 
-        Message("");
-        Message($"Creating 100,000 items to to insert by index...");
-        sw.Restart();
-        var itemsToInsert = await Task.Run(() =>
-          Enumerable.Range(0, 100000).
-          Select(x => $"Insert Value {x}").ToList());
-        sw.Stop();
-        Message("", sw.Elapsed);
+          Message("");
+          Message($"Creating 100,000 items to to insert by index...");
+          sw.Restart();
+          var itemsToInsert = await Task.Run(() =>
+            Enumerable.Range(0, 100000).
+            Select(x => $"Insert Value {x}").ToList());
+          sw.Stop();
+          Message("", sw.Elapsed);
 
 
-        var itemsToRemove = itemsToInsert.Take(1000).ToList();
+          var itemsToRemove = itemsToInsert.Take(1000).ToList();
 
           // Add items to all collections and then compare
           Message("");
@@ -142,7 +142,7 @@ namespace Swordfish.NET.Demo.ViewModels
       NormalCollection.Sort();
       NormalCollectionView = NormalCollection.ToList();
       OnPropertyChanged(nameof(NormalCollectionView));
-      var allCollections = collections.Concat(new ICollection<string>[] {NormalCollection, TestCollection, TestCollection.CollectionView });
+      var allCollections = collections.Concat(new ICollection<string>[] { NormalCollection, TestCollection, TestCollection.CollectionView });
 
       return CompareCollectionsBase(allCollections.ToArray());
     }

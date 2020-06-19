@@ -12,6 +12,7 @@
     <Title>Swordfish.NET.CollectionsV3</Title>
     <Version Condition=" '$(PointVersion)' == '' ">3.1.0</Version>
     <Version Condition=" '$(PointVersion)' != '' ">3.$(PointVersion)</Version>
+    <UserSecretsId>5d0656ca-f966-42bd-9e74-0ec774d5ccaa</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable">

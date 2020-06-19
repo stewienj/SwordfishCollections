@@ -1,17 +1,12 @@
 ﻿using Swordfish.NET.Collections;
 using Swordfish.NET.Collections.Auxiliary;
-using Swordfish.NET.WPF.ViewModel;
-using System;
+using Swordfish.NET.TestV3.Auxiliary;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Swordfish.NET.Demo.ViewModels
 {
@@ -49,7 +44,7 @@ namespace Swordfish.NET.Demo.ViewModels
             Enumerable.Range(0, 1000000).
             Select(x => $"Add {x}").ToList());
           sw.Stop();
-          Message("",sw.Elapsed);
+          Message("", sw.Elapsed);
           Message("");
           Message($"Creating only 100,000 items to insert because ObservableCollection is slow ...");
           sw.Restart();
@@ -57,8 +52,8 @@ namespace Swordfish.NET.Demo.ViewModels
             Enumerable.Range(0, 100000).
             Select(x => $"Insert {x}").ToList());
           sw.Stop();
-          Message("",sw.Elapsed);
-      
+          Message("", sw.Elapsed);
+
           var itemsToRemove = itemsToInsert.Take(10000).ToList();
 
           // Add items to both collections and then compare

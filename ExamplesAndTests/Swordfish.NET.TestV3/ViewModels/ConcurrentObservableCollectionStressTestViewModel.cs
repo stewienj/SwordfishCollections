@@ -1,9 +1,6 @@
 ﻿using Swordfish.NET.Collections;
-using Swordfish.NET.WPF.ViewModel;
-using System;
-using System.Collections.Generic;
+using Swordfish.NET.TestV3.Auxiliary;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
