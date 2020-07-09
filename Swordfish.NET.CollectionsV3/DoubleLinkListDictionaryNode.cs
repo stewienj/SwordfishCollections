@@ -7,31 +7,31 @@
 // http://www.codeproject.com/Articles/208361/Concurrent-Observable-Collection-Dictionary-and-So
 // Last Revised: September 2012
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+namespace Swordfish.NET.Collections
+{
+    public class DoubleLinkListDictionaryNode<TKey, TValue>
+    {
+        public DoubleLinkListDictionaryNode<TKey, TValue> Next;
+        public DoubleLinkListDictionaryNode<TKey, TValue> Previous;
+        public TKey Key;
+        public TValue Value;
 
-namespace Swordfish.NET.Collections {
-  public class DoubleLinkListDictionaryNode<TKey,TValue> {
-    public DoubleLinkListDictionaryNode<TKey, TValue> Next;
-    public DoubleLinkListDictionaryNode<TKey, TValue> Previous;
-    public TKey Key;
-    public TValue Value;
+        public DoubleLinkListDictionaryNode(TKey key, TValue value, DoubleLinkListDictionaryNode<TKey, TValue> next)
+        {
+            Next = next;
+            Key = key;
+            Value = value;
+            if (Next != null)
+            {
+                Next.Previous = this;
+            }
+        }
 
-    public DoubleLinkListDictionaryNode(TKey key, TValue value, DoubleLinkListDictionaryNode<TKey, TValue> next) {
-      Next = next;
-      Key = key;
-      Value = value;
-      if(Next != null) {
-        Next.Previous = this;
-      }
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}", Key, Value);
+        }
+
+
     }
-
-    public override string ToString() {
-      return string.Format("{0}, {1}", Key, Value);
-    }
-
-
-  }
 }

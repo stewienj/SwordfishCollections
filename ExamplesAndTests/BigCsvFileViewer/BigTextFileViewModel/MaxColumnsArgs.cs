@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Swordfish.NET.WPF.ViewModel
+namespace BigCsvFileViewer.BigTextFileViewModel
 {
-  public class MaxColumnsArgs : EventArgs
-  {
-    public MaxColumnsArgs(int maxColumns)
+    public class MaxColumnsArgs : EventArgs
     {
-      MaxColumns = maxColumns;
-    }
+        public MaxColumnsArgs(int maxColumns)
+        {
+            MaxColumns = maxColumns;
+        }
 
-    public int MaxColumns
-    {
-      get;
-      private set;
+        public int MaxColumns
+        {
+            get;
+            private set;
+        }
     }
-  }
 }

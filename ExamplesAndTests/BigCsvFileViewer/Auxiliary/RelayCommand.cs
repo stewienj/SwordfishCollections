@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Swordfish.NET.TestV3.Auxiliary
+namespace BigCsvFileViewer.Auxiliary
 {
     /// <summary>
     /// Preferable to use RelayCommandFactory to generate these
@@ -14,8 +14,8 @@ namespace Swordfish.NET.TestV3.Auxiliary
     {
         #region Fields
 
-        private readonly Action<object> execute;
-        private readonly Predicate<object> canExecute;
+        readonly Action<object> execute;
+        readonly Predicate<object> canExecute;
 
         #endregion // Fields
 
@@ -189,7 +189,7 @@ namespace Swordfish.NET.TestV3.Auxiliary
 
     public class RelayCommandTest : ExtendedNotifyPropertyChanged
     {
-        private static readonly Lazy<RelayCommandTest> _instance = new Lazy<RelayCommandTest>(true);
+        private static Lazy<RelayCommandTest> _instance = new Lazy<RelayCommandTest>(true);
         public static RelayCommandTest Instance
         {
             get
@@ -198,7 +198,7 @@ namespace Swordfish.NET.TestV3.Auxiliary
             }
         }
 
-        private readonly RelayCommandFactory _testCommand = new RelayCommandFactory();
+        private RelayCommandFactory _testCommand = new RelayCommandFactory();
         public ICommand TestCommand
         {
             get

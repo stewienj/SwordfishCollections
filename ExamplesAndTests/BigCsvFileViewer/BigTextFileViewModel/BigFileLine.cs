@@ -1,71 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Swordfish.NET.WPF.ViewModel
+namespace BigCsvFileViewer.BigTextFileViewModel
 {
-  public abstract class BigFileLine
-  {
-    public class ArrayWrapper
+    public abstract class BigFileLine
     {
-      public ArrayWrapper()
-      {
-      }
-
-      public string this[int index]
-      {
-        get
+        public class ArrayWrapper
         {
-          if (index >=0 && index< BaseArray.Length)
-          {
-            return BaseArray[index];
-          }
-          else
-          {
-            return "";
-          }
+            public ArrayWrapper()
+            {
+            }
+
+            public string this[int index]
+            {
+                get
+                {
+                    if (index >= 0 && index < BaseArray.Length)
+                    {
+                        return BaseArray[index];
+                    }
+                    else
+                    {
+                        return "";
+                    }
+                }
+            }
+
+            public string[] BaseArray { get; set; }
         }
-      }
 
-      public string[] BaseArray { get; set; }
+        private static Lazy<char[]> _separators = new Lazy<char[]>(() => ",;\t".ToCharArray(), true);
+
+        public static char[] Separators
+        {
+            get
+            {
+                return _separators.Value;
+            }
+        }
+
+        private ArrayWrapper _columnsSafe = new ArrayWrapper();
+        public ArrayWrapper ColumnsSafe
+        {
+            get
+            {
+                _columnsSafe.BaseArray = Columns;
+                return _columnsSafe;
+
+            }
+        }
+
+        public abstract string[] Columns { get; }
+
+        public bool IsValid { get; protected set; }
+
+        public abstract List<BigFileLine> GetLines(Stream inputStream, int linesToSkip, int linesToRead);
+
+        /// <summary>
+        /// Counts the lines in a file by returning the file position of the beginning of each line, including 0 for the first line
+        /// </summary>
+        /// <param name="inputStream"></param>
+        /// <returns></returns>
+        public abstract IEnumerable<long> CountLines(Stream inputStream);
     }
-
-    private static Lazy<char[]> _separators = new Lazy<char[]>(() => ",;\t".ToCharArray(), true);
-
-    public static char[] Separators
-    {
-      get
-      {
-        return _separators.Value;
-      }
-    }
-
-    private ArrayWrapper _columnsSafe = new ArrayWrapper();
-    public ArrayWrapper ColumnsSafe
-    {
-      get
-      {
-        _columnsSafe.BaseArray = Columns;
-        return _columnsSafe;
-
-      }
-    }
-
-    public abstract string[] Columns { get; }
-
-    public bool IsValid { get; protected set; }
-
-    public abstract List<BigFileLine> GetLines(Stream inputStream, int linesToSkip, int linesToRead);
-
-    /// <summary>
-    /// Counts the lines in a file by returning the file position of the beginning of each line, including 0 for the first line
-    /// </summary>
-    /// <param name="inputStream"></param>
-    /// <returns></returns>
-    public abstract IEnumerable<long> CountLines(Stream inputStream);
-  }
 }

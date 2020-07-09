@@ -1,13 +1,8 @@
 ﻿// Copied from http://www.zagstudio.com/blog/378 license MS-PL (Microsoft Public License)
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Threading;
-using System.Collections;
 
 namespace Swordfish.NET.Collections
 {
@@ -68,8 +63,8 @@ namespace Swordfish.NET.Collections
         /// </summary>
         private void FireCollectionReset()
         {
-          NotifyCollectionChangedEventArgs e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-          OnCollectionChanged(e);
+            NotifyCollectionChangedEventArgs e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+            OnCollectionChanged(e);
         }
 
         #endregion
@@ -82,23 +77,29 @@ namespace Swordfish.NET.Collections
         /// <value>
         /// 	<c>true</c> if this collection is loading; otherwise, <c>false</c>.
         /// </value>
-        public bool IsLoading {
-          get {
-            return _isLoading;
-          }
-          set {
-            SetValue(ref _isLoading, value);
-          }
+        public bool IsLoading
+        {
+            get
+            {
+                return _isLoading;
+            }
+            set
+            {
+                SetProperty(ref _isLoading, value);
+            }
         }
 
         private bool _isInitializing;
-        public bool IsInitializing {
-          get {
-            return _isInitializing;
-          }
-          set {
-            SetValue(ref _isInitializing, value);
-          }
+        public bool IsInitializing
+        {
+            get
+            {
+                return _isInitializing;
+            }
+            set
+            {
+                SetProperty(ref _isInitializing, value);
+            }
         }
 
         #region Load overrides
@@ -138,15 +139,15 @@ namespace Swordfish.NET.Collections
 
         private void TakeNewCount(int newCount)
         {
-          if (newCount != this.Count)
-          {
-            var oldCount = this.Count;
-            this.Count = newCount;
-            int pageIndex = (oldCount - 1) / PageSize;
+            if (newCount != this.Count)
+            {
+                var oldCount = this.Count;
+                this.Count = newCount;
+                int pageIndex = (oldCount - 1) / PageSize;
 
-            this.TrimIncompletePages(pageIndex);
-            FireCollectionReset();
-          }
+                this.TrimIncompletePages(pageIndex);
+                FireCollectionReset();
+            }
         }
 
         /// <summary>
