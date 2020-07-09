@@ -11,6 +11,7 @@
     <Product>Swordfish.NET.CollectionsV3</Product>
     <Title>Swordfish.NET.CollectionsV3</Title>
 	<Authors>stewienj</Authors>
+	<Description>C# library for Concurrent Observable Collection, Sorted Collection, Dictionary, and Sorted Dictionary</Description>
 	<RepositoryUrl>https://github.com/stewienj/SwordfishCollections.git</RepositoryUrl>
 	<RepositoryCommit>$(GITHUB_SHA)</RepositoryCommit>
     <Version Condition=" '$(PointVersion)' == '' ">3.1.0</Version>
