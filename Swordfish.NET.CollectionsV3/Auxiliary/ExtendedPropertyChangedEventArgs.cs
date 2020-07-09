@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections.Auxiliary
 {
-  internal class ExtendedPropertyChangedEventArgs : PropertyChangedEventArgs
+  public class ExtendedPropertyChangedEventArgs : PropertyChangedEventArgs
   {
     public ExtendedPropertyChangedEventArgs(string propertyName, object oldValue, object newValue) : base(propertyName)
     {

@@ -1,5 +1,4 @@
-﻿using BigCsvFileViewer.Auxiliary;
-using Swordfish.NET.Collections.Auxiliary;
+﻿using Swordfish.NET.Collections.Auxiliary;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

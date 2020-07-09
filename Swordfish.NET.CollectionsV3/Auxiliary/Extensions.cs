@@ -22,7 +22,7 @@ namespace Swordfish.NET.Collections.Auxiliary
   /// <summary>
   ///     Contains general purpose extention methods.
   /// </summary>
-  internal static class Extensions
+  public static class Extensions
   {
     public static string ReplaceCaseInsensitive(this string str, string oldValue, string newValue)
     {

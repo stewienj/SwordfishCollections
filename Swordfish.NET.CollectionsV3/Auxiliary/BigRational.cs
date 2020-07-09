@@ -30,7 +30,7 @@
 ** O(n(log n)^5 (log log n)) steps as n -> +infinity
 ============================================================*/
 
-namespace Numerics
+namespace Swordfish.NET.Collections.Auxiliary
 {
   using System;
   using System.Collections.Generic;

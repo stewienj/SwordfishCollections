@@ -1,16 +1,13 @@
-﻿using Numerics;
-using Swordfish.NET.Collections.Auxiliary;
+﻿using Swordfish.NET.Collections.Auxiliary;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections
 {
 
-  public class ImmutableDictionaryListPair<TKey, TValue>
+    public class ImmutableDictionaryListPair<TKey, TValue>
   {
     /// <summary>
     /// Class holds the item and the index of the item. Used as an intermediate when performing ops on the collections.

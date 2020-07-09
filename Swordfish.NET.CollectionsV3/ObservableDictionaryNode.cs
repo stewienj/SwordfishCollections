@@ -1,13 +1,9 @@
-﻿using Numerics;
-using System;
+﻿using Swordfish.NET.Collections.Auxiliary;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections
 {
-  internal class ObservableDictionaryNode<TKey, TValue>
+    internal class ObservableDictionaryNode<TKey, TValue>
   {
     public ObservableDictionaryNode(KeyValuePair<TKey, TValue> pair, BigRational position)
     {
