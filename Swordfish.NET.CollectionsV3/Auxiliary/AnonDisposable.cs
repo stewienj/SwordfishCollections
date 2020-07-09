@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections.Auxiliary {
-  public class AnonDisposable : IDisposable {
+  internal class AnonDisposable : IDisposable {
     private Action _dispose;
     public AnonDisposable(Action dispose){
       _dispose = dispose;

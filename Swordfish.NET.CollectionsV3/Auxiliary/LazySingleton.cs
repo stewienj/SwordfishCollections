@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections.Auxiliary
 {
-  public class LazySingleton<T>
+  internal class LazySingleton<T>
   {
     private static Lazy<T> _instance = new Lazy<T>(true);
     public static T Instance

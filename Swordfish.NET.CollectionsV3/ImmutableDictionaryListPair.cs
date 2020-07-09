@@ -34,7 +34,7 @@ namespace Swordfish.NET.Collections
     /// </summary>
     /// <param name="dictionary"></param>
     /// <param name="list"></param>
-    public ImmutableDictionaryListPair(ImmutableDictionary<TKey, ObservableDictionaryNode<TKey, TValue>> dictionary, ImmutableList<ObservableDictionaryNode<TKey, TValue>> list)
+    internal ImmutableDictionaryListPair(ImmutableDictionary<TKey, ObservableDictionaryNode<TKey, TValue>> dictionary, ImmutableList<ObservableDictionaryNode<TKey, TValue>> list)
     {
       Dictionary = dictionary;
       List = list;
@@ -216,8 +216,8 @@ namespace Swordfish.NET.Collections
     }
 
 
-    public ImmutableDictionary<TKey, ObservableDictionaryNode<TKey, TValue>> Dictionary { get;  }
-    public ImmutableList<ObservableDictionaryNode<TKey, TValue>> List { get; }
+    internal ImmutableDictionary<TKey, ObservableDictionaryNode<TKey, TValue>> Dictionary { get;  }
+    internal ImmutableList<ObservableDictionaryNode<TKey, TValue>> List { get; }
     public static ImmutableDictionaryListPair<TKey, TValue> Empty { get; } = new ImmutableDictionaryListPair<TKey, TValue>(ImmutableDictionary<TKey, ObservableDictionaryNode<TKey, TValue>>.Empty, ImmutableList<ObservableDictionaryNode<TKey, TValue>>.Empty);
 
   }

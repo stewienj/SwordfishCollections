@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections.Auxiliary
 {
-  public class ThrottledAction
+  internal class ThrottledAction
   {
     private Action _action;
     private TimeSpan _timeBetweenInvokations;

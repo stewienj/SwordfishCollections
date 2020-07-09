@@ -46,7 +46,7 @@ namespace Numerics
 
   [Serializable]
   [ComVisible(false)]
-  public struct BigRational : IComparable, IComparable<BigRational>, IDeserializationCallback, IEquatable<BigRational>, ISerializable
+  internal struct BigRational : IComparable, IComparable<BigRational>, IDeserializationCallback, IEquatable<BigRational>, ISerializable
   {
 
     // ---- SECTION:  members supporting exposed properties -------------*

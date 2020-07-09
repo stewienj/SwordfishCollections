@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace Swordfish.NET.Collections.Auxiliary
 {
-	public static class Utils
+	internal static class Utils
 	{
 		//--------------------------------------------------------------------------------------------
 

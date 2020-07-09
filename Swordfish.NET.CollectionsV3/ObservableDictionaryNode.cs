@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections
 {
-  public class ObservableDictionaryNode<TKey, TValue>
+  internal class ObservableDictionaryNode<TKey, TValue>
   {
     public ObservableDictionaryNode(KeyValuePair<TKey, TValue> pair, BigRational position)
     {
@@ -26,7 +26,7 @@ namespace Swordfish.NET.Collections
     /// <summary>
     /// Position is a BigRational that can be used to do a binary search for a node
     /// </summary>
-    public BigRational SortKey { get; }
+    internal BigRational SortKey { get; }
 
   }
 }
