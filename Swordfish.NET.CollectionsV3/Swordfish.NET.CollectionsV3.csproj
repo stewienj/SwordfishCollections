@@ -10,6 +10,9 @@
     <Company>Swordfish Computing Pty Ltd</Company>
     <Product>Swordfish.NET.CollectionsV3</Product>
     <Title>Swordfish.NET.CollectionsV3</Title>
+	<Authors>stewienj</Authors>
+	<RepositoryUrl>https://github.com/stewienj/SwordfishCollections.git</RepositoryUrl>
+	<RepositoryCommit>$(GITHUB_SHA)</RepositoryCommit>
     <Version Condition=" '$(PointVersion)' == '' ">3.1.0</Version>
     <Version Condition=" '$(PointVersion)' != '' ">3.$(PointVersion)</Version>
     <UserSecretsId>5d0656ca-f966-42bd-9e74-0ec774d5ccaa</UserSecretsId>
@@ -20,8 +23,5 @@
     <PackageReference Include="System.Collections.Immutable">
       <Version>1.7.1</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
