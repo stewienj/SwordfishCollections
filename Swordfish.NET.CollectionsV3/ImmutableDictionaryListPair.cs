@@ -24,7 +24,7 @@ namespace Swordfish.NET.Collections
             public int Index { get; }
         }
 
-        private BinarySorter<BigRational> _indexFinder = new BinarySorter<BigRational>();
+        private BinarySorter<BigRationalOld> _indexFinder = new BinarySorter<BigRationalOld>();
 
         /// <summary>
         /// Note using a class to wrap KeyValuePair (which is a value type), so the exact object can correctly be removed by key in the instance that two or more values are the same
@@ -76,9 +76,9 @@ namespace Swordfish.NET.Collections
             }
 
             // Need to find the node position numbers either side, take the average, and that is the new sort key
-            BigRational insertSortKey = index > 0 ?
-              (List[index - 1].SortKey + List[index].SortKey) / (BigRational)2 :
-              List[index].SortKey - BigRational.One;
+            BigRationalOld insertSortKey = index > 0 ?
+              (List[index - 1].SortKey + List[index].SortKey) / (BigRationalOld)2 :
+              List[index].SortKey - BigRationalOld.One;
 
 
             // Create the list of nodes for the internal list

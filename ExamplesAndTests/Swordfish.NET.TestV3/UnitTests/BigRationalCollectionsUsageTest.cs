@@ -12,7 +12,7 @@ namespace Swordfish.NET.TestV3.UnitTests
     [TestClass]
     public class BigRationalCollectionsUsageTest
     {
-        private readonly int _iterations = 5_000;
+        private readonly int _iterations = 1_000;
         private readonly int _count = 1_000;
 
         [TestMethod]

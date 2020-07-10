@@ -5,14 +5,14 @@ namespace Swordfish.NET.Collections
 {
     internal class ObservableDictionaryNode<TKey, TValue>
     {
-        public ObservableDictionaryNode(KeyValuePair<TKey, TValue> pair, BigRational position)
+        public ObservableDictionaryNode(KeyValuePair<TKey, TValue> pair, BigRationalOld position)
         {
             KeyValuePair = pair;
             SortKey = position;
         }
 
         public ObservableDictionaryNode(KeyValuePair<TKey, TValue> pair, ObservableDictionaryNode<TKey, TValue> before)
-          : this(pair, before != null ? before.SortKey + BigRational.One: BigRational.Zero) { }
+          : this(pair, before != null ? before.SortKey + BigRationalOld.One: BigRationalOld.Zero) { }
 
 
         public KeyValuePair<TKey, TValue> KeyValuePair { get; }
@@ -22,7 +22,7 @@ namespace Swordfish.NET.Collections
         /// <summary>
         /// Position is a BigRational that can be used to do a binary search for a node
         /// </summary>
-        internal BigRational SortKey { get; }
+        internal BigRationalOld SortKey { get; }
 
     }
 }

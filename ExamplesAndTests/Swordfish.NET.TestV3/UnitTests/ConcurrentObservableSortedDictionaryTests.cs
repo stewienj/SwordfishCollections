@@ -9,24 +9,24 @@ using System.Linq;
 namespace Swordfish.NET.TestV3.UnitTests
 {
     [TestClass()]
-    public class ConcurrentObservableSortedSetTests
+    public class ConcurrentObservableSortedDictionaryTests
     {
         private int _testCollectionCount = 10;
-        private int _itemsPerCollection = 1_000_000;
+        private int _itemsPerCollection = 100_000;
         private List<List<int>> _testCollections = new List<List<int>>();
-        private List<int> _sortedSet = new List<int>();
+        private List<int> _sortedCollection = new List<int>();
 
-        public ConcurrentObservableSortedSetTests()
+        public ConcurrentObservableSortedDictionaryTests()
         {
             GenerateTestCollections();
-            GenerateSortedSet();
-            TimeNormalSortedSet();
-            TimeImmutableSortedSet();
+            GenerateSortedCollection();
+            TimeNormalSortedDictionary();
+            TimeImmutableSortedDictionary();
         }
 
         private void GenerateTestCollections()
         {
-            using (var benchmark = new BenchmarkIt("Generating Test Input Collections for sorted set"))
+            using (var benchmark = new BenchmarkIt("Generating Test Input Collections for sorted dictionary"))
             {
                 // Use a fixed seed for consistency in results
                 Random random = new Random(1);
@@ -46,41 +46,41 @@ namespace Swordfish.NET.TestV3.UnitTests
             }
         }
 
-        private void TimeNormalSortedSet()
+        private void TimeNormalSortedDictionary()
         {
-            var sortedSet = new SortedSet<int>();
-            using (var benchmark = new BenchmarkIt("Timing adding everything to normal sorted set"))
+            var sortedDictionary = new SortedDictionary<int,int>();
+            using (var benchmark = new BenchmarkIt("Timing adding everything to normal sorted dictionary"))
             {
                 foreach (var collection in _testCollections)
                 {
                     foreach (var item in collection)
                     {
-                        sortedSet.Add(item);
+                        sortedDictionary[item] = item;
                     }
                 }
             }
         }
 
-        private void TimeImmutableSortedSet()
+        private void TimeImmutableSortedDictionary()
         {
-            var sortedSet = ImmutableSortedSet<int>.Empty;
-            using (var benchmark = new BenchmarkIt("Timing adding everything to an immutable sorted set"))
+            var sortedDictionary = ImmutableSortedDictionary<int,int>.Empty;
+            using (var benchmark = new BenchmarkIt("Timing adding everything to an immutable sorted dictionary"))
             {
                 foreach (var collection in _testCollections)
                 {
                     foreach (var item in collection)
                     {
-                        sortedSet = sortedSet.Add(item);
+                        sortedDictionary = sortedDictionary.SetItem(item,item);
                     }
                 }
             }
         }
 
-        private void GenerateSortedSet()
+        private void GenerateSortedCollection()
         {
-            using (var benchmark = new BenchmarkIt("Generating Expected Output for sorted set"))
+            using (var benchmark = new BenchmarkIt("Generating Expected Output for sorted dictionary"))
             {
-                _sortedSet = _testCollections
+                _sortedCollection = _testCollections
                   .SelectMany(x => x)
                   .Distinct()
                   .OrderBy(x => x)
@@ -91,8 +91,8 @@ namespace Swordfish.NET.TestV3.UnitTests
         [TestMethod()]
         public void AddTest()
         {
-            ConcurrentObservableSortedSet<int> subject = new ConcurrentObservableSortedSet<int>();
-            using (var benchmark = new BenchmarkIt("Adding items to sorted set"))
+            ConcurrentObservableSortedDictionary<int,int> subject = new ConcurrentObservableSortedDictionary<int,int>();
+            using (var benchmark = new BenchmarkIt("Adding items to sorted dictionary"))
             {
                 // Create test subject
                 // Populate test subject
@@ -100,22 +100,36 @@ namespace Swordfish.NET.TestV3.UnitTests
                 {
                     foreach (var item in collection)
                     {
-                        subject.Add(item);
+                        subject[item] = item;
                     }
                 });
             }
+
+            bool keyMatchesValue = subject
+                .All(kv => kv.Key == kv.Value);
+
+            Assert.IsTrue(keyMatchesValue);
+
+            bool isSorted = subject
+                .Aggregate(
+                    new { Sorted = true, LastKey = (int?)null }, 
+                    (a, b) => new { Sorted = a.Sorted && (!a.LastKey.HasValue || a.LastKey.Value < b.Key), LastKey = (int?)b.Key })
+                .Sorted;
+
+            Assert.IsTrue(isSorted);
+
             // Compare test subject with expected result
-            Assert.AreEqual(subject.Count, _sortedSet.Count);
-            bool itemsEqual = _sortedSet
-              .Zip(subject, (a, b) => a == b)
+            Assert.AreEqual(subject.Count, _sortedCollection.Count);
+            bool itemsEqual = _sortedCollection
+              .Zip(subject, (a, b) => a == b.Value)
               .All(b => b);
             Assert.IsTrue(itemsEqual);
 
             // Compare collectionView
             var view = subject.CollectionView;
-            Assert.AreEqual(view.Count, _sortedSet.Count);
-            bool viewItemsEqual = _sortedSet
-              .Zip(view, (a, b) => a == b)
+            Assert.AreEqual(view.Count, _sortedCollection.Count);
+            bool viewItemsEqual = _sortedCollection
+              .Zip(view, (a, b) => a == b.Value)
               .All(b => b);
             Assert.IsTrue(viewItemsEqual);
         }
