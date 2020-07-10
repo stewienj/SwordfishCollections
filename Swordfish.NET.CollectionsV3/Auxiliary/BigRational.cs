@@ -44,7 +44,7 @@ namespace Swordfish.NET.Collections.Auxiliary
 
     [Serializable]
     [ComVisible(false)]
-    internal struct BigRational : IComparable, IComparable<BigRational>, IDeserializationCallback, IEquatable<BigRational>, ISerializable
+    public struct BigRational : IComparable, IComparable<BigRational>, IDeserializationCallback, IEquatable<BigRational>, ISerializable
     {
 
         // ---- SECTION:  members supporting exposed properties -------------*
