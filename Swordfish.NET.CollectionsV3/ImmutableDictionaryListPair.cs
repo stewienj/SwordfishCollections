@@ -77,8 +77,8 @@ namespace Swordfish.NET.Collections
 
             // Need to find the node position numbers either side, take the average, and that is the new sort key
             BigRational insertSortKey = index > 0 ?
-              (List[index - 1].SortKey + List[index].SortKey) / 2 :
-              List[index].SortKey - 1;
+              (List[index - 1].SortKey + List[index].SortKey) / (BigRational)2 :
+              List[index].SortKey - BigRational.One;
 
 
             // Create the list of nodes for the internal list

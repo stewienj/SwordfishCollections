@@ -7,6 +7,8 @@
 //
 // 10th July 2020 - Changed contructor that takes a numerator and a denominator
 //                  by removing the conversion to and from a byte array.
+//
+// 10th July 2020 - Made value storage read only to enusre this class is immutable
 
 using System;
 using System.Linq;
@@ -15,7 +17,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace ExtendedNumerics
+namespace Swordfish.NET.Collections.Auxiliary
 {
 	public class Fraction : IComparable, IComparable<Fraction>, IEquatable<Fraction>, IEqualityComparer<Fraction>
 	{
@@ -47,19 +49,17 @@ namespace ExtendedNumerics
 			Denominator = denominator;// new BigInteger(denominator.ToByteArray());
 		}
 
-		public Fraction(float value)
+		public Fraction(float value) : this(value, 7)
 		{
-			Initialize(value, 7);
 		}
 
-		public Fraction(double value)
+		public Fraction(double value) : this(value, 13)
 		{
-			Initialize(value, 13);
 		}
 
-		private void Initialize(double value, int precision)
+		private Fraction(double value, int precision)
 		{
-			if (!CheckForWholeValues(value))
+			if (!CheckForWholeValues(value, out var wholeValueNumerator, out var wholeValueDenominator))
 			{
 				int sign = Math.Sign(value);
 				int exponent = value.ToString(CultureInfo.InvariantCulture)
@@ -105,6 +105,11 @@ namespace ExtendedNumerics
 					Denominator = BigInteger.One;
 				}
 			}
+			else
+			{
+				Numerator = wholeValueNumerator;
+				Denominator = wholeValueDenominator;
+			}
 		}
 
 		public Fraction(decimal value)
@@ -115,7 +120,7 @@ namespace ExtendedNumerics
 				throw new ArgumentException("invalid decimal", "value");
 			}
 
-			if (!CheckForWholeValues((double)value))
+			if (!CheckForWholeValues((double)value, out var wholeValueNumerator, out var wholeValueDenominator))
 			{
 				// build up the numerator
 				ulong ul = (((ulong)(uint)bits[2]) << 32) | ((ulong)(uint)bits[1]);  // (hi    << 32) | (mid)
@@ -136,9 +141,14 @@ namespace ExtendedNumerics
 				Numerator = reduced.Numerator;
 				Denominator = reduced.Denominator;
 			}
+			else
+            {
+				Numerator = wholeValueNumerator;
+				Denominator = wholeValueDenominator;
+			}
 		}
 
-		private bool CheckForWholeValues(double value)
+		private bool CheckForWholeValues(double value, out BigInteger numerator, out BigInteger denominator)
 		{
 			if (double.IsNaN(value))
 			{
@@ -151,27 +161,32 @@ namespace ExtendedNumerics
 
 			if (value == 0)
 			{
-				Numerator = BigInteger.Zero;
-				Denominator = BigInteger.One;
+				numerator = BigInteger.Zero;
+				denominator = BigInteger.One;
 				return true;
 			}
 			else if (value == 1)
 			{
-				Numerator = BigInteger.One;
-				Denominator = BigInteger.One;
+				numerator = BigInteger.One;
+				denominator = BigInteger.One;
 				return true;
 			}
 			else if (value == -1)
 			{
-				Numerator = BigInteger.MinusOne;
-				Denominator = BigInteger.One;
+				numerator = BigInteger.MinusOne;
+				denominator = BigInteger.One;
 				return true;
 			}
 			else if (value % 1 == 0)
 			{
-				Numerator = (BigInteger)value;
-				Denominator = BigInteger.One;
+				numerator = (BigInteger)value;
+				denominator = BigInteger.One;
 				return true;
+			}
+			else
+            {
+				numerator = BigInteger.Zero;
+				denominator = BigInteger.One;
 			}
 			return false;
 		}
@@ -180,8 +195,8 @@ namespace ExtendedNumerics
 
 		#region Properties
 
-		public BigInteger Numerator { get; private set; }
-		public BigInteger Denominator { get; private set; }
+		public BigInteger Numerator { get; }
+		public BigInteger Denominator { get; }
 
 		public int Sign { get { return Fraction.NormalizeSign(this).Numerator.Sign; } }
 		public bool IsZero { get { return (this == Fraction.Zero); } }

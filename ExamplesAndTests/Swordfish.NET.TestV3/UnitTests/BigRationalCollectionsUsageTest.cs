@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Swordfish.NET.Collections.Auxiliary;
 using System.Collections.Generic;
 
 namespace Swordfish.NET.TestV3.UnitTests
@@ -11,7 +12,7 @@ namespace Swordfish.NET.TestV3.UnitTests
     [TestClass]
     public class BigRationalCollectionsUsageTest
     {
-        private readonly int _iterations = 4_000;
+        private readonly int _iterations = 5_000;
         private readonly int _count = 1_000;
 
         [TestMethod]
@@ -19,8 +20,8 @@ namespace Swordfish.NET.TestV3.UnitTests
         {
             // If iterations is set to 10_000 it takes 23 minutes to run this test
 
-            List<Swordfish.NET.Collections.Auxiliary.BigRational> testSetLower = new List<Swordfish.NET.Collections.Auxiliary.BigRational>(_count);
-            List<Swordfish.NET.Collections.Auxiliary.BigRational> testSetUpper = new List<Swordfish.NET.Collections.Auxiliary.BigRational>(_count);
+            List<BigRationalOld> testSetLower = new List<BigRationalOld>(_count);
+            List<BigRationalOld> testSetUpper = new List<BigRationalOld>(_count);
             for (int i = 0; i < _count; ++i)
             {
                 testSetLower.Add(i);
@@ -32,7 +33,7 @@ namespace Swordfish.NET.TestV3.UnitTests
                 {
                     // Get pairs of number, take half way between them, and check it
                     // is less than the high end and greater than the lower end
-                    Swordfish.NET.Collections.Auxiliary.BigRational newValue = (testSetLower[i] + testSetUpper[i]) / 2;
+                    BigRationalOld newValue = (testSetLower[i] + testSetUpper[i]) / 2;
                     Assert.IsTrue(newValue > testSetLower[i]);
                     Assert.IsTrue(newValue < testSetUpper[i]);
                     testSetUpper[i] = newValue;
@@ -45,8 +46,8 @@ namespace Swordfish.NET.TestV3.UnitTests
         {
             // If iterations is set to 10_000 it takes 23 minutes to run this test
 
-            List<Swordfish.NET.Collections.Auxiliary.BigRational> testSetLower = new List<Swordfish.NET.Collections.Auxiliary.BigRational>(_count);
-            List<Swordfish.NET.Collections.Auxiliary.BigRational> testSetUpper = new List<Swordfish.NET.Collections.Auxiliary.BigRational>(_count);
+            List<BigRationalOld> testSetLower = new List<BigRationalOld>(_count);
+            List<BigRationalOld> testSetUpper = new List<BigRationalOld>(_count);
             for (int i = 0; i < _count; ++i)
             {
                 testSetLower.Add(i);
@@ -58,7 +59,7 @@ namespace Swordfish.NET.TestV3.UnitTests
                 {
                     // Get pairs of number, take half way between them, and check it
                     // is less than the high end and greater than the lower end
-                    Swordfish.NET.Collections.Auxiliary.BigRational newValue = (testSetLower[i] + testSetUpper[i]) / 2;
+                    BigRationalOld newValue = (testSetLower[i] + testSetUpper[i]) / 2;
                     Assert.IsTrue(newValue > testSetLower[i]);
                     Assert.IsTrue(newValue < testSetUpper[i]);
                     testSetLower[i] = newValue;
@@ -70,12 +71,12 @@ namespace Swordfish.NET.TestV3.UnitTests
         [TestMethod]
         public void TestIteratingOnInsertionIndexDownDirectionAlternate2()
         {
-            List<ExtendedNumerics.BigRational> testSetLower = new List<ExtendedNumerics.BigRational>(_count);
-            List<ExtendedNumerics.BigRational> testSetUpper = new List<ExtendedNumerics.BigRational>(_count);
+            List<BigRational> testSetLower = new List<BigRational>(_count);
+            List<BigRational> testSetUpper = new List<BigRational>(_count);
             for (int i = 0; i < _count; ++i)
             {
-                testSetLower.Add((ExtendedNumerics.BigRational)i);
-                testSetUpper.Add((ExtendedNumerics.BigRational)(i + 1));
+                testSetLower.Add((BigRational)i);
+                testSetUpper.Add((BigRational)(i + 1));
             }
             for (int iteration = 0; iteration < _iterations; ++iteration)
             {
@@ -83,7 +84,7 @@ namespace Swordfish.NET.TestV3.UnitTests
                 {
                     // Get pairs of number, take half way between them, and check it
                     // is less than the high end and greater than the lower end
-                    ExtendedNumerics.BigRational newValue = (testSetLower[i] + testSetUpper[i]) / (ExtendedNumerics.BigRational)2;
+                    BigRational newValue = (testSetLower[i] + testSetUpper[i]) / (BigRational)2;
                     Assert.IsTrue(newValue > testSetLower[i]);
                     Assert.IsTrue(newValue < testSetUpper[i]);
                     testSetUpper[i] = newValue;
@@ -94,22 +95,22 @@ namespace Swordfish.NET.TestV3.UnitTests
         [TestMethod]
         public void TestIteratingOnInsertionIndexUpDirectionAlternate2()
         {
-            List<ExtendedNumerics.BigRational> testSetLower = new List<ExtendedNumerics.BigRational>(_count);
-            List<ExtendedNumerics.BigRational> testSetUpper = new List<ExtendedNumerics.BigRational>(_count);
+            List<BigRational> testSetLower = new List<BigRational>(_count);
+            List<BigRational> testSetUpper = new List<BigRational>(_count);
             for (int i = 0; i < _count; ++i)
             {
-                testSetLower.Add((ExtendedNumerics.BigRational)i);
-                testSetUpper.Add((ExtendedNumerics.BigRational)(i + 1));
+                testSetLower.Add((BigRational)i);
+                testSetUpper.Add((BigRational)(i + 1));
             }
 
-            var half = (ExtendedNumerics.BigRational)0.5;
+            var half = (BigRational)0.5;
             for (int iteration = 0; iteration < _iterations; ++iteration)
             {
                 for (int i = 0; i < _count; ++i)
                 {
                     // Get pairs of number, take half way between them, and check it
                     // is less than the high end and greater than the lower end
-                    ExtendedNumerics.BigRational newValue = (testSetLower[i] + testSetUpper[i]) / (ExtendedNumerics.BigRational)2;
+                    BigRational newValue = (testSetLower[i] + testSetUpper[i]) / (BigRational)2;
                     Assert.IsTrue(newValue > testSetLower[i]);
                     Assert.IsTrue(newValue < testSetUpper[i]);
                     testSetLower[i] = newValue;

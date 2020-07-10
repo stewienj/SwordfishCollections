@@ -12,7 +12,7 @@ namespace Swordfish.NET.Collections
         }
 
         public ObservableDictionaryNode(KeyValuePair<TKey, TValue> pair, ObservableDictionaryNode<TKey, TValue> before)
-          : this(pair, before != null ? before.SortKey + 1 : 0) { }
+          : this(pair, before != null ? before.SortKey + BigRational.One: BigRational.Zero) { }
 
 
         public KeyValuePair<TKey, TValue> KeyValuePair { get; }
