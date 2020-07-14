@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swordfish.NET.Collections.Auxiliary;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Swordfish.NET.TestV3.UnitTests
 {
@@ -16,6 +17,19 @@ namespace Swordfish.NET.TestV3.UnitTests
         private readonly int _count = 1_000;
 
         [TestMethod]
+        public void TestMidPoint()
+        {
+            var low = (BigRational)(-7);
+            var high = (BigRational)(-6);
+
+            // Take the mid point of the above 2 numbers
+            var mid = (low + high) / (BigRational)2;
+
+            Assert.IsTrue(mid > low);
+            Assert.IsTrue(mid < high);
+        }
+
+        [TestMethod]
         public void TestIteratingOnInsertionIndexDownDirectionAlternate1()
         {
             // If iterations is set to 10_000 it takes 23 minutes to run this test
@@ -24,8 +38,8 @@ namespace Swordfish.NET.TestV3.UnitTests
             List<BigRationalOld> testSetUpper = new List<BigRationalOld>(_count);
             for (int i = 0; i < _count; ++i)
             {
-                testSetLower.Add(i);
-                testSetUpper.Add(i + 1);
+                testSetLower.Add(i- _count/2);
+                testSetUpper.Add(i + 1 - _count / 2);
             }
             for (int iteration = 0; iteration < _iterations; ++iteration)
             {
@@ -50,8 +64,8 @@ namespace Swordfish.NET.TestV3.UnitTests
             List<BigRationalOld> testSetUpper = new List<BigRationalOld>(_count);
             for (int i = 0; i < _count; ++i)
             {
-                testSetLower.Add(i);
-                testSetUpper.Add(i + 1);
+                testSetLower.Add(i- _count / 2);
+                testSetUpper.Add(i + 1- _count / 2);
             }
             for (int iteration = 0; iteration < _iterations; ++iteration)
             {
@@ -75,8 +89,8 @@ namespace Swordfish.NET.TestV3.UnitTests
             List<BigRational> testSetUpper = new List<BigRational>(_count);
             for (int i = 0; i < _count; ++i)
             {
-                testSetLower.Add((BigRational)i);
-                testSetUpper.Add((BigRational)(i + 1));
+                testSetLower.Add((BigRational)(i - _count / 2));
+                testSetUpper.Add((BigRational)(i + 1 - _count / 2));
             }
             for (int iteration = 0; iteration < _iterations; ++iteration)
             {
@@ -99,8 +113,8 @@ namespace Swordfish.NET.TestV3.UnitTests
             List<BigRational> testSetUpper = new List<BigRational>(_count);
             for (int i = 0; i < _count; ++i)
             {
-                testSetLower.Add((BigRational)i);
-                testSetUpper.Add((BigRational)(i + 1));
+                testSetLower.Add((BigRational)(i - _count / 2));
+                testSetUpper.Add((BigRational)(i + 1 - _count / 2));
             }
 
             var half = (BigRational)0.5;

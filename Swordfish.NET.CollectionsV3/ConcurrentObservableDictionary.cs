@@ -12,6 +12,8 @@ namespace Swordfish.NET.Collections
     /// Has the advantage over ObservableCollection in that it doesn't have to be updated from the Dispatcher thread.
     /// When using this in your view model you should bind to the CollectionView property in your view model. If you
     /// bind directly this this class it will throw an exception.
+    /// 
+    /// Note this uses a combination of a list and a dictionary on the back end so the items can be accessed by index.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]

@@ -1,11 +1,9 @@
-﻿// Code taken from https://github.com/AdamWhiteHat/BigRational on 10th July 2020
+﻿// Code taken from https://github.com/AdamWhiteHat/BigRational on 14th July 2020
 // Using this code for performance comparisions in the test code
 // MIT License
 // Copyright(c) 2019 Adam White
 //
 // Modifications:
-//
-// 10th July 2020 - Made value storage read only to enusre this class is immutable
 
 using System;
 using System.Linq;
@@ -43,55 +41,43 @@ namespace Swordfish.NET.Collections.Auxiliary
 		{
 			WholePart = whole;
 			FractionalPart = new Fraction(numerator, denominator);
+			this.NormalizeSign();
 		}
 
 		public BigRational(float value)
 		{
-			if (!CheckForWholeValues(value, out var wholePart, out var fractionalPart))
+			if (!CheckForWholeValues(value))
 			{
 				WholePart = (BigInteger)Math.Truncate(value);
 				float fract = Math.Abs(value) % 1;
 				FractionalPart = (fract == 0) ? Fraction.Zero : new Fraction(fract);
-			}
-			else
-			{
-				WholePart = wholePart;
-				FractionalPart = fractionalPart;
+				this.NormalizeSign();
 			}
 		}
 
 		public BigRational(double value)
 		{
-			if (!CheckForWholeValues(value, out var wholePart, out var fractionalPart))
+			if (!CheckForWholeValues(value))
 			{
 				WholePart = (BigInteger)Math.Truncate(value);
 				double fract = Math.Abs(value) % 1;
 				FractionalPart = (fract == 0) ? Fraction.Zero : new Fraction(fract);
-			}
-			else
-			{
-				WholePart = wholePart;
-				FractionalPart = fractionalPart;
+				this.NormalizeSign();
 			}
 		}
 
 		public BigRational(decimal value)
 		{
-			if (!CheckForWholeValues((double)value, out var wholePart, out var fractionalPart))
+			if (!CheckForWholeValues((double)value))
 			{
 				WholePart = (BigInteger)Math.Truncate(value);
 				decimal fract = Math.Abs(value) % 1;
 				FractionalPart = (fract == 0) ? Fraction.Zero : new Fraction(fract);
-			}
-			else
-            {
-				WholePart = wholePart;
-				FractionalPart = fractionalPart;
+				this.NormalizeSign();
 			}
 		}
 
-
-		private bool CheckForWholeValues(double value, out BigInteger wholePart, out Fraction fractionalPart)
+		private bool CheckForWholeValues(double value)
 		{
 			if (double.IsNaN(value))
 			{
@@ -104,26 +90,21 @@ namespace Swordfish.NET.Collections.Auxiliary
 
 			if (value == 0)
 			{
-				wholePart = BigInteger.Zero;
-				fractionalPart = Fraction.Zero;
+				WholePart = BigInteger.Zero;
+				FractionalPart = Fraction.Zero;
 				return true;
 			}
 			else if (value == 1)
 			{
-				wholePart = BigInteger.Zero;
-				fractionalPart = Fraction.One;
+				WholePart = BigInteger.Zero;
+				FractionalPart = Fraction.One;
 				return true;
 			}
 			else if (value == -1)
 			{
-				wholePart = BigInteger.Zero;
-				fractionalPart = Fraction.MinusOne;
+				WholePart = BigInteger.Zero;
+				FractionalPart = Fraction.MinusOne;
 				return true;
-			}
-			else
-            {
-				wholePart = BigInteger.Zero;
-				fractionalPart = Fraction.Zero;
 			}
 			return false;
 		}
@@ -133,8 +114,8 @@ namespace Swordfish.NET.Collections.Auxiliary
 
 		#region Properties
 
-		public BigInteger WholePart { get; }
-		public Fraction FractionalPart { get; }
+		public BigInteger WholePart { get; private set; }
+		public Fraction FractionalPart { get; private set; }
 
 		public int Sign { get { return NormalizeSign(this).WholePart.Sign; } }
 		public bool IsZero { get { return (WholePart.IsZero && FractionalPart.IsZero); } }
@@ -325,7 +306,9 @@ namespace Swordfish.NET.Collections.Auxiliary
 
 			if (leftRed.WholePart == rightRed.WholePart)
 			{
-				return Fraction.Compare(leftRed.FractionalPart, rightRed.FractionalPart);
+				Fraction leftFrac = (leftRed.Sign == -1) ? Fraction.Negate(leftRed.FractionalPart) : leftRed.FractionalPart;
+				Fraction rightFrac = (rightRed.Sign == -1) ? Fraction.Negate(rightRed.FractionalPart) : rightRed.FractionalPart;
+				return Fraction.Compare(leftFrac, rightFrac);
 			}
 			else
 			{
@@ -415,7 +398,7 @@ namespace Swordfish.NET.Collections.Auxiliary
 		{
 			double fract = (double)value.FractionalPart;
 			double whole = (double)value.WholePart;
-			double result = whole + (fract);
+			double result = whole + (fract * value.Sign);
 			return result;
 		}
 
@@ -423,7 +406,7 @@ namespace Swordfish.NET.Collections.Auxiliary
 		{
 			decimal fract = (decimal)value.FractionalPart;
 			decimal whole = (decimal)value.WholePart;
-			decimal result = whole + (fract);
+			decimal result = whole + (fract * value.Sign);
 			return result;
 		}
 
@@ -576,21 +559,20 @@ namespace Swordfish.NET.Collections.Auxiliary
 			return result;
 		}
 
-		private static BigRational NormalizeSign(BigRational value)
+		public static BigRational NormalizeSign(BigRational value)
 		{
-			BigInteger whole;
-			Fraction fract = Fraction.NormalizeSign(value.FractionalPart);
+			return value.NormalizeSign();
+		}
 
-			if (value.WholePart > 0 && value.WholePart.Sign == 1 && fract.Sign == -1)
+		internal BigRational NormalizeSign()
+		{
+			this.FractionalPart = Fraction.NormalizeSign(this.FractionalPart);
+			if (this.WholePart > 0 && this.WholePart.Sign == 1 && this.FractionalPart.Sign == -1)
 			{
-				whole = BigInteger.Negate(value.WholePart);
+				this.WholePart = BigInteger.Negate(this.WholePart);
+				this.FractionalPart = Fraction.Negate(this.FractionalPart);
 			}
-			else
-			{
-				whole = value.WholePart;
-			}
-
-			return new BigRational(whole, fract);
+			return this;
 		}
 
 		#endregion
@@ -624,28 +606,28 @@ namespace Swordfish.NET.Collections.Auxiliary
 
 			BigRational input = BigRational.Reduce(this);
 
-			string first = input.WholePart != 0 ? String.Format(provider, "{0}", input.WholePart.ToString(format, provider)) : string.Empty;
-			string second = input.FractionalPart.Numerator != 0 ? String.Format(provider, "{0}", input.FractionalPart.ToString(format, provider)) : string.Empty;
+			string whole = input.WholePart != 0 ? String.Format(provider, "{0}", input.WholePart.ToString(format, provider)) : string.Empty;
+			string fractional = input.FractionalPart.Numerator != 0 ? String.Format(provider, "{0}", input.FractionalPart.ToString(format, provider)) : string.Empty;
 			string join = string.Empty;
 
-			if (!string.IsNullOrWhiteSpace(first) && !string.IsNullOrWhiteSpace(second))
+			if (!string.IsNullOrWhiteSpace(whole) && !string.IsNullOrWhiteSpace(fractional))
 			{
 				if (input.WholePart.Sign < 0)
 				{
-					join = numberFormatProvider.NegativeSign;
+					join = $" {numberFormatProvider.NegativeSign} ";
 				}
 				else
 				{
-					join = numberFormatProvider.PositiveSign;
+					join = $" {numberFormatProvider.PositiveSign} ";
 				}
 			}
 
-			if (string.IsNullOrWhiteSpace(first) && string.IsNullOrWhiteSpace(join) && string.IsNullOrWhiteSpace(second))
+			if (string.IsNullOrWhiteSpace(whole) && string.IsNullOrWhiteSpace(join) && string.IsNullOrWhiteSpace(fractional))
 			{
 				return zeroString;
 			}
 
-			return string.Concat(first, join, second);
+			return string.Concat(whole, join, fractional);
 		}
 
 		#endregion

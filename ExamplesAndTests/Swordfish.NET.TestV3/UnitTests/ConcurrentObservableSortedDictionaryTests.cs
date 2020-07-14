@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swordfish.NET.Collections;
+using Swordfish.NET.Collections.Auxiliary;
 using Swordfish.NET.TestV3.Auxiliary;
 using System;
 using System.Collections.Generic;
@@ -11,87 +12,39 @@ namespace Swordfish.NET.TestV3.UnitTests
     [TestClass()]
     public class ConcurrentObservableSortedDictionaryTests
     {
-        private int _testCollectionCount = 10;
-        private int _itemsPerCollection = 100_000;
-        private List<List<int>> _testCollections = new List<List<int>>();
-        private List<int> _sortedCollection = new List<int>();
-
-        public ConcurrentObservableSortedDictionaryTests()
-        {
-            GenerateTestCollections();
-            GenerateSortedCollection();
-            TimeNormalSortedDictionary();
-            TimeImmutableSortedDictionary();
-        }
-
-        private void GenerateTestCollections()
-        {
-            using (var benchmark = new BenchmarkIt("Generating Test Input Collections for sorted dictionary"))
-            {
-                // Use a fixed seed for consistency in results
-                Random random = new Random(1);
-
-                // Create 10 test sets
-                for (int collection = 0; collection < _testCollectionCount; ++collection)
-                {
-                    List<int> testCollection = new List<int>();
-                    for (int item = 0; item < _itemsPerCollection; ++item)
-                    {
-                        // Ensure we have some duplicates by picking a random number
-                        // less than half the number of items.
-                        testCollection.Add(random.Next(_itemsPerCollection / 2));
-                    }
-                    _testCollections.Add(testCollection);
-                }
-            }
-        }
-
-        private void TimeNormalSortedDictionary()
-        {
-            var sortedDictionary = new SortedDictionary<int,int>();
-            using (var benchmark = new BenchmarkIt("Timing adding everything to normal sorted dictionary"))
-            {
-                foreach (var collection in _testCollections)
-                {
-                    foreach (var item in collection)
-                    {
-                        sortedDictionary[item] = item;
-                    }
-                }
-            }
-        }
-
-        private void TimeImmutableSortedDictionary()
-        {
-            var sortedDictionary = ImmutableSortedDictionary<int,int>.Empty;
-            using (var benchmark = new BenchmarkIt("Timing adding everything to an immutable sorted dictionary"))
-            {
-                foreach (var collection in _testCollections)
-                {
-                    foreach (var item in collection)
-                    {
-                        sortedDictionary = sortedDictionary.SetItem(item,item);
-                    }
-                }
-            }
-        }
-
-        private void GenerateSortedCollection()
-        {
-            using (var benchmark = new BenchmarkIt("Generating Expected Output for sorted dictionary"))
-            {
-                _sortedCollection = _testCollections
-                  .SelectMany(x => x)
-                  .Distinct()
-                  .OrderBy(x => x)
-                  .ToList();
-            }
-        }
 
         [TestMethod()]
         public void AddTest()
         {
-            ConcurrentObservableSortedDictionary<int,int> subject = new ConcurrentObservableSortedDictionary<int,int>();
+            int _testCollectionCount = 10;
+            int _itemsPerCollection = 200_000;
+            List<List<int>> _testCollections = new List<List<int>>();
+            List<int> _sortedCollection = new List<int>();
+
+            // Use a fixed seed for consistency in results
+            Random random = new Random(1);
+
+            // Create 10 test sets
+            for (int collection = 0; collection < _testCollectionCount; ++collection)
+            {
+                List<int> testCollection = new List<int>();
+                for (int item = 0; item < _itemsPerCollection; ++item)
+                {
+                    // Ensure we have some duplicates by picking a random number
+                    // less than half the number of items.
+                    testCollection.Add(random.Next(_itemsPerCollection / 2));
+                }
+                _testCollections.Add(testCollection);
+            }
+
+            _sortedCollection = _testCollections
+                .SelectMany(x => x)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+
+
+            ConcurrentObservableSortedDictionary<int, int> subject = new ConcurrentObservableSortedDictionary<int, int>();
             using (var benchmark = new BenchmarkIt("Adding items to sorted dictionary"))
             {
                 // Create test subject
@@ -112,7 +65,7 @@ namespace Swordfish.NET.TestV3.UnitTests
 
             bool isSorted = subject
                 .Aggregate(
-                    new { Sorted = true, LastKey = (int?)null }, 
+                    new { Sorted = true, LastKey = (int?)null },
                     (a, b) => new { Sorted = a.Sorted && (!a.LastKey.HasValue || a.LastKey.Value < b.Key), LastKey = (int?)b.Key })
                 .Sorted;
 
@@ -133,55 +86,206 @@ namespace Swordfish.NET.TestV3.UnitTests
               .All(b => b);
             Assert.IsTrue(viewItemsEqual);
         }
-        /*
 
-        [TestMethod()]
-        public void AddRangeTest()
-        {
-          Assert.Fail();
-        }
 
-        [TestMethod()]
-        public void RemoveTest()
+        [TestMethod]
+        public void TestManyOperations()
         {
-          Assert.Fail();
-        }
+            // Create some random, but unique items
+            // Use a fixed seed for consistency in results
+            Random random = new Random(1);
+            HashSet<int> baseItemsSet = new HashSet<int>();
+            while (baseItemsSet.Count < 1_100_000)
+            {
+                baseItemsSet.Add(random.Next());
+            }
 
-        [TestMethod()]
-        public void RemoveRangeTest()
-        {
-          Assert.Fail();
-        }
+            // Create 2 collections, 1 to test, and 1 to compare against
+            var testCollection = new ConcurrentObservableSortedDictionary<string, string>();
+            var sortedDictionary = new SortedDictionary<string, string>();
 
-        [TestMethod()]
-        public void ToStringTest()
-        {
-          Assert.Fail();
-        }
+            // Create 1,000,000 items to add and insert
+            var itemsToAdd =
+                baseItemsSet
+                .Take(1_000_000)
+                .Select(x => KeyValuePair.Create($"Key {x}", $"Value {x}"))
+                .ToList();
 
-        [TestMethod()]
-        public void GetEnumeratorTest()
-        {
-          Assert.Fail();
-        }
+            // Create 100,000 items to insert
+            var itemsToInsert =
+                baseItemsSet
+                .Skip(1_000_000)
+                .Take(100_000)
+                .Select(x => KeyValuePair.Create($"Insert Key {x}", $"Insert Value {x}"))
+                .ToList();
 
-        [TestMethod()]
-        public void ClearTest()
-        {
-          Assert.Fail();
-        }
+            // Create items to remove
+            var itemsToRemove =
+                itemsToInsert
+                .Take(1000)
+                .ToList();
 
-        [TestMethod()]
-        public void ContainsTest()
-        {
-          Assert.Fail();
-        }
+            foreach (var item in itemsToAdd)
+            {
+                sortedDictionary.Add(item.Key, item.Value);
+                testCollection.Add(item.Key, item.Value);
+            }
 
-        [TestMethod()]
-        public void CopyToTest()
-        {
-          Assert.Fail();
+            // Check items are equal count
+            Assert.IsTrue(sortedDictionary.Count == testCollection.Count, "Added Items correct count");
+
+            // Check items are equal order
+            var allEqualAfterAdd =
+                sortedDictionary
+                .Zip(testCollection, (a, b) => (a.Key == b.Key) && (a.Value == b.Value))
+                .All(a => a);
+
+            Assert.IsTrue(allEqualAfterAdd, "Added items correct order");
+
+
+            // Test inserting items
+
+            int insertIndex = itemsToInsert.Count + 100;
+            foreach (var item in itemsToInsert)
+            {
+                // Naturally sorted dictionary doesn't support insert at
+                sortedDictionary.Add(item.Key, item.Value);
+                // We have the function but it's there for other reasons
+                testCollection.Insert(insertIndex, item);
+
+                insertIndex--;
+            }
+
+            // Check items are equal count
+            Assert.IsTrue(sortedDictionary.Count == testCollection.Count, "Items correct count after inserting");
+
+            // Check items are equal order
+            var allEqualAfterInsert =
+                sortedDictionary
+                .Zip(testCollection, (a, b) => (a.Key == b.Key) && (a.Value == b.Value))
+                .All(a => a);
+
+            Assert.IsTrue(allEqualAfterAdd, "Items correct order after insert");
+
+            // Test removing items
+
+            foreach (var item in itemsToRemove)
+            {
+                sortedDictionary.Remove(item.Key);
+                testCollection.Remove(item.Key);
+            }
+
+            // Check items are equal count
+            Assert.IsTrue(sortedDictionary.Count == testCollection.Count, "Items correct count after removing");
+
+            // Check items are equal order
+            var allEqualAfterRemove =
+                sortedDictionary
+                .Zip(testCollection, (a, b) => (a.Key == b.Key) && (a.Value == b.Value))
+                .All(a => a);
+
+            Assert.IsTrue(allEqualAfterRemove, "Items correct order after removing");
+
+            // Test contains
+
+            var containsAll = sortedDictionary
+                .All(kv => testCollection.Contains(kv));
+
+            Assert.IsTrue(containsAll, "Contains all the items is true");
+
+            var containsNone = itemsToRemove
+                .Any(kv => testCollection.ContainsKey(kv.Key));
+
+            Assert.IsFalse(containsNone, "Contains any of the removed items is false");
+
+
+            // Test removing at
+
+            var sortedList = new SortedList<string, string>(sortedDictionary);
+
+            int removeAtIndex = sortedDictionary.Count - 30;
+            while (removeAtIndex >= 0 && sortedDictionary.Count > 0)
+            {
+                sortedList.RemoveAt(removeAtIndex);
+                testCollection.RemoveAt(removeAtIndex);
+                removeAtIndex -= 30;
+            }
+
+            // Check items are equal count
+            Assert.IsTrue(sortedList.Count == testCollection.Count, "Items correct count after removing at index");
+
+            // Check items are equal order
+            var allEqualAfterRemoveAt =
+                sortedList
+                .Zip(testCollection, (a, b) => (a.Key == b.Key) && (a.Value == b.Value))
+                .All(a => a);
+
+            Assert.IsTrue(allEqualAfterRemoveAt, "Items correct order after removing at index");
+
+            var list =
+                sortedList
+                .Select(x=>x.Key)
+                .ToList();
+
+            bool getItemCorrect = true;
+
+            for(int i=0; i<list.Count; ++i)
+            {
+                getItemCorrect &= testCollection.GetItem(i).Key == list[i];
+            }
+
+            Assert.IsTrue(getItemCorrect, "Get item by index correct");
+
+            /*
+
+            [TestMethod()]
+            public void AddRangeTest()
+            {
+              Assert.Fail();
+            }
+
+            [TestMethod()]
+            public void RemoveTest()
+            {
+              Assert.Fail();
+            }
+
+            [TestMethod()]
+            public void RemoveRangeTest()
+            {
+              Assert.Fail();
+            }
+
+            [TestMethod()]
+            public void ToStringTest()
+            {
+              Assert.Fail();
+            }
+
+            [TestMethod()]
+            public void GetEnumeratorTest()
+            {
+              Assert.Fail();
+            }
+
+            [TestMethod()]
+            public void ClearTest()
+            {
+              Assert.Fail();
+            }
+
+            [TestMethod()]
+            public void ContainsTest()
+            {
+              Assert.Fail();
+            }
+
+            [TestMethod()]
+            public void CopyToTest()
+            {
+              Assert.Fail();
+            }
+            */
         }
-        */
     }
 }

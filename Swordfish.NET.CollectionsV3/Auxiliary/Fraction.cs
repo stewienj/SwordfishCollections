@@ -1,14 +1,9 @@
-﻿// Code taken from https://github.com/AdamWhiteHat/BigRational on 10th July 2020
+﻿// Code taken from https://github.com/AdamWhiteHat/BigRational on 14th July 2020
 // Using this code for performance comparisions in the test code
 // MIT License
 // Copyright(c) 2019 Adam White
 //
 // Modifications:
-//
-// 10th July 2020 - Changed contructor that takes a numerator and a denominator
-//                  by removing the conversion to and from a byte array.
-//
-// 10th July 2020 - Made value storage read only to enusre this class is immutable
 
 using System;
 using System.Linq;
@@ -45,21 +40,23 @@ namespace Swordfish.NET.Collections.Auxiliary
 
 		public Fraction(BigInteger numerator, BigInteger denominator)
 		{
-			Numerator = numerator;// new BigInteger(numerator.ToByteArray());
-			Denominator = denominator;// new BigInteger(denominator.ToByteArray());
+			Numerator = numerator;
+			Denominator = denominator;
 		}
 
-		public Fraction(float value) : this(value, 7)
+		public Fraction(float value)
 		{
+			Initialize(value, 7);
 		}
 
-		public Fraction(double value) : this(value, 13)
+		public Fraction(double value)
 		{
+			Initialize(value, 13);
 		}
 
-		private Fraction(double value, int precision)
+		private void Initialize(double value, int precision)
 		{
-			if (!CheckForWholeValues(value, out var wholeValueNumerator, out var wholeValueDenominator))
+			if (!CheckForWholeValues(value))
 			{
 				int sign = Math.Sign(value);
 				int exponent = value.ToString(CultureInfo.InvariantCulture)
@@ -105,11 +102,6 @@ namespace Swordfish.NET.Collections.Auxiliary
 					Denominator = BigInteger.One;
 				}
 			}
-			else
-			{
-				Numerator = wholeValueNumerator;
-				Denominator = wholeValueDenominator;
-			}
 		}
 
 		public Fraction(decimal value)
@@ -120,7 +112,7 @@ namespace Swordfish.NET.Collections.Auxiliary
 				throw new ArgumentException("invalid decimal", "value");
 			}
 
-			if (!CheckForWholeValues((double)value, out var wholeValueNumerator, out var wholeValueDenominator))
+			if (!CheckForWholeValues((double)value))
 			{
 				// build up the numerator
 				ulong ul = (((ulong)(uint)bits[2]) << 32) | ((ulong)(uint)bits[1]);  // (hi    << 32) | (mid)
@@ -141,14 +133,9 @@ namespace Swordfish.NET.Collections.Auxiliary
 				Numerator = reduced.Numerator;
 				Denominator = reduced.Denominator;
 			}
-			else
-            {
-				Numerator = wholeValueNumerator;
-				Denominator = wholeValueDenominator;
-			}
 		}
 
-		private bool CheckForWholeValues(double value, out BigInteger numerator, out BigInteger denominator)
+		private bool CheckForWholeValues(double value)
 		{
 			if (double.IsNaN(value))
 			{
@@ -161,32 +148,27 @@ namespace Swordfish.NET.Collections.Auxiliary
 
 			if (value == 0)
 			{
-				numerator = BigInteger.Zero;
-				denominator = BigInteger.One;
+				Numerator = BigInteger.Zero;
+				Denominator = BigInteger.One;
 				return true;
 			}
 			else if (value == 1)
 			{
-				numerator = BigInteger.One;
-				denominator = BigInteger.One;
+				Numerator = BigInteger.One;
+				Denominator = BigInteger.One;
 				return true;
 			}
 			else if (value == -1)
 			{
-				numerator = BigInteger.MinusOne;
-				denominator = BigInteger.One;
+				Numerator = BigInteger.MinusOne;
+				Denominator = BigInteger.One;
 				return true;
 			}
 			else if (value % 1 == 0)
 			{
-				numerator = (BigInteger)value;
-				denominator = BigInteger.One;
+				Numerator = (BigInteger)value;
+				Denominator = BigInteger.One;
 				return true;
-			}
-			else
-            {
-				numerator = BigInteger.Zero;
-				denominator = BigInteger.One;
 			}
 			return false;
 		}
@@ -195,8 +177,8 @@ namespace Swordfish.NET.Collections.Auxiliary
 
 		#region Properties
 
-		public BigInteger Numerator { get; }
-		public BigInteger Denominator { get; }
+		public BigInteger Numerator { get; private set; }
+		public BigInteger Denominator { get; private set; }
 
 		public int Sign { get { return Fraction.NormalizeSign(this).Numerator.Sign; } }
 		public bool IsZero { get { return (this == Fraction.Zero); } }
@@ -420,10 +402,9 @@ namespace Swordfish.NET.Collections.Auxiliary
 
 		public static int Compare(Fraction left, Fraction right)
 		{
-			return BigInteger.Compare(
-					BigInteger.Multiply(left.Numerator, right.Denominator),
-					BigInteger.Multiply(right.Numerator, left.Denominator)
-				);
+			var l = BigInteger.Multiply(left.Numerator, right.Denominator);
+			var r = BigInteger.Multiply(right.Numerator, left.Denominator);
+			return BigInteger.Compare(l, r);
 		}
 
 		// IComparable
@@ -667,6 +648,7 @@ namespace Swordfish.NET.Collections.Auxiliary
 
 		internal static Fraction NormalizeSign(Fraction value)
 		{
+
 			BigInteger numer = value.Numerator;
 			BigInteger denom = value.Denominator;
 
@@ -732,7 +714,7 @@ namespace Swordfish.NET.Collections.Auxiliary
 			}
 			else
 			{
-				return String.Format(provider, "{0} / {1}", Numerator.ToString(format, provider), Denominator.ToString(format, provider));
+				return String.Format(provider, "{0}/{1}", Numerator.ToString(format, provider), Denominator.ToString(format, provider));
 			}
 		}
 
