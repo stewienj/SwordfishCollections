@@ -60,16 +60,13 @@ namespace Swordfish.NET.Collections.Auxiliary
         /// <param name="propertyName"></param>
         protected virtual void RaisePropertyChanged(params string[] propertyNames)
         {
-            if (PropertyChanged != null)
+            foreach (string propertyName in propertyNames)
             {
-                foreach (string propertyName in propertyNames)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-                }
-                if (propertyNames.Length == 0)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(null));
-                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            if (propertyNames.Length == 0)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
             }
         }
 
