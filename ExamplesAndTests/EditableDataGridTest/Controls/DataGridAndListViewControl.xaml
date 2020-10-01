@@ -26,7 +26,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <DataGrid Grid.Row="1" Grid.Column="0" ItemsSource="{Binding DataGridTestCollection1.CollectionView}" x:Name="_dataGrid"
+        <DataGrid Grid.Row="1" Grid.Column="0" ItemsSource="{Binding DataGridTestCollection1.EditableCollectionView}"
                   IsReadOnly="False"
                 AutoGenerateColumns="True"
                 CanUserAddRows="True" />
