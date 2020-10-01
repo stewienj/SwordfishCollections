@@ -41,7 +41,7 @@ namespace Swordfish.NET.Collections.EditableBridges
         /// Used to keep track of when we are inside of an edit so we can detect
         /// re-entrance into this class.
         /// </summary>
-        private volatile Thread _lastThread = null;
+        private volatile Thread _guiCallerThread = null;
 
         private EditableImmutableListBridge(ImmutableList<T> source, IConcurrentObservableList<T> destination)
         {
@@ -71,10 +71,21 @@ namespace Swordfish.NET.Collections.EditableBridges
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public EditableImmutableListBridge<T> UpdateSource(ImmutableList<T> source) =>
-            _lastThread != Thread.CurrentThread ?
+        internal EditableImmutableListBridge<T> UpdateSource(ImmutableList<T> source)
+        {
+            // Note: We are inside a lock here so we don't have to worry about race conditions
+            // Lock is entered further up the call stack
+
+            var editableBridge = _guiCallerThread != Thread.CurrentThread ?
                 new EditableImmutableListBridge<T>(source, _destination) :
                 this;
+
+            // Reset this to null here, in case the gui thread is waiting on a lock and we
+            // aren't currently inside the gui thread we need to make sure that when the gui
+            // thread gets to the line above it doesn't mutate the new state.
+            _guiCallerThread = null;
+            return editableBridge;
+        }
 
         /// <summary>
         /// If used properly all incoming writes should only be coming from the GUI, and so the
@@ -82,10 +93,10 @@ namespace Swordfish.NET.Collections.EditableBridges
         /// </summary>
         private void Sync(Action action)
         {
-            _lastThread = Thread.CurrentThread;
+            _guiCallerThread = Thread.CurrentThread;
             action();
             _source = _destination.ImmutableList;
-            _lastThread = null;
+            _guiCallerThread = null;
         }
 
         /// <summary>
@@ -94,10 +105,10 @@ namespace Swordfish.NET.Collections.EditableBridges
         /// </summary>
         private TResult Sync<TResult>(Func<TResult> action)
         {
-            _lastThread = Thread.CurrentThread;
+            _guiCallerThread = Thread.CurrentThread;
             var returnValue = action();
             _source = _destination.ImmutableList;
-            _lastThread = null;
+            _guiCallerThread = null;
             return returnValue;
         }
 
