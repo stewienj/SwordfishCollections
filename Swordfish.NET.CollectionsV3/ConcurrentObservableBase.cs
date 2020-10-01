@@ -185,7 +185,7 @@ namespace Swordfish.NET.Collections
         // ************************************************************************
         #region INotifyCollectionChanged Implementation
 
-        protected void OnCollectionChanged(NotifyCollectionChangedEventArgs changes)
+        protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs changes)
         {
             try
             {

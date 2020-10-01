@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swordfish.NET.Collections.EditableBridges;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,6 +11,11 @@ using System.Threading;
 
 namespace Swordfish.NET.Collections
 {
+	public interface IConcurrentObservableList<T> : IConcurrentObservableBase<T>, IList<T>, IList 
+    {
+        ImmutableList<T> ImmutableList { get; }
+    };
+
     /// <summary>
     /// A collection that can be updated from multiple threads, and can be bound to an items control in the user interface.
     /// Has the advantage over ObservableCollection in that it doesn't have to be updated from the Dispatcher thread.
@@ -22,16 +28,41 @@ namespace Swordfish.NET.Collections
     // Use IList<T> as the internal collection type parameter, not ImmutableList
     // otherwise everything that uses this needs to reference the corresponding assembly
     ConcurrentObservableBase<T, IList<T>>,
+    IConcurrentObservableList<T>,
     IList<T>,
     IList,
     ISerializable
     {
+        /// <summary>
+        /// The CollectionView, used in Binding to a ListView or DataGrid is immutable, thus readonly,
+        /// this bridge passes the writes from the CollectionView back to the underlying collection.
+        /// </summary>
+        private EditableImmutableListBridge<T> _collectionView;
 
         public ConcurrentObservableCollection() : this(true)
         {
         }
 
-        protected ImmutableList<T> ImmutableList
+        /// <summary>
+        /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
+        /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
+        /// it the default.
+        /// </summary>
+        /// <param name="isThreadSafe"></param>
+        public ConcurrentObservableCollection(bool isMultithreaded) : base(isMultithreaded, ImmutableList<T>.Empty)
+        {
+            _collectionView = EditableImmutableListBridge<T>.Empty(this);
+        }
+
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs changes)
+        {
+            // Assign new value to CollectionView so it is recognised as different to existing value
+            _collectionView = _collectionView.UpdateSource((ImmutableList<T>)_internalCollection);
+            base.OnCollectionChanged(changes);
+        }
+
+
+		public ImmutableList<T> ImmutableList
         {
             get
             {
@@ -46,16 +77,6 @@ namespace Swordfish.NET.Collections
               (index) => ImmutableList.Add(item),
               (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index)
             );
-        }
-
-        /// <summary>
-        /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
-        /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
-        /// it the default.
-        /// </summary>
-        /// <param name="isThreadSafe"></param>
-        public ConcurrentObservableCollection(bool isMultithreaded) : base(isMultithreaded, ImmutableList<T>.Empty)
-        {
         }
 
         public T RemoveLast()
@@ -270,13 +291,7 @@ namespace Swordfish.NET.Collections
             }
         }
 
-        public override IList<T> CollectionView
-        {
-            get
-            {
-                return ImmutableList;
-            }
-        }
+        public override IList<T> CollectionView => _collectionView;
 
         public bool Remove(T item)
         {
