@@ -2,8 +2,8 @@
 
 Swordfish.NET.CollectionsV3 is a library that provides Concurrent, Observable collections.
 
-[![Swordfish.NET.CollectionsV3 nuget package](https://img.shields.io/nuget/v/Swordfish.NET.CollectionsV3
-.svg?style=flat&label=V3)](https://www.nuget.org/packages/Swordfish.NET.CollectionsV3)
+
+[![Swordfish.NET.CollectionsV3 nuget package](https://img.shields.io/nuget/v/Swordfish.NET.CollectionsV3.svg?style=flat&label=NuGet%20Swordfish.NET.CollectionsV3)](https://www.nuget.org/packages/Swordfish.NET.CollectionsV3)
 
 ![Build .NET Framework DLL](https://github.com/stewienj/SwordfishCollections/workflows/Build%20.NET%20Framework%20DLL/badge.svg)
 ![Release to Nuget](https://github.com/stewienj/SwordfishCollections/workflows/Release%20to%20Nuget/badge.svg)
