@@ -11,8 +11,8 @@ Swordfish.NET.CollectionsV3 is a library that provides Concurrent, Observable co
 # Contents
 
 - [Collection Types](#collection-types)
-- [Usage (CollectionView)](#usage-(collectionview))
-- [Usage (EditableCollectionView) - v3.3.0 onwards](#usage-(editablecollectionview)---v3.3.0-onwards)
+- [Usage (CollectionView)](#usage-collectionview)
+- [Usage (EditableCollectionView) - v3.3.0 onwards](#usage-editablecollectionview---v330-onwards)
 
 # Collection Types
 
