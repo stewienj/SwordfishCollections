@@ -17,24 +17,25 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBlock HorizontalAlignment="Center" Grid.Column="0">DataGrid Bound To CollectionView</TextBlock>
-        <TextBlock HorizontalAlignment="Center" Grid.Column="1">ListView Bound To CollectionView</TextBlock>
-        <ListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding DataGridTestCollection1.CollectionView}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding StringValue}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+        <TextBlock HorizontalAlignment="Center" Grid.Column="0">ListView Bound To CollectionView</TextBlock>
+
+        <TextBlock HorizontalAlignment="Center" Grid.Column="1">DataGrid Bound To EditableCollectionView</TextBlock>
+
+        <!-- ListView binds to TestCollection.CollectionView -->
+        <ListView ItemsSource="{Binding TestCollection.CollectionView}" Grid.Row="1" Grid.Column="0" >
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header="Label" DisplayMemberBinding="{Binding Label}"/>
+                        <GridViewColumn Header="Value1" DisplayMemberBinding="{Binding Value1}"/>
+                        <GridViewColumn Header="Value2" DisplayMemberBinding="{Binding Value2}"/>
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
         </ListView>
-        <DataGrid Grid.Row="1" Grid.Column="0" ItemsSource="{Binding DataGridTestCollection1.EditableCollectionView}"
-                  IsReadOnly="False"
-                AutoGenerateColumns="True"
-                CanUserAddRows="True" />
-<!--
-        CanUserDeleteRows="True" 
-                CanUserReorderColumns="True" 
-                CanUserSortColumns="True"
-                CanUserResizeColumns="True"/>
-        -->
+
+        <!-- DataGrid binds to TestCollection.EditableCollectionView -->
+        <DataGrid ItemsSource="{Binding TestCollection.EditableCollectionView}" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1" />
+
     </Grid>
 </UserControl>

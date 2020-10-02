@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EditableDataGridTest.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Editable DataGrid Test" Height="400" Width="600">
     <Grid>
         <local:DataGridAndListViewControl/>
     </Grid>

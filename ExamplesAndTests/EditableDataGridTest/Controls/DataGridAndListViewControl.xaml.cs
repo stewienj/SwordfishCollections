@@ -23,7 +23,7 @@ namespace EditableDataGridTest.Controls
 	{
 		public DataGridAndListViewControl()
 		{
-			DataContext = new ConcurrentObservableCollectionDataGridTestViewModel();
+			DataContext = new DataGridTestViewModel();
 			InitializeComponent();
 		}
 	}

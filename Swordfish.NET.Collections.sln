@@ -15,7 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swordfish.NET.Test", "Examp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swordfish.NET.TestV3", "ExamplesAndTests\Swordfish.NET.TestV3\Swordfish.NET.TestV3.csproj", "{844232DB-E29B-4608-BB1E-A64D541DF107}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditableDataGridTest", "ExamplesAndTests\EditableDataGridTest\EditableDataGridTest.csproj", "{D3C41078-CAE0-4581-B246-91343817E59C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EditableDataGridTest", "ExamplesAndTests\EditableDataGridTest\EditableDataGridTest.csproj", "{D3C41078-CAE0-4581-B246-91343817E59C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F612E4C5-2FA3-4F69-9770-09ABCBFFF88A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,40 @@
+# EditorConfig file for solution: 
+# http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# options for every file
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Tab indentation (no size specified)
+[Makefile]
+indent_style = tab
+
+# options for source files
+[*.{cs,xaml,cpp,h}]
+indent_style = space
+indent_size = 4
+
+#options for C# files
+[*.cs]
+csharp_space_after_keywords_in_control_flow_statements = true
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
+
+dotnet_naming_style.non_public_field.required_prefix = _
+dotnet_naming_style.non_public_field.capitalization = camel_case
+dotnet_naming_symbols.fields.applicable_kinds = field
+dotnet_naming_symbols.fields.applicable_accessibilities = private,protected
+dotnet_naming_rule.non_public_fields_must_have_underscore_prefix.severity = suggestion
+dotnet_naming_rule.non_public_fields_must_have_underscore_prefix.symbols = fields
+dotnet_naming_rule.non_public_fields_must_have_underscore_prefix.style = non_public_field
+
+
+
+
