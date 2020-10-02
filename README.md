@@ -8,13 +8,13 @@ Swordfish.NET.CollectionsV3 is a library that provides Concurrent, Observable co
 ![Build .NET Framework DLL](https://github.com/stewienj/SwordfishCollections/workflows/Build%20.NET%20Framework%20DLL/badge.svg)
 ![Release to Nuget](https://github.com/stewienj/SwordfishCollections/workflows/Release%20to%20Nuget/badge.svg)
 
-## Contents
+# Contents
 
-- [Collection Types](#collection-types-id)
-- [Usage (CollectionView)](#usage-collection-view-id)
-- [Usage (EditableCollectionView) - v3.3.0 onwards](#usage-collection-view-id)
+- [Collection Types](#collection-types)
+- [Usage (CollectionView)](#usage-(collectionview))
+- [Usage (EditableCollectionView) - v3.3.0 onwards](#usage-(editablecollectionview)---v3.3.0-onwards)
 
-## Collection Types {#collection-types-id}
+# Collection Types
 
 The primary collection types that are available are:
 
@@ -40,12 +40,12 @@ them yet.
 > shouldn't have any sync issues like this as the mechanism it uses is much more robust.
 
 
-## Usage (CollectionView) {#usage-collection-view-id}
+# Usage (CollectionView)
 
 Use these collections as you would any other collection class. The difference is that you can add and
 remove items from these classes from multiple threads at once while having the collection bound to a
 ListBox, ListView, DataGrid or other control that displays a collection. The following code is from the
-[EditableDataGridTest example](ExamplesAndTests\EditableDataGridTest) found in this repo.
+[EditableDataGridTest example](ExamplesAndTests/EditableDataGridTest) found in this repo.
 
 The example uses this view model:
 
@@ -99,7 +99,7 @@ on the collection. Here's the code, which hopefully makes it clear:
 </ListView>
 ```
 
-## Usage (EditableCollectionView) - v3.3.0 onwards {#usage-collection-view-id}
+# Usage (EditableCollectionView) - v3.3.0 onwards
 
 The `EditableCollectionView` property is new for version 3.3.0 and is only on
 ConcurrentObservableCollection, I will add it to other collections if there is any
@@ -114,11 +114,11 @@ passes addition and removal of items back to the host ConcurrentObservableCollec
 and replaces the internal immutable collection in the wrapper with a new one when
 an add or remove item is done through the binding. You can see how this works in
 the source file
-[EditableImmutableListBridge.cs](Swordfish.NET.CollectionsV3\EditableBridges\EditableImmutableListBridge.cs).
+[EditableImmutableListBridge.cs](Swordfish.NET.CollectionsV3/EditableBridges/EditableImmutableListBridge.cs).
 
 Below is how you use the ```EditableCollectionView``` property. The same rules
-apply as when you use the [CollectionView](#usage-collection-view-id) property. Again
-this is from the [EditableDataGridTest example](ExamplesAndTests\EditableDataGridTest)
+apply as when you use the [CollectionView](#usage-collection-view) property. Again
+this is from the [EditableDataGridTest example](ExamplesAndTests/EditableDataGridTest)
 found in this repo.
 
 ```xml
@@ -130,4 +130,4 @@ Below is a screenshot of the EditableDataGridTest example running, on the right 
 the DataGrid control with the dummy row being displayed indicating a new item can be
 added to the collection from the DataGrid control.
 
-![Screenshot of the EditableDataGridTest example](Documentation\EditableDataGridTestScreenshot.png)
+![Screenshot of the EditableDataGridTest example](Documentation/EditableDataGridTestScreenshot.png)
