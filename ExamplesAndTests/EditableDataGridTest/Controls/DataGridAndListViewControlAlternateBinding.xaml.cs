@@ -19,9 +19,9 @@ namespace EditableDataGridTest.Controls
 	/// <summary>
 	/// Interaction logic for DataGridAndListViewControl.xaml
 	/// </summary>
-	public partial class DataGridAndListViewControl : UserControl
+	public partial class DataGridAndListViewControlAlternateBinding : UserControl
 	{
-		public DataGridAndListViewControl()
+		public DataGridAndListViewControlAlternateBinding()
 		{
 			InitializeComponent();
 		}

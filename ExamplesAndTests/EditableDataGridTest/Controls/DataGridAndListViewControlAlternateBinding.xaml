@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="EditableDataGridTest.Controls.DataGridAndListViewControl"
+﻿<UserControl x:Class="EditableDataGridTest.Controls.DataGridAndListViewControlAlternateBinding"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -17,12 +17,12 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBlock HorizontalAlignment="Center" Grid.Column="0">ListView Bound To CollectionView</TextBlock>
+        <TextBlock HorizontalAlignment="Center" Grid.Column="0">ListView Bound To TestCollectionView</TextBlock>
 
-        <TextBlock HorizontalAlignment="Center" Grid.Column="1">DataGrid Bound To EditableCollectionView</TextBlock>
+        <TextBlock HorizontalAlignment="Center" Grid.Column="1">DataGrid Bound To EditableTestCollectionView</TextBlock>
 
         <!-- ListView binds to TestCollection.CollectionView -->
-        <ListView ItemsSource="{Binding TestCollection.CollectionView}" Grid.Row="1" Grid.Column="0" >
+        <ListView ItemsSource="{Binding TestCollectionView}" Grid.Row="1" Grid.Column="0" >
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
@@ -35,7 +35,7 @@
         </ListView>
 
         <!-- DataGrid binds to TestCollection.EditableCollectionView -->
-        <DataGrid ItemsSource="{Binding TestCollection.EditableCollectionView}" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1" />
+        <DataGrid ItemsSource="{Binding EditableTestCollectionView}" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1" />
 
         <Button Command="{Binding AddRandomItemCommand}" Grid.Row="3">Add Random Item</Button>
 

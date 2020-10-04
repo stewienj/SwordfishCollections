@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EditableDataGridTest.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,8 @@ namespace EditableDataGridTest
 	{
 		public MainWindow()
 		{
-			InitializeComponent();
+            DataContext = new DataGridTestViewModel();
+            InitializeComponent();
 		}
 	}
 }

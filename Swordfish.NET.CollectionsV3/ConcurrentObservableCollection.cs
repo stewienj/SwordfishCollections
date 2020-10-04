@@ -53,6 +53,13 @@ namespace Swordfish.NET.Collections
         public ConcurrentObservableCollection(bool isMultithreaded) : base(isMultithreaded, ImmutableList<T>.Empty)
         {
             _editableCollectionView = EditableImmutableListBridge<T>.Empty(this);
+            PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(CollectionView))
+                {
+                    RaisePropertyChanged(nameof(EditableCollectionView));
+                }
+            };
         }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs changes)

@@ -99,6 +99,49 @@ on the collection. Here's the code, which hopefully makes it clear:
 </ListView>
 ```
 
+For the above xaml you would have a view model that looks like this:
+
+```csharp
+public class ExampleViewModel : INotifyPropertyChanged
+{
+    public ConcurrentObservableCollection<TestItem> TestCollection { get; }
+        = new ConcurrentObservableCollection<TestItem>();
+
+    public event PropertyChangedEventHandler PropertyChanged;
+}
+```
+
+There is an alternative way to bind to the collection. In your view model you
+subscribe to the `PropertyChanged` event of the collections you are using,
+and you pass the CollectionView through another property in your view model.
+Here's and example of a view model that does this:
+```csharp
+public class ExampleViewModel : INotifyPropertyChanged
+{
+    public ExampleViewModel()
+    {
+        TestCollection.PropertyChanged += (s, e) =>
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(ConcurrentObservableCollection<TestItem>.CollectionView):
+                    PropertyChanged?.Invoke(this,
+                        new PropertyChangedEventArgs(nameof(TestCollectionView)));
+                    break;
+            }
+        };
+    }
+
+    public ConcurrentObservableCollection<TestItem> TestCollection { get; }
+        = new ConcurrentObservableCollection<TestItem>();
+
+    public IList<TestItem> TestCollectionView => TestCollection.CollectionView;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+}
+
+```
+
 # Usage (EditableCollectionView) - v3.3.0 onwards
 
 The `EditableCollectionView` property is new for version 3.3.0 and is only on
@@ -124,6 +167,74 @@ found in this repo.
 ```xml
 <!-- DataGrid binds to TestCollection.EditableCollectionView -->
 <DataGrid ItemsSource="{Binding TestCollection.EditableCollectionView}" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1" />
+```
+
+For the xaml above you would have a view model that looks like this:
+```csharp
+public class ExampleViewModel
+{
+    public ExampleViewModel()
+    {
+    }
+
+    public ConcurrentObservableCollection<TestItem> TestCollection { get; }
+        = new ConcurrentObservableCollection<TestItem>();
+}
+```
+
+Alternatively, same as for binding to CollectionView (see previous section), you listen
+to the `PropertyChanged` event on the collection and have a proxy for the `EditableCollectionView`
+property like the example below, which includes proxies for `CollectionView` and `EditableCollectionView`
+
+```csharp
+public class ExampleViewModel : INotifyPropertyChanged
+{
+    public ExampleViewModel()
+    {
+        TestCollection.PropertyChanged += (s, e) =>
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(ConcurrentObservableCollection<TestItem>.CollectionView):
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TestCollectionView)));
+                    break;
+                case nameof(ConcurrentObservableCollection<TestItem>.EditableCollectionView):
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EditableTestCollectionView)));
+                    break;
+            }
+        };
+    }
+
+    public ConcurrentObservableCollection<TestItem> TestCollection { get; }
+        = new ConcurrentObservableCollection<TestItem>();
+
+    public IList<TestItem> TestCollectionView => TestCollection.CollectionView;
+    public IList<TestItem> EditableTestCollectionView => TestCollection.EditableCollectionView;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+}
+
+```
+
+For the above view model your xaml could look something like this:
+
+```xml
+
+<!-- ListView binds to TestCollection.CollectionView -->
+<ListView ItemsSource="{Binding TestCollectionView}" Grid.Row="1" Grid.Column="0" >
+    <ListView.View>
+        <GridView>
+            <GridView.Columns>
+                <GridViewColumn Header="Label" DisplayMemberBinding="{Binding Label}"/>
+                <GridViewColumn Header="Value1" DisplayMemberBinding="{Binding Value1}"/>
+                <GridViewColumn Header="Value2" DisplayMemberBinding="{Binding Value2}"/>
+            </GridView.Columns>
+        </GridView>
+    </ListView.View>
+</ListView>
+
+<!-- DataGrid binds to TestCollection.EditableCollectionView -->
+<DataGrid ItemsSource="{Binding EditableTestCollectionView}" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1" />
 ```
 
 Below is a screenshot of the EditableDataGridTest example running, on the right is

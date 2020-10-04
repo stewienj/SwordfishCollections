@@ -7,6 +7,13 @@
         mc:Ignorable="d"
         Title="Editable DataGrid Test" Height="400" Width="600">
     <Grid>
-        <local:DataGridAndListViewControl/>
+        <TabControl>
+            <TabItem Header="Binding To Collection">
+                <local:DataGridAndListViewControl/>
+            </TabItem>
+            <TabItem Header="Alternate Binding Method">
+                <local:DataGridAndListViewControlAlternateBinding/>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
