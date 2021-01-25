@@ -62,7 +62,7 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => _internalCollection.Count,
               (index) => ((ImmutableHashSet<T>)_internalCollection).AddRange(values),
-              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, values, index)
+              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)values, index)
             );
         }
 
@@ -88,7 +88,7 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => _internalCollection.Count,
               (index) => ((ImmutableHashSet<T>)_internalCollection).RemoveRange(values),
-              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, values, index)
+              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)values, index)
             );
         }
 
@@ -131,7 +131,7 @@ namespace Swordfish.NET.Collections
               // remove the keys from the dictionary, remove the range from the list
               (items) => ImmutableHashSet<T>.Empty,
               // Notify which items were removed
-              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, 0)
+              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items, 0)
             );
         }
 

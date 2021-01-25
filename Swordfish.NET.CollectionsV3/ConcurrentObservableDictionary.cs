@@ -73,7 +73,7 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => _internalCollection.Count,
               (index) => _internalCollection.AddRange(pairsList),
-              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, pairsList, index)
+              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)pairsList, index)
             );
         }
 
@@ -220,7 +220,7 @@ namespace Swordfish.NET.Collections
               (items) =>
               {
                   localRemovedItems = items;
-                  return new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, index);
+                  return new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items, index);
               }
             );
             return localRemovedItems;
@@ -234,7 +234,7 @@ namespace Swordfish.NET.Collections
               // remove the keys from the dictionary, remove the range from the list
               (items) => _internalCollection.RemoveRange(keys),
               // Notify which items were removed
-              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items)
+              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items)
             );
         }
 
@@ -377,7 +377,7 @@ namespace Swordfish.NET.Collections
               // remove the keys from the dictionary, remove the range from the list
               (items) => ImmutableDictionaryListPair<TKey, TValue>.Empty,
               // Notify which items were removed
-              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, 0)
+              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items, 0)
             );
         }
 

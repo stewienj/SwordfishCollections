@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => 0,
               getIndicesAndInsert,
-              (nothing) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, pairs.ToList())
+              (nothing) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)pairs.ToList())
             );
         }
 
