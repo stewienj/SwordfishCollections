@@ -18,7 +18,7 @@ namespace Swordfish.NET.Collections
     /// <summary>
     /// Provides an IList interface that lets you use a list with a select to type convert a list as its being accessed
     /// </summary>
-    public class ListSelect<TSource, TResult> : IList<TResult>
+    public class ListSelect<TSource, TResult> : IList<TResult>, IList
     {
         private IList<TSource> _sourceList;
         private Func<TSource, TResult> _select;
@@ -51,13 +51,19 @@ namespace Swordfish.NET.Collections
             }
         }
 
-        bool ICollection<TResult>.IsReadOnly
-        {
-            get
-            {
-                return true;
-            }
-        }
+        bool ICollection<TResult>.IsReadOnly => true;
+
+        bool IList.IsFixedSize => true;
+
+        bool IList.IsReadOnly => true;
+
+        int ICollection.Count => _sourceList.Count;
+
+        bool ICollection.IsSynchronized => false;
+
+        object ICollection.SyncRoot => null;
+
+        object IList.this[int index] { get => _sourceList[index]; set => throw new NotImplementedException(); }
 
         public void Add(TResult item)
         {
@@ -119,6 +125,35 @@ namespace Swordfish.NET.Collections
         }
 
         void IList<TResult>.RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        int IList.Add(object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IList.Contains(object value) => Contains((TResult)value);
+
+        int IList.IndexOf(object value) => IndexOf((TResult)value);
+
+        void IList.Insert(int index, object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IList.Remove(object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IList.RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        void ICollection.CopyTo(Array array, int index)
         {
             throw new NotImplementedException();
         }
