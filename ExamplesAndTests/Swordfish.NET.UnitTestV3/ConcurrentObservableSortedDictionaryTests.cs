@@ -1,13 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swordfish.NET.Collections;
-using Swordfish.NET.Collections.Auxiliary;
-using Swordfish.NET.TestV3.Auxiliary;
+using Swordfish.NET.UnitTestV3.Auxiliary;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 
-namespace Swordfish.NET.TestV3.UnitTests
+namespace Swordfish.NET.UnitTestV3
 {
     [TestClass()]
     public class ConcurrentObservableSortedDictionaryTests
@@ -108,7 +106,7 @@ namespace Swordfish.NET.TestV3.UnitTests
             var itemsToAdd =
                 baseItemsSet
                 .Take(1_000_000)
-                .Select(x => KeyValuePair.Create($"Key {x}", $"Value {x}"))
+                .Select(x => Swordfish.NET.Collections.KeyValuePair.Create($"Key {x}", $"Value {x}"))
                 .ToList();
 
             // Create 100,000 items to insert
@@ -116,7 +114,7 @@ namespace Swordfish.NET.TestV3.UnitTests
                 baseItemsSet
                 .Skip(1_000_000)
                 .Take(100_000)
-                .Select(x => KeyValuePair.Create($"Insert Key {x}", $"Insert Value {x}"))
+                .Select(x => Swordfish.NET.Collections.KeyValuePair.Create($"Insert Key {x}", $"Insert Value {x}"))
                 .ToList();
 
             // Create items to remove

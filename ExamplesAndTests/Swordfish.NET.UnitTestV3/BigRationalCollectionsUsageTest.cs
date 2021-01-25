@@ -1,9 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swordfish.NET.Collections.Auxiliary;
 using System.Collections.Generic;
-using System.Numerics;
 
-namespace Swordfish.NET.TestV3.UnitTests
+namespace Swordfish.NET.UnitTestV3
 {
     /// <summary>
     /// The Swordfish.NET.Collections.Auxiliary.BigRational class is used in the collections as a sort key.

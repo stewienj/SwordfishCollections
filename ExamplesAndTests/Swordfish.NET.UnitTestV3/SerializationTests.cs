@@ -3,7 +3,7 @@ using Swordfish.NET.Collections;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Swordfish.NET.TestV3.UnitTests
+namespace Swordfish.NET.UnitTestV3
 {
     [TestClass]
     public class SerializationTests

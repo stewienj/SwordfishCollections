@@ -64,10 +64,16 @@ namespace Swordfish.NET.Collections
         /// </summary>
         public virtual void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
         {
+            // Convert to a list off the bat, as this is used multiple times and is required to be
+            // an IList for NotifyCollectionChangedEventArgs
+            if (!(pairs is IList<KeyValuePair<TKey, TValue>> pairsList))
+            {
+                pairsList = pairs.ToList();
+            }
             DoReadWriteNotify(
               () => _internalCollection.Count,
-              (index) => _internalCollection.AddRange(pairs),
-              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)pairs, index)
+              (index) => _internalCollection.AddRange(pairsList),
+              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, pairsList, index)
             );
         }
 

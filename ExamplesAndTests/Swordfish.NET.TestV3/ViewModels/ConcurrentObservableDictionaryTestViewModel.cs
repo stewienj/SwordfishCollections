@@ -41,7 +41,7 @@ namespace Swordfish.NET.Demo.ViewModels
                     sw.Restart();
                     var itemsToAdd = await Task.Run(() =>
               Enumerable.Range(0, 1000000).
-              Select(x => KeyValuePair.Create($"Key {x}", $"Value {x}")).ToList());
+              Select(x => Swordfish.NET.Collections.KeyValuePair.Create($"Key {x}", $"Value {x}")).ToList());
                     sw.Stop();
                     Message("", sw.Elapsed);
 
@@ -50,7 +50,7 @@ namespace Swordfish.NET.Demo.ViewModels
                     sw.Restart();
                     var itemsToUpdate = await Task.Run(() =>
               Enumerable.Range(0, 100000).
-              Select(x => KeyValuePair.Create($"Key {x}", $"New Value {x}")).ToList());
+              Select(x => Swordfish.NET.Collections.KeyValuePair.Create($"Key {x}", $"New Value {x}")).ToList());
                     sw.Stop();
                     Message("", sw.Elapsed);
 
@@ -61,7 +61,7 @@ namespace Swordfish.NET.Demo.ViewModels
                     sw.Restart();
                     var itemsToInsert = await Task.Run(() =>
               Enumerable.Range(0, 100000).
-              Select(x => KeyValuePair.Create($"Insert Key {x}", $"Insert Value {x}")).ToList());
+              Select(x => Swordfish.NET.Collections.KeyValuePair.Create($"Insert Key {x}", $"Insert Value {x}")).ToList());
                     sw.Stop();
                     Message("", sw.Elapsed);
 

@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swordfish.NET.UnitTestV3", "ExamplesAndTests\Swordfish.NET.UnitTestV3\Swordfish.NET.UnitTestV3.csproj", "{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,18 @@ Global
 		{D3C41078-CAE0-4581-B246-91343817E59C}.Release|x64.Build.0 = Release|Any CPU
 		{D3C41078-CAE0-4581-B246-91343817E59C}.Release|x86.ActiveCfg = Release|Any CPU
 		{D3C41078-CAE0-4581-B246-91343817E59C}.Release|x86.Build.0 = Release|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Debug|x64.Build.0 = Debug|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Debug|x86.Build.0 = Debug|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Release|x64.ActiveCfg = Release|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Release|x64.Build.0 = Release|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Release|x86.ActiveCfg = Release|Any CPU
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -114,6 +128,7 @@ Global
 		{9A04D222-2B52-4E93-9B92-CC6EF54D5848} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
 		{844232DB-E29B-4608-BB1E-A64D541DF107} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
 		{D3C41078-CAE0-4581-B246-91343817E59C} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
+		{F68915F3-6D08-4171-9E66-7BEB6B1D3C30} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD39B382-7E64-41EF-A56E-9C42E39D784F}
