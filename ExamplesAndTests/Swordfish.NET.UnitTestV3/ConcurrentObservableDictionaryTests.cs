@@ -24,10 +24,16 @@ namespace Swordfish.NET.UnitTestV3
             }
 
             var itemsToAdd = GetIEnumerable();
-            var dictionary = new ConcurrentObservableDictionary<string,string>();
-            dictionary.AddRange(itemsToAdd);
+            var dictionary1 = new ConcurrentObservableDictionary<string,string>();
+            dictionary1.AddRange(itemsToAdd);
 
-            Assert.IsTrue(dictionary.Count == itemsToAdd.Count(), "Right number of items");
+            Assert.IsTrue(dictionary1.Count == itemsToAdd.Count(), "Right number of items");
+
+            var sourceDictionary = itemsToAdd.ToDictionary(a => a.Key, b => b.Value);
+            var dictionary2 = new ConcurrentObservableDictionary<string, string>();
+            dictionary2.AddRange(sourceDictionary);
+
+            Assert.IsTrue(dictionary2.Count == sourceDictionary.Count, "Right number of items");
         }
 
         [TestMethod]
