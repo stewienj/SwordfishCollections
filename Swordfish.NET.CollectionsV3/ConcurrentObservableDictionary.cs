@@ -226,13 +226,20 @@ namespace Swordfish.NET.Collections
             return localRemovedItems;
         }
 
-        public void RemoveRange(IList<TKey> keys)
+        public void RemoveRange(IEnumerable<TKey> keys)
         {
+            // Convert to a list off the bat, as this is used multiple times and is required to be
+            // an IList for NotifyCollectionChangedEventArgs
+            if (!(keys is IList<TKey> keysList))
+            {
+                keysList = keys.ToList();
+            }
+
             DoReadWriteNotify<IList<KeyValuePair<TKey, TValue>>>(
               // Get the list of keys and values from the internal list
-              () => _internalCollection.GetRange(keys),
+              () => _internalCollection.GetRange(keysList),
               // remove the keys from the dictionary, remove the range from the list
-              (items) => _internalCollection.RemoveRange(keys),
+              (items) => _internalCollection.RemoveRange(keysList),
               // Notify which items were removed
               (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items)
             );

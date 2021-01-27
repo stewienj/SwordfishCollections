@@ -31,10 +31,18 @@ namespace Swordfish.NET.Collections
 
         public override void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
         {
+            // Convert to a list off the bat, as this is used multiple times and is required to be
+            // an IList for NotifyCollectionChangedEventArgs
+            if (!(pairs is IList<KeyValuePair<TKey, TValue>> pairsList))
+            {
+                pairsList = pairs.ToList();
+            }
+
+
             Func<int, ImmutableDictionaryListPair<TKey, TValue>> getIndicesAndInsert = (x) =>
             {
                 var updatedCollection = _internalCollection;
-                foreach (var pair in pairs)
+                foreach (var pair in pairsList)
                 {
                     int index = _sorter.GetInsertIndex(updatedCollection.Count, pair.Key, i => updatedCollection.List[i].Key);
                     updatedCollection = updatedCollection.Insert(index, pair);
@@ -45,7 +53,7 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => 0,
               getIndicesAndInsert,
-              (nothing) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)pairs.ToList())
+              (nothing) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)pairsList)
             );
         }
 

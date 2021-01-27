@@ -57,12 +57,19 @@ namespace Swordfish.NET.Collections
         /// Adds a range of items to the end of the collection. Quicker than adding them individually,
         /// but the view doesn't update until the last item has been added.
         /// </summary>
-        public void AddRange(IList<T> values)
+        public void AddRange(IEnumerable<T> values)
         {
+            // Convert to a list off the bat, as this is used multiple times and is required to be
+            // an IList for NotifyCollectionChangedEventArgs
+            if (!(values is IList<T> valuesList))
+            {
+                valuesList = values.ToList();
+            }
+
             DoReadWriteNotify(
               () => _internalCollection.Count,
-              (index) => ((ImmutableHashSet<T>)_internalCollection).AddRange(values),
-              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)values, index)
+              (index) => ((ImmutableHashSet<T>)_internalCollection).AddRange(valuesList),
+              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)valuesList, index)
             );
         }
 
@@ -85,10 +92,16 @@ namespace Swordfish.NET.Collections
 
         public void RemoveRange(IEnumerable<T> values)
         {
-            DoReadWriteNotify(
-              () => _internalCollection.Count,
-              (index) => ((ImmutableHashSet<T>)_internalCollection).RemoveRange(values),
-              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)values, index)
+            // Convert to a list off the bat, as this is used multiple times and is required to be
+            // an IList for NotifyCollectionChangedEventArgs
+            if (!(values is IList<T> valuesList))
+            {
+                valuesList = values.ToList();
+            }
+
+            DoWriteNotify(
+              () => ((ImmutableHashSet<T>)_internalCollection).RemoveRange(valuesList),
+              () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)valuesList)
             );
         }
 

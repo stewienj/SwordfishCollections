@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swordfish.NET.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Swordfish.NET.UnitTestV3
     /// Test the following collection classes:
     ///
     /// - ConcurrentObservableCollection - done (this class)
-    /// - ConcurrentObservableDictionary
+    /// - ConcurrentObservableDictionary - done (other class)
     /// - ConcurrentObservableHashSet
     /// - ConcurrentObservableSortedCollection
     /// - ConcurrentObservableSortedDictionary
@@ -30,7 +31,7 @@ namespace Swordfish.NET.UnitTestV3
     public class ConcurrentObservableCollection_INotifyCollectionChangedTests
     {
         [TestMethod]
-        public void Test_ConcurrentObservableCollection_AddRange()
+        public void Test_ConcurrentObservableCollection_AddRange_IList()
         {
             var toAdd = Enumerable.Range(0, 100).ToList();
             var collection = new ConcurrentObservableCollection<int>();
@@ -50,8 +51,7 @@ namespace Swordfish.NET.UnitTestV3
             Assert.IsNotNull(returnedArgs.NewItems);
             Assert.IsNull(returnedArgs.OldItems);
             Assert.AreEqual(toAdd.Count(), returnedArgs.NewItems.Count);
-            Assert.IsTrue(toAdd.Zip(returnedArgs.NewItems.OfType<int>(), (a, b) => a == b).All(c => c));
-
+            Assert.IsTrue(CollectionsAreEqual(toAdd, returnedArgs.NewItems));
         }
 
         [TestMethod]
@@ -80,11 +80,11 @@ namespace Swordfish.NET.UnitTestV3
             Assert.IsNotNull(returnedArgs.NewItems);
             Assert.IsNull(returnedArgs.OldItems);
             Assert.AreEqual(toAdd.Count(), returnedArgs.NewItems.Count);
-            Assert.IsTrue(toAdd.Zip(returnedArgs.NewItems.OfType<int>(), (a, b) => a == b).All(c => c));
+            Assert.IsTrue(CollectionsAreEqual(toAdd, returnedArgs.NewItems));
         }
 
         [TestMethod]
-        public void Test_ConcurrentObservableCollection_RemoveRange()
+        public void Test_ConcurrentObservableCollection_RemoveRange_ByIndex()
         {
             var initial = Enumerable.Range(0, 100).ToList();
             var startIndex = 50;
@@ -112,6 +112,42 @@ namespace Swordfish.NET.UnitTestV3
             Assert.IsNull(returnedArgs.NewItems);
             Assert.IsNotNull(returnedArgs.OldItems);
             Assert.AreEqual(removeCount, returnedArgs.OldItems.Count);
+            var toRemove = initial.Skip(startIndex).Take(removeCount).ToList();
+            Assert.IsTrue(CollectionsAreEqual(toRemove, returnedArgs.OldItems));
+        }
+
+        [TestMethod]
+        public void Test_ConcurrentObservableCollection_RemoveRange_ByList()
+        {
+            var initial = Enumerable.Range(0, 100).ToList();
+            var startIndex = 50;
+            var removeCount = 40;
+            var toRemove = initial.Skip(startIndex).Take(removeCount).ToList();
+            var collection = new ConcurrentObservableCollection<int>();
+            collection.AddRange(initial);
+            Assert.AreEqual(100, collection.Count);
+
+            // Record all the collection changed events
+            List<(object, NotifyCollectionChangedEventArgs)> returnedList = new List<(object, NotifyCollectionChangedEventArgs)>();
+            collection.CollectionChanged += (s, e) => returnedList.Add((s, e));
+
+            collection.RemoveRange(toRemove);
+
+            // Check just one collection changed event was fired
+            Assert.AreEqual(1, returnedList.Count);
+            (var returnedObject, var returnedArgs) = returnedList[0];
+
+            Assert.IsNotNull(returnedObject);
+            Assert.IsNotNull(returnedArgs);
+
+            Assert.AreEqual(returnedObject, collection);
+            Assert.AreEqual(NotifyCollectionChangedAction.Remove, returnedArgs.Action);
+            // Removed by values so index not relevant, should be -1
+            Assert.AreEqual(-1, returnedArgs.OldStartingIndex);
+            Assert.IsNull(returnedArgs.NewItems);
+            Assert.IsNotNull(returnedArgs.OldItems);
+            Assert.AreEqual(removeCount, returnedArgs.OldItems.Count);
+            Assert.IsTrue(CollectionsAreEqual(toRemove, returnedArgs.OldItems));
         }
 
         [TestMethod]
@@ -147,12 +183,13 @@ namespace Swordfish.NET.UnitTestV3
             Assert.IsNull(returnedArgs0.NewItems);
             Assert.IsNotNull(returnedArgs0.OldItems);
             Assert.AreEqual(initial.Count(), returnedArgs0.OldItems.Count);
-            Assert.IsTrue(initial.Zip(returnedArgs0.OldItems.OfType<int>(), (a, b) => a == b).All(c => c));
+            Assert.IsTrue(CollectionsAreEqual(initial, returnedArgs0.OldItems));
+
 
             Assert.IsNull(returnedArgs1.OldItems);
             Assert.IsNotNull(returnedArgs1.NewItems);
             Assert.AreEqual(toAdd.Count(), returnedArgs1.NewItems.Count);
-            Assert.IsTrue(toAdd.Zip(returnedArgs1.NewItems.OfType<int>(), (a, b) => a == b).All(c => c));
+            Assert.IsTrue(CollectionsAreEqual(toAdd, returnedArgs1.NewItems));
         }
 
         [TestMethod]
@@ -185,8 +222,10 @@ namespace Swordfish.NET.UnitTestV3
 
             Assert.IsNotNull(returnedArgs.OldItems);
             Assert.AreEqual(initial.Count(), returnedArgs.OldItems.Count);
-            Assert.IsTrue(initial.Zip(returnedArgs.OldItems.OfType<int>(), (a, b) => a == b).All(c => c));
+            Assert.IsTrue(CollectionsAreEqual(initial, returnedArgs.OldItems));
         }
 
+        bool CollectionsAreEqual(IEnumerable<int> collectionA, IList collectionB) =>
+            collectionA.Zip(collectionB.OfType<int>(), (a, b) => a == b).All(c => c);
     }
 }

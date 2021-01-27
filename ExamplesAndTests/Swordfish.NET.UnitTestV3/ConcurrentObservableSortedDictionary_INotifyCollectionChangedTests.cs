@@ -6,12 +6,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 namespace Swordfish.NET.UnitTestV3
 {
     /// <summary>
-    /// Tests that the following methods fire the correct event in ConcurrentObservableDictionary:
+    /// Tests that the following methods fire the correct event in ConcurrentObservableSortedDictionary:
     ///
     /// - AddRange
     /// - RemoveRange
@@ -27,13 +26,13 @@ namespace Swordfish.NET.UnitTestV3
     /// - ConcurrentObservableSortedSet
     /// </summary>
     [TestClass]
-    public class ConcurrentObservableDictionary_INotifyCollectionChangedTests
+    public class ConcurrentObservableSortedDictionary_INotifyCollectionChangedTests
     {
         [TestMethod]
-        public void Test_ConcurrentObservableDictionary_AddRange_IEnumerable()
+        public void Test_ConcurrentObservableSortedDictionary_AddRange_IEnumerable()
         {
             var toAdd = Enumerable.Range(0, 100).Select(x => new KeyValuePair<int, int>(x, x));
-            var collection = new ConcurrentObservableDictionary<int, int>();
+            var collection = new ConcurrentObservableSortedDictionary<int, int>();
 
             // Record all the collection changed events
             List<(object, NotifyCollectionChangedEventArgs)> returnedList = new List<(object, NotifyCollectionChangedEventArgs)>();
@@ -54,10 +53,10 @@ namespace Swordfish.NET.UnitTestV3
         }
 
         [TestMethod]
-        public void Test_ConcurrentObservableDictionary_AddRange_List()
+        public void Test_ConcurrentObservableSortedDictionary_AddRange_List()
         {
             var toAdd = Enumerable.Range(0, 100).Select(x => new KeyValuePair<int, int>(x, x)).ToList();
-            var collection = new ConcurrentObservableDictionary<int, int>();
+            var collection = new ConcurrentObservableSortedDictionary<int, int>();
 
             // Record all the collection changed events
             List<(object, NotifyCollectionChangedEventArgs)> returnedList = new List<(object, NotifyCollectionChangedEventArgs)>();
@@ -78,10 +77,10 @@ namespace Swordfish.NET.UnitTestV3
         }
 
         [TestMethod]
-        public void Test_ConcurrentObservableDictionary_AddRange_Dictionary()
+        public void Test_ConcurrentObservableSortedDictionary_AddRange_Dictionary()
         {
             var toAdd = Enumerable.Range(0, 100).Select(x => new KeyValuePair<int, int>(x, x)).ToDictionary(x => x.Key, x => x.Value);
-            var collection = new ConcurrentObservableDictionary<int, int>();
+            var collection = new ConcurrentObservableSortedDictionary<int, int>();
 
             // Record all the collection changed events
             List<(object, NotifyCollectionChangedEventArgs)> returnedList = new List<(object, NotifyCollectionChangedEventArgs)>();
@@ -102,12 +101,12 @@ namespace Swordfish.NET.UnitTestV3
         }
 
         [TestMethod]
-        public void Test_ConcurrentObservableCollection_RemoveRange_ByIndex()
+        public void Test_ConcurrentObservableSortedDictionary_RemoveRange_ByIndex()
         {
             var initial = Enumerable.Range(0, 100).Select(x => new KeyValuePair<int, int>(x, x));
             var startIndex = 50;
             var removeCount = 40;
-            var collection = new ConcurrentObservableDictionary<int, int>();
+            var collection = new ConcurrentObservableSortedDictionary<int, int>();
             collection.AddRange(initial);
             Assert.AreEqual(100, collection.Count);
 
@@ -134,11 +133,11 @@ namespace Swordfish.NET.UnitTestV3
         }
 
         [TestMethod]
-        public void Test_ConcurrentObservableCollection_RemoveRange_ByItems_IList()
+        public void Test_ConcurrentObservableSortedDictionary_RemoveRange_ByItems_IList()
         {
             var initial = Enumerable.Range(0, 100).Select(x => new KeyValuePair<int, int>(x, x));
             var toRemove = Enumerable.Range(1, 40).Select(x => x * 2).ToList();
-            var collection = new ConcurrentObservableDictionary<int, int>();
+            var collection = new ConcurrentObservableSortedDictionary<int, int>();
             collection.AddRange(initial);
             Assert.AreEqual(100, collection.Count);
 
@@ -165,11 +164,11 @@ namespace Swordfish.NET.UnitTestV3
         }
 
         [TestMethod]
-        public void Test_ConcurrentObservableCollection_RemoveRange_ByItems_IEnumerable()
+        public void Test_ConcurrentObservableSortedDictionary_RemoveRange_ByItems_IEnumerable()
         {
             var initial = Enumerable.Range(0, 100).Select(x => new KeyValuePair<int, int>(x, x));
             var toRemove = Enumerable.Range(1, 40).Select(x => x * 2);
-            var collection = new ConcurrentObservableDictionary<int, int>();
+            var collection = new ConcurrentObservableSortedDictionary<int, int>();
             collection.AddRange(initial);
             Assert.AreEqual(100, collection.Count);
 
@@ -197,10 +196,10 @@ namespace Swordfish.NET.UnitTestV3
 
 
         [TestMethod]
-        public void Test_ConcurrentObservableDictionary_Clear()
+        public void Test_ConcurrentObservableSortedDictionary_Clear()
         {
             var initial = Enumerable.Range(0, 100).Select(x => new KeyValuePair<int, int>(x, x));
-            var collection = new ConcurrentObservableDictionary<int, int>();
+            var collection = new ConcurrentObservableSortedDictionary<int, int>();
             collection.AddRange(initial);
             Assert.AreEqual(100, collection.Count);
 
@@ -215,7 +214,7 @@ namespace Swordfish.NET.UnitTestV3
             (var returnedObject, var returnedArgs) = returnedList[0];
 
             Assert.AreEqual(0, collection.Count);
-            
+
             Assert.AreEqual(returnedObject, collection);
             Assert.AreEqual(NotifyCollectionChangedAction.Remove, returnedArgs.Action);
 
