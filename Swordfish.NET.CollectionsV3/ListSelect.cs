@@ -32,24 +32,11 @@ namespace Swordfish.NET.Collections
 
         TResult IList<TResult>.this[int index]
         {
-            get
-            {
-                return _select(_sourceList[index]);
-            }
-
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get => _select(_sourceList[index]);
+            set => throw new NotImplementedException();
         }
 
-        int ICollection<TResult>.Count
-        {
-            get
-            {
-                return _sourceList.Count;
-            }
-        }
+        int ICollection<TResult>.Count => _sourceList.Count;
 
         bool ICollection<TResult>.IsReadOnly => true;
 
@@ -63,22 +50,17 @@ namespace Swordfish.NET.Collections
 
         object ICollection.SyncRoot => null;
 
-        object IList.this[int index] { get => _sourceList[index]; set => throw new NotImplementedException(); }
-
-        public void Add(TResult item)
+        object IList.this[int index]
         {
-            throw new NotImplementedException();
+            get => _select(_sourceList[index]);
+            set => throw new NotImplementedException();
         }
 
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
+        public void Add(TResult item) => throw new NotImplementedException();
 
-        public bool Contains(TResult item)
-        {
-            return _sourceList.Select(x => _select(x)).Where(x => x.Equals(item)).Any();
-        }
+        public void Clear() => throw new NotImplementedException();
+
+        public bool Contains(TResult item) => _sourceList.Select(x => _select(x)).Where(x => x.Equals(item)).Any();
 
         public void CopyTo(TResult[] array, int arrayIndex)
         {
@@ -90,15 +72,9 @@ namespace Swordfish.NET.Collections
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _sourceList.Select(x => _select(x)).GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => _sourceList.Select(x => _select(x)).GetEnumerator();
 
-        public IEnumerator<TResult> GetEnumerator()
-        {
-            return _sourceList.Select(x => _select(x)).GetEnumerator();
-        }
+        public IEnumerator<TResult> GetEnumerator() => _sourceList.Select(x => _select(x)).GetEnumerator();
 
         public int IndexOf(TResult item)
         {
@@ -114,48 +90,24 @@ namespace Swordfish.NET.Collections
             return -1;
         }
 
-        void IList<TResult>.Insert(int index, TResult item)
-        {
-            throw new NotImplementedException();
-        }
+        void IList<TResult>.Insert(int index, TResult item) => throw new NotImplementedException();
 
-        bool ICollection<TResult>.Remove(TResult item)
-        {
-            throw new NotImplementedException();
-        }
+        bool ICollection<TResult>.Remove(TResult item) => throw new NotImplementedException();
 
-        void IList<TResult>.RemoveAt(int index)
-        {
-            throw new NotImplementedException();
-        }
+        void IList<TResult>.RemoveAt(int index) => throw new NotImplementedException();
 
-        int IList.Add(object value)
-        {
-            throw new NotImplementedException();
-        }
+        int IList.Add(object value) => throw new NotImplementedException();
 
         bool IList.Contains(object value) => Contains((TResult)value);
 
         int IList.IndexOf(object value) => IndexOf((TResult)value);
 
-        void IList.Insert(int index, object value)
-        {
-            throw new NotImplementedException();
-        }
+        void IList.Insert(int index, object value) => throw new NotImplementedException();
 
-        void IList.Remove(object value)
-        {
-            throw new NotImplementedException();
-        }
+        void IList.Remove(object value) => throw new NotImplementedException();
 
-        void IList.RemoveAt(int index)
-        {
-            throw new NotImplementedException();
-        }
+        void IList.RemoveAt(int index) => throw new NotImplementedException();
 
-        void ICollection.CopyTo(Array array, int index)
-        {
-            throw new NotImplementedException();
-        }
+        void ICollection.CopyTo(Array array, int index) => throw new NotImplementedException();
     }
 }

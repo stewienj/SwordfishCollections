@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swordfish.NET.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -39,7 +40,6 @@ namespace Swordfish.NET.UnitTestV3
         [TestMethod]
         public void AddTest()
         {
-
             int testCollectionCount = 10;
             int itemsPerCollection = 200_000;
             var sourceCollections = new List<List<int>>();
@@ -100,7 +100,6 @@ namespace Swordfish.NET.UnitTestV3
 
             Assert.IsTrue(allItemsPresent, "All items present");
         }
-
 
         [TestMethod]
         public void TestManyOperations()
@@ -231,6 +230,69 @@ namespace Swordfish.NET.UnitTestV3
                 .All(a => a);
 
             Assert.IsTrue(allEqualAfterRemoveAt, "Items correct order after removing at index");
+        }
+
+        [TestMethod]
+        public void TestIndexOfInViews()
+        {
+            var initial = Enumerable.Range(0, 100).Select(x => new KeyValuePair<int, string>(x, x.ToString())).ToList();
+            var other = Enumerable.Range(100, 100).Select(x => new KeyValuePair<int, string>(x, x.ToString())).ToList();
+            var testCollection = new ConcurrentObservableDictionary<int, string>();
+            testCollection.AddRange(initial);
+            var collectionView = testCollection.CollectionView;
+            var keysView = testCollection.Keys;
+            var valuesView = testCollection.Values;
+
+            // Test the IList implementation because it had a bug
+
+            IList collectionList = (IList)testCollection.CollectionView;
+            IList keysList = (IList)testCollection.Keys;
+            IList valuesList = (IList)testCollection.Values;
+
+            foreach (var item in initial)
+            {
+                Assert.IsTrue(testCollection.Contains(item));
+
+                Assert.IsTrue(collectionView.Contains(item));
+                Assert.IsTrue(keysView.Contains(item.Key));
+                Assert.IsTrue(valuesView.Contains(item.Value));
+
+                Assert.IsTrue(collectionList.Contains(item));
+                Assert.IsTrue(keysList.Contains(item.Key));
+                Assert.IsTrue(valuesList.Contains(item.Value));
+            }
+
+            foreach (var item in other)
+            {
+                Assert.IsFalse(testCollection.Contains(item));
+
+                Assert.IsFalse(collectionView.Contains(item));
+                Assert.IsFalse(keysView.Contains(item.Key));
+                Assert.IsFalse(valuesView.Contains(item.Value));
+
+                Assert.IsFalse(collectionList.Contains(item));
+                Assert.IsFalse(keysList.Contains(item.Key));
+                Assert.IsFalse(valuesList.Contains(item.Value));
+            }
+
+            for (int i=0; i<initial.Count; ++i)
+            {
+                Assert.AreEqual(initial[i], collectionView[i]);
+                Assert.AreEqual(initial[i].Key, keysView[i]);
+                Assert.AreEqual(initial[i].Value, valuesView[i]);
+
+                Assert.AreEqual(initial[i], collectionList[i]);
+                Assert.AreEqual(initial[i].Key, keysList[i]);
+                Assert.AreEqual(initial[i].Value, valuesList[i]);
+
+                Assert.AreEqual(i, collectionView.IndexOf(initial[i]));
+                Assert.AreEqual(i, keysView.IndexOf(initial[i].Key));
+                Assert.AreEqual(i, valuesView.IndexOf(initial[i].Value));
+
+                Assert.AreEqual(i, collectionList.IndexOf(initial[i]));
+                Assert.AreEqual(i, keysList.IndexOf(initial[i].Key));
+                Assert.AreEqual(i, valuesList.IndexOf(initial[i].Value));
+            }
         }
     }
 }
