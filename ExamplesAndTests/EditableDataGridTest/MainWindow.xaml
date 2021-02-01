@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EditableDataGridTest.Controls"
         mc:Ignorable="d"
-        Title="Editable DataGrid Test" Height="400" Width="600">
+        Title="Editable DataGrid Test" Height="400" Width="800">
     <Grid>
         <TabControl>
             <TabItem Header="Binding To Collection">

@@ -37,7 +37,15 @@
         <!-- DataGrid binds to TestCollection.EditableCollectionView -->
         <DataGrid ItemsSource="{Binding TestCollection.EditableCollectionView}" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1" />
 
-        <Button Command="{Binding AddRandomItemCommand}" Grid.Row="3">Add Random Item</Button>
+        <Button Command="{Binding AddRandomItemCommand}" Grid.Column="0" Grid.Row="3">Add Random Item</Button>
+        <Grid Grid.Column="1" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <CheckBox IsChecked="{Binding ContinuouslyAddItems}" Grid.Column="0">Continuously Add Items</CheckBox>
+            <CheckBox IsChecked="{Binding ContinuouslyUpdateItems}" Grid.Column="1">Continuously Update Items</CheckBox>
+        </Grid>
 
     </Grid>
 </UserControl>

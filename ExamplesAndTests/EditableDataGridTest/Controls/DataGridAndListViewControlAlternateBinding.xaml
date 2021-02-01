@@ -6,38 +6,56 @@
              xmlns:local="clr-namespace:EditableDataGridTest.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition />
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <TextBlock HorizontalAlignment="Center" Grid.Column="0">ListView Bound To TestCollectionView</TextBlock>
+    <DockPanel LastChildFill="True">
+        <Border BorderThickness="1" CornerRadius="8" BorderBrush="Blue" DockPanel.Dock="Top" Background="Cornsilk">
+            <TextBlock TextWrapping="Wrap" Margin="8">
+                This just shows an alternate binding where the binding path is shorter, as the
+                ListView/DataGrid bound to an alias. TestCollectionView is an alias for TestCollection.CollectionView and
+                EditableTestCollectionView is an alias for TestCollection.EditableCollectionView.
+            </TextBlock>
+        </Border>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock HorizontalAlignment="Center" Grid.Column="0">ListView Bound To TestCollectionView</TextBlock>
 
-        <TextBlock HorizontalAlignment="Center" Grid.Column="1">DataGrid Bound To EditableTestCollectionView</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Grid.Column="1">DataGrid Bound To EditableTestCollectionView</TextBlock>
 
-        <!-- ListView binds to TestCollection.CollectionView -->
-        <ListView ItemsSource="{Binding TestCollectionView}" Grid.Row="1" Grid.Column="0" >
-            <ListView.View>
-                <GridView>
-                    <GridView.Columns>
-                        <GridViewColumn Header="Label" DisplayMemberBinding="{Binding Label}"/>
-                        <GridViewColumn Header="Value1" DisplayMemberBinding="{Binding Value1}"/>
-                        <GridViewColumn Header="Value2" DisplayMemberBinding="{Binding Value2}"/>
-                    </GridView.Columns>
-                </GridView>
-            </ListView.View>
-        </ListView>
+            <!-- ListView binds to TestCollection.CollectionView -->
+            <ListView ItemsSource="{Binding TestCollectionView}" Grid.Row="1" Grid.Column="0" >
+                <ListView.View>
+                    <GridView>
+                        <GridView.Columns>
+                            <GridViewColumn Header="Label" DisplayMemberBinding="{Binding Label}"/>
+                            <GridViewColumn Header="Value1" DisplayMemberBinding="{Binding Value1}"/>
+                            <GridViewColumn Header="Value2" DisplayMemberBinding="{Binding Value2}"/>
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>
+            </ListView>
 
-        <!-- DataGrid binds to TestCollection.EditableCollectionView -->
-        <DataGrid ItemsSource="{Binding EditableTestCollectionView}" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1" />
+            <!-- DataGrid binds to TestCollection.EditableCollectionView -->
+            <DataGrid ItemsSource="{Binding EditableTestCollectionView}" AutoGenerateColumns="True" Grid.Row="1" Grid.Column="1" />
 
-        <Button Command="{Binding AddRandomItemCommand}" Grid.Row="3">Add Random Item</Button>
+            <Button Command="{Binding AddRandomItemCommand}" Grid.Row="3">Add Random Item</Button>
 
-    </Grid>
+            <Grid Grid.Column="1" Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <CheckBox IsChecked="{Binding ContinuouslyAddItems}" Grid.Column="0">Continuously Add Items</CheckBox>
+                <CheckBox IsChecked="{Binding ContinuouslyUpdateItems}" Grid.Column="1">Continuously Update Items</CheckBox>
+            </Grid>
+
+        </Grid>
+    </DockPanel>
 </UserControl>
