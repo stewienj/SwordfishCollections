@@ -137,12 +137,18 @@ namespace Swordfish.NET.Collections
 
         public override string ToString() => $"{{Items : {Count}}}";
 
+        // ************************************************************************
+        // EditableCollection region. Methods and Properties for handling editing
+        // the collection in a DataGrid. 
+        // ************************************************************************
         #region EditableCollection
 
         /// <summary>
         /// Flags that an item is being edited, this should be called from the GUI thread.
         /// This stops updates from going through that would cause a data grid to exit
         /// editing mode.
+        ///
+        /// This would normally be called from a WPF DataGrid BeginningEdit event.
         /// </summary>
         public void BeginEditingItem()
         {
@@ -150,17 +156,22 @@ namespace Swordfish.NET.Collections
         }
 
         /// <summary>
-        /// CLears flag for indicating an item is being edited, this should be called from the GUI thread,
+        /// Clears flag for indicating an item is being edited, this should be called from the GUI thread,
         /// and called from the CurrentCellChanged event, as the CellEditEnding event gets fired before the
         /// edit is committed and will be lost when the underlying collection gets refreshed.
+        ///
+        /// This would normally be called from a WPF DataGrid CurrentCellChanged event.
         /// </summary>
         public void EndedEditingItem()
         {
+            // Check the FreezeUpdates flag is set, else we are not in the middle of an edit.
             if (_editableCollectionView.FreezeUpdates)
             {
+                // Clear flag
                 _editableCollectionView.FreezeUpdates = false;
                 // Assign new value to CollectionView so it is recognised as different to existing value
                 _editableCollectionView = _editableCollectionView.UpdateSource((ImmutableList<T>)_internalCollection);
+                // Raise event to display updated collection
                 RaisePropertyChanged(nameof(EditableCollectionView));
             }
         }
