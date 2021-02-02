@@ -76,7 +76,7 @@ namespace Swordfish.NET.Collections.EditableBridges
             // Note: We are inside a lock here so we don't have to worry about race conditions
             // Lock is entered further up the call stack
 
-            var editableBridge = _guiCallerThread != Thread.CurrentThread ?
+            var editableBridge = _guiCallerThread != Thread.CurrentThread && !FreezeUpdates ?
                 new EditableImmutableListBridge<T>(source, _destination) :
                 this;
 
@@ -111,6 +111,8 @@ namespace Swordfish.NET.Collections.EditableBridges
             _guiCallerThread = null;
             return returnValue;
         }
+
+        public bool FreezeUpdates { get; set; }
 
         // **************************************************************************
         // IList<T> implementation

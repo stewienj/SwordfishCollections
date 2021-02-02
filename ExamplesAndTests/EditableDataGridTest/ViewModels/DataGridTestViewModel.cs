@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 
@@ -106,6 +108,18 @@ namespace EditableDataGridTest.ViewModels
             }
         }
 
+        /// <summary>
+        /// Tell the collection that we are beginning an edit so the edit mode isn't exited when an update comes through
+        /// </summary>
+        private RelayCommandFactory _beginningEditCommand = new RelayCommandFactory();
+        public ICommand BeginningEditCommand => _beginningEditCommand.GetCommand(() => TestCollection.BeginEditingItem());
+
+        private RelayCommandFactory _cellChangedCommand = new RelayCommandFactory();
+        public ICommand CellChangedCommand => _cellChangedCommand.GetCommand(() =>
+        {
+            TestCollection.EndedEditingItem();
+        });
+
 
         /// <summary>
         /// The main source source collection. You can bing to TestCollection.CollectionView or bind to TestCollectionView,
@@ -114,10 +128,12 @@ namespace EditableDataGridTest.ViewModels
         /// property further down. Again they are both the same thing, just the latter is a shorter path.
         /// </summary>
         public ConcurrentObservableCollection<TestItem> TestCollection { get; }  = new ConcurrentObservableCollection<TestItem>();
+
         /// <summary>
         /// This is the read-only collection view
         /// </summary>
         public IList<TestItem> TestCollectionView => TestCollection.CollectionView;
+
         /// <summary>
         /// This is an editable collection that can be edited in a DataGrid. 
         /// </summary>

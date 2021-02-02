@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections
 {
@@ -136,6 +137,45 @@ namespace Swordfish.NET.Collections
 
         public override string ToString() => $"{{Items : {Count}}}";
 
+        #region EditableCollection
+
+        /// <summary>
+        /// Flags that an item is being edited, this should be called from the GUI thread.
+        /// This stops updates from going through that would cause a data grid to exit
+        /// editing mode.
+        /// </summary>
+        public void BeginEditingItem()
+        {
+            _editableCollectionView.FreezeUpdates = true;
+        }
+
+        /// <summary>
+        /// CLears flag for indicating an item is being edited, this should be called from the GUI thread,
+        /// and called from the CurrentCellChanged event, as the CellEditEnding event gets fired before the
+        /// edit is committed and will be lost when the underlying collection gets refreshed.
+        /// </summary>
+        public void EndedEditingItem()
+        {
+            if (_editableCollectionView.FreezeUpdates)
+            {
+                _editableCollectionView.FreezeUpdates = false;
+                // Assign new value to CollectionView so it is recognised as different to existing value
+                _editableCollectionView = _editableCollectionView.UpdateSource((ImmutableList<T>)_internalCollection);
+                RaisePropertyChanged(nameof(EditableCollectionView));
+            }
+        }
+
+        /// <summary>
+        /// Bind to this property in the ItemSource of a WPF DataGrid to allow editing
+        /// of the collection from the view. I could have made the CollectionView property
+        /// editable, but I didn't want to change the item that was returned as it might
+        /// have broken someones code that depended on the return type being an immutable
+        /// collection.
+        /// </summary>
+        public IList<T> EditableCollectionView => _editableCollectionView;
+
+        #endregion
+
         // ************************************************************************
         // IEnumerable<T> Implementation
         // ************************************************************************
@@ -229,15 +269,6 @@ namespace Swordfish.NET.Collections
         public bool IsReadOnly => false;
 
         public override IList<T> CollectionView => _internalCollection;
-
-        /// <summary>
-        /// Bind to this property in the ItemSource of a WPF DataGrid to allow editing
-        /// of the collection from the view. I could have made the CollectionView property
-        /// editable, but I didn't want to change the item that was returned as it might
-        /// have broken someones code that depended on the return type being an immutable
-        /// collection.
-        /// </summary>
-        public IList<T> EditableCollectionView => _editableCollectionView;
 
         public bool Remove(T item) =>
             DoReadWriteNotify(

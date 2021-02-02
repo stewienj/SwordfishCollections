@@ -8,11 +8,11 @@
         Title="Editable DataGrid Test" Height="400" Width="800">
     <Grid>
         <TabControl>
-            <TabItem Header="Binding To Collection">
-                <local:DataGridAndListViewControl/>
-            </TabItem>
-            <TabItem Header="Alternate Binding Method">
+            <TabItem Header="Alias Binding Method">
                 <local:DataGridAndListViewControlAlternateBinding/>
+            </TabItem>
+            <TabItem Header="Binding To CollectionView">
+                <local:DataGridAndListViewControl/>
             </TabItem>
         </TabControl>
     </Grid>
