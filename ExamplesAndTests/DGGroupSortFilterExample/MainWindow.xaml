@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DGGroupSortFilterExample.Controls"
         mc:Ignorable="d"
-        Title="Editable DataGrid Test" Height="600" Width="600">
+        Title="Editable DataGrid Test" Height="600" Width="640">
     <Grid>
         <local:DataGridTestControl/>
     </Grid>

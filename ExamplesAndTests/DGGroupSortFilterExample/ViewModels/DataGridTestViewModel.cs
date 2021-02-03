@@ -48,8 +48,12 @@ namespace DGGroupSortFilterExample.ViewModels
             TestCollection.Add(ProjectDetails.GetNewProject());
         }
 
-        private RelayCommandFactory _addRandomItemCommand = new RelayCommandFactory();
-        public ICommand AddNewItemCommand => _addRandomItemCommand.GetCommand(() => TestCollection.Add(ProjectDetails.GetNewProject()));
+        private RelayCommandFactory _add100000ItemsCommand = new RelayCommandFactory();
+        public ICommand Add100000ItemsCommand => _add100000ItemsCommand.GetCommand(() =>
+            TestCollection.AddRange(Enumerable.Range(0,100_000).Select(i=>ProjectDetails.GetNewProject())));
+
+        private RelayCommandFactory _addNewItemCommand = new RelayCommandFactory();
+        public ICommand AddNewItemCommand => _addNewItemCommand.GetCommand(() => TestCollection.Add(ProjectDetails.GetNewProject()));
 
         private bool _continuouslyAddItems = false;
         public bool ContinuouslyAddItems

@@ -29,7 +29,9 @@
         </Grid.RowDefinitions>
         <DataGrid x:Name="dataGrid1"
                   ItemsSource="{Binding Source={StaticResource cvsTasks}}"
-                  CanUserAddRows="False">
+                  CanUserAddRows="False"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  VirtualizingPanel.IsVirtualizingWhenGrouping="True">
             <DataGrid.GroupStyle>
                 <!-- Style for groups at top level. -->
                 <GroupStyle>
@@ -80,6 +82,7 @@
                       Checked="CompleteFilter_Changed" Unchecked="CompleteFilter_Changed">Filter completed items</CheckBox>
             <Button Content="Remove Groups" Margin="10,2,2,2" Click="UngroupButton_Click" />
             <Button Content="Group by Project/Status" Margin="2" Click="GroupButton_Click" />
+            <Button Command="{Binding Add100000ItemsCommand}">Add 100,000 Items</Button>
             <CheckBox VerticalAlignment="Center" IsChecked="{Binding ContinuouslyAddItems}" Grid.Column="0">Continuously Add Items</CheckBox>
         </StackPanel>
     </Grid>
