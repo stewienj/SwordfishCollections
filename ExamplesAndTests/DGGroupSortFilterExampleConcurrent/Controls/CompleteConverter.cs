@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace DGGroupSortFilterExample.Controls
+namespace DGGroupSortFilterExampleConcurrent.Controls
 {
     [ValueConversion(typeof(Boolean), typeof(String))]
     public class CompleteConverter : IValueConverter

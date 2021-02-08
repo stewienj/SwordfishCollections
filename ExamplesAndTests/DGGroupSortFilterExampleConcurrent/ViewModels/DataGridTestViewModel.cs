@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 
-namespace DGGroupSortFilterExample.ViewModels
+namespace DGGroupSortFilterExampleConcurrent.ViewModels
 {
     /// <summary>
     /// View model used as a source of items for both a ListView and a DataGrid

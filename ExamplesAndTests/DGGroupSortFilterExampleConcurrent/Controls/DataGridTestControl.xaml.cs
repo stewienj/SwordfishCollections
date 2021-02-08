@@ -1,4 +1,4 @@
-﻿using DGGroupSortFilterExample.ViewModels;
+﻿using DGGroupSortFilterExampleConcurrent.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DGGroupSortFilterExample.Controls
+namespace DGGroupSortFilterExampleConcurrent.Controls
 {
     /// <summary>
     /// Interaction logic for DataGridTestControl.xaml

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DGGroupSortFilterExample.ViewModels
+namespace DGGroupSortFilterExampleConcurrent.ViewModels
 {
     // Task Class
     // Requires using System.ComponentModel;

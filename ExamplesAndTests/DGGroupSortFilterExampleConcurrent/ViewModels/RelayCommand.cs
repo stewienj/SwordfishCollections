@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace DGGroupSortFilterExample.ViewModels
+namespace DGGroupSortFilterExampleConcurrent.ViewModels
 {
   /// <summary>
   /// Preferable to use RelayCommandFactory to generate these
