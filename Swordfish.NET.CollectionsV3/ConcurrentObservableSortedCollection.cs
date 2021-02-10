@@ -50,10 +50,12 @@ namespace Swordfish.NET.Collections
 
         public override void Reset(IList<T> items) =>
             DoReadWriteNotify(
-              () => new OldAndNew(ImmutableList.ToArray(),items.OrderBy(x => x, _sorter).ToList()),
-              (oldAndNew) => ImmutableList<T>.Empty.AddRange(oldAndNew.New),
-              (oldAndNew) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)oldAndNew.Old, 0),
-              (oldAndNew) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)oldAndNew.New, 0)
+              // Sort the incoming collection and add it directly to the internal collection.
+              // Should be quicker than sorting 1 by 1 on insert.
+              () => ImmutableList.ToArray(),
+              (oldItems) => ImmutableList<T>.Empty.AddRange(items.OrderBy(x => x, _sorter).ToList()),
+              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)oldItems, 0),
+              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)items, 0)
             );
 
         public override void Insert(int index, T item)
@@ -74,16 +76,6 @@ namespace Swordfish.NET.Collections
                 RemoveAt(index);
                 Add(value);
             }
-        }
-
-        private class OldAndNew {
-            public OldAndNew(T[] old, List<T> @new)
-            {
-                Old = old;
-                New = @new;
-            }
-            public T[] Old;
-            public List<T> New;
         }
     }
 }

@@ -76,7 +76,8 @@ namespace Swordfish.NET.UnitTestV3
 
             Assert.AreEqual(returnedObject, collection);
             Assert.AreEqual(NotifyCollectionChangedAction.Add, returnedArgs.Action);
-            Assert.AreEqual(startIndex, returnedArgs.NewStartingIndex);
+            // Sorted collection doesn't add at the index, so it should be -1
+            Assert.AreEqual(-1, returnedArgs.NewStartingIndex);
             Assert.IsNotNull(returnedArgs.NewItems);
             Assert.IsNull(returnedArgs.OldItems);
             Assert.AreEqual(toAdd.Count(), returnedArgs.NewItems.Count);
