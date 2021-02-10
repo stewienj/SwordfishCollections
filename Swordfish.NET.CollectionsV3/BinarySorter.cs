@@ -16,7 +16,7 @@ namespace Swordfish.NET.Collections
     /// <summary>
     /// This class is a helper for creating binary sorted lists
     /// </summary>
-    internal class BinarySorter<TKey>
+    internal class BinarySorter<TKey> : IComparer<TKey>
     {
 
         // ************************************************************************
@@ -60,20 +60,13 @@ namespace Swordfish.NET.Collections
             return BinarySearchForMatch(0, count - 1, key, indexToKey);
         }
 
-        #endregion Public Methods
-
-        // ************************************************************************
-        // Private Methods
-        // ************************************************************************
-        #region Private Methods
-
         /// <summary>
         /// Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
         /// </summary>
         /// <param name="key1"></param>
         /// <param name="key2"></param>
         /// <returns></returns>
-        private int Compare(TKey key1, TKey key2)
+        public int Compare(TKey key1, TKey key2)
         {
             // First use the comparer if it is set
             if (_comparer != null)
@@ -98,6 +91,13 @@ namespace Swordfish.NET.Collections
             return string.Compare(key1.ToString(), key2.ToString(), StringComparison.InvariantCultureIgnoreCase);
         }
         private bool _defaultCompareFailed = false;
+
+        #endregion Public Methods
+
+        // ************************************************************************
+        // Private Methods
+        // ************************************************************************
+        #region Private Methods
 
         /// <summary>
         /// Searches for the index of the insertion point for the key passed in such that

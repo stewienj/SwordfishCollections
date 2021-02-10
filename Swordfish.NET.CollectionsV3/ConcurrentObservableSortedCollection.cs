@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Linq;
 
@@ -47,6 +48,14 @@ namespace Swordfish.NET.Collections
             );
         }
 
+        public override void Reset(IList<T> items) =>
+            DoReadWriteNotify(
+              () => new OldAndNew(ImmutableList.ToArray(),items.OrderBy(x => x, _sorter).ToList()),
+              (oldAndNew) => ImmutableList<T>.Empty.AddRange(oldAndNew.New),
+              (oldAndNew) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)oldAndNew.Old, 0),
+              (oldAndNew) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)oldAndNew.New, 0)
+            );
+
         public override void Insert(int index, T item)
         {
             Add(item);
@@ -54,21 +63,27 @@ namespace Swordfish.NET.Collections
 
         public override void InsertRange(int index, IList<T> items)
         {
-            base.InsertRange(index, items);
+            AddRange(items);
         }
 
         public override T this[int index]
         {
-            get
-            {
-                return base[index];
-            }
-
+            get=> base[index];
             set
             {
                 RemoveAt(index);
                 Add(value);
             }
+        }
+
+        private class OldAndNew {
+            public OldAndNew(T[] old, List<T> @new)
+            {
+                Old = old;
+                New = @new;
+            }
+            public T[] Old;
+            public List<T> New;
         }
     }
 }

@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace Swordfish.NET.UnitTestV3
 {
-    [TestClass()]
+    [TestClass]
     public class ConcurrentObservableSortedDictionaryTests
     {
 
-        [TestMethod()]
+        [TestMethod]
         public void AddTest()
         {
             int _testCollectionCount = 10;
@@ -236,49 +236,49 @@ namespace Swordfish.NET.UnitTestV3
 
             /*
 
-            [TestMethod()]
+            [TestMethod]
             public void AddRangeTest()
             {
               Assert.Fail();
             }
 
-            [TestMethod()]
+            [TestMethod]
             public void RemoveTest()
             {
               Assert.Fail();
             }
 
-            [TestMethod()]
+            [TestMethod]
             public void RemoveRangeTest()
             {
               Assert.Fail();
             }
 
-            [TestMethod()]
+            [TestMethod]
             public void ToStringTest()
             {
               Assert.Fail();
             }
 
-            [TestMethod()]
+            [TestMethod]
             public void GetEnumeratorTest()
             {
               Assert.Fail();
             }
 
-            [TestMethod()]
+            [TestMethod]
             public void ClearTest()
             {
               Assert.Fail();
             }
 
-            [TestMethod()]
+            [TestMethod]
             public void ContainsTest()
             {
               Assert.Fail();
             }
 
-            [TestMethod()]
+            [TestMethod]
             public void CopyToTest()
             {
               Assert.Fail();

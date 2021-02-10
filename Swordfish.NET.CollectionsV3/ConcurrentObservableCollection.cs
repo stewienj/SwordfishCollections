@@ -123,7 +123,7 @@ namespace Swordfish.NET.Collections
               () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items)
             );
 
-        public void Reset(IList<T> items) =>
+        public virtual void Reset(IList<T> items) =>
             DoReadWriteNotify(
               () => ImmutableList.ToArray(),
               (oldItems) => ImmutableList<T>.Empty.AddRange(items),
