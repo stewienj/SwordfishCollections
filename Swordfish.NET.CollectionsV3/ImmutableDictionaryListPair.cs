@@ -37,6 +37,12 @@ namespace Swordfish.NET.Collections
             List = list;
         }
 
+        public ImmutableDictionaryListPair<TKey, TValue> WithComparers(IEqualityComparer<TKey> keyComparer)
+        {
+            return new ImmutableDictionaryListPair<TKey, TValue>(
+                dictionary: Dictionary.WithComparers(keyComparer: keyComparer), list: List);
+        }
+
         public ImmutableDictionaryListPair<TKey, TValue> Add(KeyValuePair<TKey, TValue> pair)
         {
             var endNode = List.Any() ? List[List.Count - 1] : null;

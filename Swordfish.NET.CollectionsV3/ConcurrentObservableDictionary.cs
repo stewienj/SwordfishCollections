@@ -34,7 +34,11 @@ namespace Swordfish.NET.Collections
         /// it the default.
         /// </summary>
         /// <param name="isThreadSafe"></param>
-        public ConcurrentObservableDictionary(bool isMultithreaded) : base(isMultithreaded, ImmutableDictionaryListPair<TKey, TValue>.Empty)
+        public ConcurrentObservableDictionary(bool isMultithreaded, IEqualityComparer<TKey> keyComparer = null)
+            : base(isMultithreaded,
+                  keyComparer == null
+                  ? ImmutableDictionaryListPair<TKey, TValue>.Empty
+                  : ImmutableDictionaryListPair<TKey, TValue>.Empty.WithComparers(keyComparer: keyComparer))
         {
             PropertyChanged += (s, e) =>
             {

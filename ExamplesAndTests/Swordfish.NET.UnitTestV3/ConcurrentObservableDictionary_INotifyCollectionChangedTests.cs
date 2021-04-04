@@ -231,5 +231,68 @@ namespace Swordfish.NET.UnitTestV3
 
         bool CollectionsAreEqual(IEnumerable<int> collectionA, IList collectionB) =>
             collectionA.Zip(collectionB.OfType<int>(), (a, b) => a == b).All(c => c);
+
+        [TestMethod]
+        public void Test_ConcurrentObservableDictionary_With_EqualityComparer()
+        {
+            BoxEqualityComparer boxEqC = new BoxEqualityComparer();
+
+            var boxes = new Dictionary<Box, string>(boxEqC);
+
+            var redBox = new Box(4, 3, 4);
+            boxes.Add(redBox, "red");
+
+            var blueBox = new Box(4, 3, 4);
+            Assert.ThrowsException<ArgumentException>(
+                action: () => boxes.Add(blueBox, "blue"),
+                message: "An item with the same key has already been added. Key: (4, 3, 4)");
+
+            var greenBox = new Box(3, 4, 3);
+            boxes.Add(greenBox, "green");
+            Console.WriteLine();
+
+            Assert.AreEqual(2, boxes.Count);
+        }
+
+        public class Box
+        {
+            public Box(int h, int l, int w)
+            {
+                this.Height = h;
+                this.Length = l;
+                this.Width = w;
+            }
+
+            public int Height { get; set; }
+            public int Length { get; set; }
+            public int Width { get; set; }
+
+            public override String ToString()
+            {
+                return String.Format("({0}, {1}, {2})", Height, Length, Width);
+            }
+        }
+
+        class BoxEqualityComparer : IEqualityComparer<Box>
+        {
+            public bool Equals(Box b1, Box b2)
+            {
+                if (b2 == null && b1 == null)
+                    return true;
+                else if (b1 == null || b2 == null)
+                    return false;
+                else if (b1.Height == b2.Height && b1.Length == b2.Length
+                                    && b1.Width == b2.Width)
+                    return true;
+                else
+                    return false;
+            }
+
+            public int GetHashCode(Box bx)
+            {
+                int hCode = bx.Height ^ bx.Length ^ bx.Width;
+                return hCode.GetHashCode();
+            }
+        }
     }
 }
