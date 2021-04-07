@@ -1,0 +1,98 @@
+﻿<UserControl x:Class="DataGridGroupSortFilterUltimateExample.Controls.DataGridEditableTestControlBasic"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:aux="clr-namespace:DataGridGroupSortFilterUltimateExample.Auxilary"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+      <ResourceDictionary Source="pack://application:,,,/DataGridGroupSortFilterUltimateExample;component/Resources/GroupStyles.xaml"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <!-- The DataGrid Control -->
+        
+        <DataGrid Grid.Column="0"
+                  ItemsSource="{Binding EditableProjectList}"
+                  CanUserAddRows="False"
+                  VirtualizingPanel.IsVirtualizing="True"
+                  VirtualizingPanel.IsVirtualizingWhenGrouping="True">
+
+            <!-- Triggers convert UI Widget events into commands, which is convenient for MVVM -->
+            <i:Interaction.Triggers>
+                <!-- This signals the view model to put a pause on updates else the data grid jumps out of editing mode when an update occurs -->
+                <i:EventTrigger EventName="BeginningEdit">
+                    <i:InvokeCommandAction Command="{Binding BeginningEditCommand}"/>
+                </i:EventTrigger>
+                <!-- Tell the view model it's ok to update the collection again -->
+                <!-- Use CurrentCellChanged event, as the ending-edit events occur before the edit is commited (and thus the edit gets lost) -->
+                <i:EventTrigger EventName="CurrentCellChanged">
+                    <i:InvokeCommandAction Command="{Binding CellChangedCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+            <!-- Behaviours let you augment a control with some more code behind -->
+            <i:Interaction.Behaviors>
+                <aux:GroupSortAndFilterBehavior x:Name="_groupSortFilterBehavior" Filter="{Binding Filter}">
+                    <!-- A list of column/property names to sort on -->
+                    <aux:GroupSortAndFilterBehavior.SortDescriptions>
+                        <scm:SortDescription PropertyName="ProjectName"/>
+                        <scm:SortDescription PropertyName="CompleteStatus" />
+                        <scm:SortDescription PropertyName="DueDate" />
+                    </aux:GroupSortAndFilterBehavior.SortDescriptions>
+                    <!-- A list of column/property names to group on -->
+                    <aux:GroupSortAndFilterBehavior.GroupDescriptions>
+                        <PropertyGroupDescription PropertyName="ProjectName"/>
+                        <PropertyGroupDescription PropertyName="CompleteStatus"/>
+                    </aux:GroupSortAndFilterBehavior.GroupDescriptions>
+                </aux:GroupSortAndFilterBehavior>
+            </i:Interaction.Behaviors>
+
+            <DataGrid.GroupStyle>
+                <!-- Style for groups at top level. -->
+                <GroupStyle ContainerStyle="{StaticResource ResourceKey=TopLevelStyle}"/>
+                <!-- Style for groups under the top level. -->
+                <GroupStyle HeaderTemplate="{StaticResource ResourceKey=LowerLevelStyle}"/>
+            </DataGrid.GroupStyle>
+        </DataGrid>
+
+
+        <!-- The Right Panel showing grouping, sorting and filtering -->
+        
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <GroupBox Header="Group Descriptions" Grid.Row="0">
+                <ListView ItemsSource="{Binding Source={x:Reference _groupSortFilterBehavior}, Path=GroupDescriptions}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding PropertyName}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </GroupBox>
+            <GroupBox Header="Sort Descriptions" Grid.Row="1">
+                <ListView ItemsSource="{Binding Source={x:Reference _groupSortFilterBehavior}, Path=SortDescriptions}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="150" Header="Property" DisplayMemberBinding="{Binding PropertyName}"/>
+                            <GridViewColumn Width="150" Header="Direction" DisplayMemberBinding="{Binding Direction}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </GroupBox>
+            <GroupBox Header="Filtering" Grid.Row="2">
+                <CheckBox IsChecked="{Binding DoCompletedFiltering}">Filter Completed</CheckBox>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</UserControl>
