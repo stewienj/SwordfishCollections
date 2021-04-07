@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net461</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resources\Thumbs_Up.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Page Remove="Resources\GroupStyles.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Swordfish.NET.CollectionsV3\Swordfish.NET.CollectionsV3.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\GroupStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+  </ItemGroup>
+
+</Project>
