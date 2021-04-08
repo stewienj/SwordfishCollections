@@ -25,6 +25,11 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                 var descriptor = DependencyPropertyDescriptor.FromProperty(ItemsControl.ItemsSourceProperty, typeof(ItemsControl));
                 descriptor.AddValueChanged(itemsControl, ItemsControl_ItemsSourceChanged);
                 ItemsControl_ItemsSourceChanged(itemsControl, EventArgs.Empty);
+
+                itemsControl.TargetUpdated += (s, e) =>
+                {
+                    string test = "test";
+                };
             }
 
             if (AssociatedObject is DataGrid dataGrid)
@@ -183,6 +188,10 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
 
                     if (_collectionView != null)
                     {
+                        ((ICollectionViewLiveShaping)_collectionView).IsLiveFiltering = true;
+                        ((ICollectionViewLiveShaping)_collectionView).IsLiveGrouping = true;
+                        ((ICollectionViewLiveShaping)_collectionView).IsLiveSorting = true;
+
                         _collectionView.Filter = Filter;
 
                         // Copy group descriptions

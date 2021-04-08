@@ -333,7 +333,7 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
                     new SortDescriptionOption(true, "ProjectName"),
                     new SortDescriptionOption(false, "TaskName"),
                     new SortDescriptionOption(false, "DueDate"),
-                    new SortDescriptionOption(true, "CompleteStatus"),
+                    new SortDescriptionOption(true, "Status"),
                 }
             );
 
@@ -346,7 +346,7 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
                     new GroupDescriptionOption(true, "ProjectName"),
                     new GroupDescriptionOption(false, "TaskName"),
                     new GroupDescriptionOption(false, "DueDate"),
-                    new GroupDescriptionOption(true, "CompleteStatus"),
+                    new GroupDescriptionOption(true, "Status"),
                 }
             );
 
@@ -369,7 +369,7 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
                     if (_doCompletedFiltering)
                     {
                         Filter = p => p is ProjectDetails projectDetails ?
-                                projectDetails.CompleteStatus == CompleteStatus.Active :
+                                projectDetails.Status == CompleteStatus.Active :
                                 true;
                     }
                     else
@@ -399,6 +399,15 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
                 }
             }
         }
+
+        private ProjectDetails _selectedProjectDetails = null;
+        public ProjectDetails SelectedProjectDetails
+        {
+            get => _selectedProjectDetails;
+            set => SetProperty(ref _selectedProjectDetails, value);
+        }
+
+        public ObservableCollection<ProjectDetails> MultiSelectedProjectDetails { get; } = new ObservableCollection<ProjectDetails>();
 
         #endregion Properties
     }

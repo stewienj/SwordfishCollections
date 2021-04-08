@@ -43,13 +43,13 @@
                     <!-- A list of column/property names to sort on -->
                     <aux:GroupSortAndFilterBehavior.SortDescriptions>
                         <scm:SortDescription PropertyName="ProjectName"/>
-                        <scm:SortDescription PropertyName="CompleteStatus" />
+                        <scm:SortDescription PropertyName="Status" />
                         <scm:SortDescription PropertyName="DueDate" />
                     </aux:GroupSortAndFilterBehavior.SortDescriptions>
                     <!-- A list of column/property names to group on -->
                     <aux:GroupSortAndFilterBehavior.GroupDescriptions>
                         <PropertyGroupDescription PropertyName="ProjectName"/>
-                        <PropertyGroupDescription PropertyName="CompleteStatus"/>
+                        <PropertyGroupDescription PropertyName="Status"/>
                     </aux:GroupSortAndFilterBehavior.GroupDescriptions>
                 </aux:GroupSortAndFilterBehavior>
             </i:Interaction.Behaviors>

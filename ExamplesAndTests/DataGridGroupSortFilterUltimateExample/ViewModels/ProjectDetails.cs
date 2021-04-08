@@ -19,7 +19,7 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
         private string _projectName = string.Empty;
         private string _taskName = string.Empty;
         private DateTime _dueDate = DateTime.Now;
-        private CompleteStatus _completeStatus = CompleteStatus.Active;
+        private CompleteStatus _status = CompleteStatus.Active;
 
         private static int _itemCount = 0;
 
@@ -31,13 +31,13 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
                 ProjectName = "Project " + ((i % 3) + 1).ToString(),
                 TaskName = "Task " + i.ToString().PadLeft(2, '0'),
                 DueDate = DateTime.Now.AddDays(i),
-                CompleteStatus = (i % 2 == 0) ? CompleteStatus.Complete : CompleteStatus.Active
+                Status = (i % 2 == 0) ? CompleteStatus.Complete : CompleteStatus.Active
             };
         }
 
         public override string ToString()
         {
-            return $"{ProjectName} {TaskName} Due {DueDate} CompleteStatus: {CompleteStatus}";
+            return $"{ProjectName} {TaskName} Due {DueDate} Status: {Status}";
         }
 
         // Public properties.
@@ -59,10 +59,10 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
             set => SetProperty(ref _dueDate, value);
         }
 
-        public CompleteStatus CompleteStatus
+        public CompleteStatus Status
         {
-            get => _completeStatus;
-            set => SetProperty(ref _completeStatus, value);
+            get => _status;
+            set => SetProperty(ref _status, value);
         }
 
     }

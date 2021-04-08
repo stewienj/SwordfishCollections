@@ -9,7 +9,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <ResourceDictionary Source="pack://application:,,,/DataGridGroupSortFilterUltimateExample;component/Resources/GroupStyles.xaml"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DataGridGroupSortFilterUltimateExample;component/Resources/GroupStyles.xaml"/>
+                <ResourceDictionary>
+                    <Style TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
+                        <Setter Property="HeaderTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <TextBlock FontWeight="Bold" Text="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType=GroupBox, AncestorLevel=1}, Path=Header}"/>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -20,6 +35,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -33,26 +49,29 @@
                 </Grid.ColumnDefinitions>
                 <Border BorderBrush="Black" BorderThickness="1" Background="Cornsilk" CornerRadius="8" Grid.Column="0" Grid.Row="0" Padding="8" Margin="4">
                     <TextBlock TextWrapping="Wrap">
-                Below is a data grid with MVVM based grouping, sorting and filtering, using a behavior class
-                called GroupSortAndFilterBehavior.
-                <LineBreak/><LineBreak/>
-                Click on the column headings to change the sort order.
-                The sorting list on the right will change accordingly.
-                <LineBreak/><LineBreak/>
-                Select and Item and press DEL to remove it, add items one at a time, or in an automated fashion
-                by using the buttons underneath the DataGrid.
-                <LineBreak/><LineBreak/>
-                Double click an item's cell to edit the text in that cell, even while items are being added.
+                        Below is a data grid with MVVM based grouping, sorting and filtering, using a behavior class
+                        called GroupSortAndFilterBehavior.
+                        <LineBreak/><LineBreak/>
+                        Click on the column headings to change the sort order.
+                        The sorting list on the right will change accordingly.
+                        <LineBreak/><LineBreak/>
+                        Select and Item and press DEL to remove it, add items one at a time, or in an automated fashion
+                        by using the buttons underneath the DataGrid.
+                        <LineBreak/><LineBreak/>
+                        Double click an item's cell to edit the text in that cell, even while items are being added.
                     </TextBlock>
                 </Border>
 
                 <Border BorderBrush="Black" BorderThickness="1" Background="Cornsilk" CornerRadius="8" Grid.Column="1" Grid.Row="0" Padding="8" Margin="4">
                     <TextBlock TextWrapping="Wrap">
-                Below are the grouping, sorting and filtering options.
-                <LineBreak/><LineBreak/>
-                Click the IsActive check boxes to turn on or off the
-                sorting and filtering by the corresponding property, or drag and drop the items to change the order in which
-                they are applied.
+                        Below are the grouping, sorting and filtering options.
+                        <LineBreak/><LineBreak/>
+                        Click the IsActive check boxes to turn on or off the
+                        sorting and filtering by the corresponding property, or drag and drop the items to change the order in which
+                        they are applied.
+                        <LineBreak/><LineBreak/>
+                        Multi-Selected items in the DataGrid appear in the list at the bottom. Items
+                        can be selected and deleted from the list to remove their selection in the DataGrid.
                     </TextBlock>
                 </Border>
             </Grid>
@@ -63,6 +82,8 @@
         <GroupBox Header="DataGrid" Grid.Column="0" Grid.Row="1">
             <DataGrid
                   ItemsSource="{Binding EditableProjectList}"
+                  SelectedValue="{Binding SelectedProjectDetails}"
+                  aux:DataGridSelectedItemsBinding.SelectedValues="{Binding MultiSelectedProjectDetails}"
                   CanUserAddRows="False"
                   VirtualizingPanel.IsVirtualizing="True"
                   VirtualizingPanel.IsVirtualizingWhenGrouping="True">
@@ -97,21 +118,29 @@
             </DataGrid>
         </GroupBox>
 
-        <Grid Grid.Row="2">
+
+        <GroupBox Header="Selected ProjectDetails" Grid.Row="2">
+            <TextBlock Text="{Binding SelectedProjectDetails}"/>
+        </GroupBox>
+        
+        <!-- Buttons underneath DataGrid -->
+        
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <ToggleButton Grid.Column="0" IsChecked="{Binding ContinuouslyAddItems}">Add Item Every Second</ToggleButton>
+            <ToggleButton Grid.Column="0" IsChecked="{Binding ContinuouslyAddItems}">Toggle Add Item Every Second</ToggleButton>
             <Button Grid.Column="1" Command="{Binding AddSingleItemCommand}">Add a Single Item</Button>
         </Grid>
 
         <!-- The Right Panel showing grouping, sorting and filtering -->
 
-        <Grid Grid.Column="1" Grid.Row="1" Grid.RowSpan="2">
+        <Grid Grid.Column="1" Grid.Row="1" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
@@ -181,6 +210,10 @@
             
             <GroupBox Header="Filtering" Grid.Row="2">
                 <CheckBox IsChecked="{Binding DoCompletedFiltering}">Filter Out Completed Tasks</CheckBox>
+            </GroupBox>
+
+            <GroupBox Header="Multi Selected ProjectDetails" Grid.Row="3">
+                <DataGrid ItemsSource="{Binding MultiSelectedProjectDetails}" CanUserAddRows="False"/>
             </GroupBox>
         </Grid>
     </Grid>
