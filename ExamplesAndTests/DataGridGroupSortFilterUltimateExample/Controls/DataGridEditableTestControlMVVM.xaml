@@ -213,7 +213,7 @@
             </GroupBox>
 
             <GroupBox Header="Multi Selected ProjectDetails" Grid.Row="3">
-                <DataGrid ItemsSource="{Binding MultiSelectedProjectDetails}" CanUserAddRows="False"/>
+                <DataGrid ItemsSource="{Binding MultiSelectedProjectDetails}" CanUserAddRows="False" AutoGeneratingColumn="DataGrid_AutoGeneratingColumn"/>
             </GroupBox>
         </Grid>
     </Grid>
