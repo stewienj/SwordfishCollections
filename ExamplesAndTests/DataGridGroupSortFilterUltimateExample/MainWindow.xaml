@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DataGridGroupSortFilterUltimateExample.Controls"
         mc:Ignorable="d"
-        Title="DataGrid Group/Sort/Filter Behavior Test" Height="920" Width="1000">
+        Title="DataGrid Group/Sort/Filter Behavior Test" Height="1000" Width="1000">
     <Grid>
         <TabControl>
             <TabItem Header="MVVM Grouping and Sorting">

@@ -72,6 +72,12 @@
                         <LineBreak/><LineBreak/>
                         Multi-Selected items in the DataGrid appear in the list at the bottom. Items
                         can be selected and deleted from the list to remove their selection in the DataGrid.
+                        <LineBreak/><LineBreak/>
+                        <TextBlock Foreground="Red" TextWrapping="Wrap">
+                        An exception sometimes gets thrown when editing items while they are being added.
+                        Clear all the sort descriptions below to get around this. Sort in the source collection
+                        if you need to edit while adding items to the source collection.
+                        </TextBlock>
                     </TextBlock>
                 </Border>
             </Grid>
@@ -80,13 +86,16 @@
         <!-- The DataGrid Control -->
 
         <GroupBox Header="DataGrid" Grid.Column="0" Grid.Row="1">
-            <DataGrid
-                  ItemsSource="{Binding EditableProjectList}"
-                  SelectedValue="{Binding SelectedProjectDetails}"
-                  aux:DataGridSelectedItemsBinding.SelectedValues="{Binding MultiSelectedProjectDetails}"
-                  CanUserAddRows="False"
-                  VirtualizingPanel.IsVirtualizing="True"
-                  VirtualizingPanel.IsVirtualizingWhenGrouping="True">
+            <DataGrid ItemsSource="{Binding EditableProjectList}"
+                      SelectedValue="{Binding SelectedProjectDetails}"
+                      aux:DataGridSelectedItemsBinding.SelectedValues="{Binding MultiSelectedProjectDetails}"
+                      CanUserAddRows="False"
+                      VirtualizingPanel.IsVirtualizing="True"
+                      VirtualizingPanel.IsVirtualizingWhenGrouping="True">
+                    <!-- This causes exception when adding items -->
+                    <!--
+                    AutoGeneratingColumn="DataGrid_AutoGeneratingColumn">
+                    -->
 
                 <!-- Triggers convert UI Widget events into commands, which is convenient for MVVM -->
                 <i:Interaction.Triggers>

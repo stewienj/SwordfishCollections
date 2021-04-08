@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xaml.Behaviors;
+using Swordfish.NET.Collections;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +15,8 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
 {
     public class GroupSortAndFilterBehavior : Behavior<ItemsControl>
     {
+        private bool _liveGroupSortFiltering = true;
+
         /// <summary>
         /// Attaches to an ItemsControl
         /// </summary>
@@ -29,7 +33,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
 
             if (AssociatedObject is DataGrid dataGrid)
             {
-                dataGrid.Sorting += DataGrid_Sorting;
+                dataGrid.Sorting += DataGrid_UserClickedOnHeaderSorting;
             }
 
             // Add hooks to when GroupDescriptions and SortDescriptions change
@@ -38,7 +42,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
             HookNewSortDescriptionsAndRefresh(SortDescriptions);
         }
 
-        private void DataGrid_Sorting(object sender, DataGridSortingEventArgs e)
+        private void DataGrid_UserClickedOnHeaderSorting(object sender, DataGridSortingEventArgs e)
         {
             var sortMemberPath = e.Column.SortMemberPath;
             var direction = e.Column.SortDirection ?? ListSortDirection.Ascending;
@@ -87,7 +91,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                 notify.CollectionChanged += GroupDescriptions_CollectionChanged;
             }
 
-            if (CollectionView != null)
+            if (CollectionView != null && _liveGroupSortFiltering)
             {
                 CollectionView.GroupDescriptions.Clear();
                 if (groupDesciptions != null)
@@ -107,7 +111,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                 notify.CollectionChanged += SortDescriptions_CollectionChanged;
             }
 
-            if (CollectionView != null)
+            if (CollectionView != null && _liveGroupSortFiltering)
             {
                 CollectionView.SortDescriptions.Clear();
                 if (sortDesciptions != null)
@@ -156,7 +160,24 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
         private void SortDescriptions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             HookNewSortDescriptionsAndRefresh(SortDescriptions.ToList());
+            UpdateLiveGroupSortFiltering();
         }
+
+        private void CollectionView_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (_collectionView is ListCollectionView listCollectionView)
+            {
+                switch (e.PropertyName)
+                {
+                    case nameof(listCollectionView.IsAddingNew):
+                    case nameof(listCollectionView.IsEditingItem):
+                        _liveGroupSortFiltering = !(listCollectionView.IsEditingItem || listCollectionView.IsAddingNew);
+                        UpdateLiveGroupSortFiltering();
+                        break;
+                }
+            }
+        }
+
 
         private ICollectionView _collectionView = null;
         public ICollectionView CollectionView
@@ -167,14 +188,9 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                 // Check if the collection view is changing
                 if (_collectionView != value)
                 {
-
-                    // Unhook the old filtering, grouping, and sorting from the old collection view
-
-                    if (_collectionView != null)
+                    if (_collectionView is INotifyPropertyChanged oldPropertyChanged)
                     {
-                        _collectionView.Filter = null;
-                        _collectionView.GroupDescriptions.Clear();
-                        _collectionView.SortDescriptions.Clear();
+                        oldPropertyChanged.PropertyChanged -= CollectionView_PropertyChanged;
                     }
 
                     _collectionView = value;
@@ -183,9 +199,12 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
 
                     if (_collectionView != null)
                     {
-                        ((ICollectionViewLiveShaping)_collectionView).IsLiveFiltering = true;
-                        ((ICollectionViewLiveShaping)_collectionView).IsLiveGrouping = true;
-                        ((ICollectionViewLiveShaping)_collectionView).IsLiveSorting = true;
+                        if (_collectionView is INotifyPropertyChanged newPropertyChanged)
+                        {
+                            newPropertyChanged.PropertyChanged += CollectionView_PropertyChanged;
+                        }
+
+                        UpdateLiveGroupSortFiltering();
 
                         _collectionView.Filter = Filter;
 
@@ -198,6 +217,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                 }
             }
         }
+
 
         /// <summary>
         /// Gets or sets a collection of System.ComponentModel.GroupDescription objects that
@@ -283,5 +303,16 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                       behavior.CollectionView.Filter = e.NewValue as Predicate<object>;
                   }
               }));
+
+        public void UpdateLiveGroupSortFiltering()
+        {
+            if (CollectionView is ICollectionViewLiveShaping liveShaping)
+            {
+                liveShaping.IsLiveFiltering = _liveGroupSortFiltering;
+                liveShaping.IsLiveGrouping = _liveGroupSortFiltering;
+                liveShaping.IsLiveSorting = _liveGroupSortFiltering && SortDescriptions.Count >0;
+
+            }
+        }
     }
 }

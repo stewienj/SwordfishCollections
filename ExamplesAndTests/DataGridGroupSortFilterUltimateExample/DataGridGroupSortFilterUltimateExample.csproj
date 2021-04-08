@@ -5,6 +5,7 @@
     <TargetFramework>net461</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\Thumbs_Up.ico</ApplicationIcon>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

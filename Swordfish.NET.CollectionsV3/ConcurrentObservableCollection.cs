@@ -30,6 +30,7 @@ namespace Swordfish.NET.Collections
     // otherwise everything that uses this needs to reference the corresponding assembly
     ConcurrentObservableBase<T, IList<T>>,
     IConcurrentObservableList<T>,
+    IEditableCollection,
     IList<T>,
     IList,
     ISerializable
@@ -152,7 +153,9 @@ namespace Swordfish.NET.Collections
         /// </summary>
         public void BeginEditingItem()
         {
+            _lock.EnterWriteLock();
             _editableCollectionView.FreezeUpdates = true;
+            _lock.ExitWriteLock();
         }
 
         /// <summary>
@@ -164,16 +167,10 @@ namespace Swordfish.NET.Collections
         /// </summary>
         public void EndedEditingItem()
         {
-            // Check the FreezeUpdates flag is set, else we are not in the middle of an edit.
-            if (_editableCollectionView.FreezeUpdates)
-            {
-                // Clear flag
-                _editableCollectionView.FreezeUpdates = false;
-                // Assign new value to CollectionView so it is recognised as different to existing value
-                _editableCollectionView = _editableCollectionView.UpdateSource((ImmutableList<T>)_internalCollection);
-                // Raise event to display updated collection
-                RaisePropertyChanged(nameof(EditableCollectionView));
-            }
+            // Clear flag
+            _lock.EnterWriteLock();
+            _editableCollectionView.FreezeUpdates = false;
+            _lock.ExitWriteLock();
         }
 
         /// <summary>

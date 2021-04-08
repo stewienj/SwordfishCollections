@@ -28,7 +28,7 @@ namespace Swordfish.NET.Collections
         /// The lock that controls read/write access to the base collection when it's been initialized as thread safe.
         /// Allows updating the collection from multiple threads.
         /// </summary>
-        private ReaderWriterLockSlim _lock;
+        protected ReaderWriterLockSlim _lock;
 
         /// <summary>
         /// The internal collection that holds all the keys, but the keys then point to linklist node which holds the values.
