@@ -25,11 +25,6 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                 var descriptor = DependencyPropertyDescriptor.FromProperty(ItemsControl.ItemsSourceProperty, typeof(ItemsControl));
                 descriptor.AddValueChanged(itemsControl, ItemsControl_ItemsSourceChanged);
                 ItemsControl_ItemsSourceChanged(itemsControl, EventArgs.Empty);
-
-                itemsControl.TargetUpdated += (s, e) =>
-                {
-                    string test = "test";
-                };
             }
 
             if (AssociatedObject is DataGrid dataGrid)
