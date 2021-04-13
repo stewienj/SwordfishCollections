@@ -112,10 +112,13 @@
 
                 <!-- Behaviours let you augment a control with some more code behind -->
                 <i:Interaction.Behaviors>
-                    <aux:GroupSortAndFilterBehavior x:Name="_groupSortFilterBehavior"
-                                               SortDescriptions="{Binding SortDescriptions}"
-                                               GroupDescriptions="{Binding GroupDescriptions}"
-                                               Filter="{Binding Filter}"/>
+                    <!-- All the parameters are optional -->
+                    <aux:GroupSortAndFilterBehavior SortDescriptions="{Binding SortDescriptions}"
+                                                    GroupDescriptions="{Binding GroupDescriptions}"
+                                                    Filter="{Binding Filter}"
+                                                    EnableLiveSorting="{Binding EnableLiveSorting}"
+                                                    EnableLiveGrouping="{Binding EnableLiveGrouping}"
+                                                    EnableLiveFiltering="{Binding EnableLiveFiltering}"/>
                 </i:Interaction.Behaviors>
 
                 <DataGrid.GroupStyle>
@@ -149,6 +152,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
@@ -215,13 +219,26 @@
                 </ListView>
             </GroupBox>
 
+
             <!-- Completed Filter Toggle -->
             
             <GroupBox Header="Filtering" Grid.Row="2">
-                <CheckBox IsChecked="{Binding DoCompletedFiltering}">Filter Out Completed Tasks</CheckBox>
+                <CheckBox IsChecked="{Binding FilterOutCompleted}">Filter Out Completed Tasks</CheckBox>
             </GroupBox>
 
-            <GroupBox Header="Multi Selected ProjectDetails" Grid.Row="3">
+            <!-- Live Update Options -->
+
+            <GroupBox Header="Live Grouping/Sorting/Filtering Options" Grid.Row="3">
+                <StackPanel>
+                    <CheckBox IsChecked="{Binding EnableLiveGrouping}" ToolTip="Recalculate grouping when an item's property changes">Enable Live Grouping</CheckBox>
+                    <CheckBox IsChecked="{Binding EnableLiveSorting}" ToolTip="Recalculate sorting when an item's property changes">Enable Live Sorting</CheckBox>
+                    <CheckBox IsChecked="{Binding EnableLiveFiltering}" ToolTip="Recalculate filtering when an item's property changes">Enable Live Filtering</CheckBox>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- A List of Selected Items -->
+
+            <GroupBox Header="Multi Selected ProjectDetails" Grid.Row="4">
                 <DataGrid ItemsSource="{Binding MultiSelectedProjectDetails}" CanUserAddRows="False" AutoGeneratingColumn="DataGrid_AutoGeneratingColumn"/>
             </GroupBox>
         </Grid>

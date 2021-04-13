@@ -15,7 +15,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
 {
     public class GroupSortAndFilterBehavior : Behavior<ItemsControl>
     {
-        private bool _liveGroupSortFiltering = true;
+        private bool _isBeingEdited = false;
 
         /// <summary>
         /// Attaches to an ItemsControl
@@ -91,7 +91,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                 notify.CollectionChanged += GroupDescriptions_CollectionChanged;
             }
 
-            if (CollectionView != null && _liveGroupSortFiltering)
+            if (CollectionView != null && !_isBeingEdited)
             {
                 CollectionView.GroupDescriptions.Clear();
                 if (groupDesciptions != null)
@@ -111,7 +111,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                 notify.CollectionChanged += SortDescriptions_CollectionChanged;
             }
 
-            if (CollectionView != null && _liveGroupSortFiltering)
+            if (CollectionView != null && !_isBeingEdited)
             {
                 CollectionView.SortDescriptions.Clear();
                 if (sortDesciptions != null)
@@ -171,7 +171,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                 {
                     case nameof(listCollectionView.IsAddingNew):
                     case nameof(listCollectionView.IsEditingItem):
-                        _liveGroupSortFiltering = !(listCollectionView.IsEditingItem || listCollectionView.IsAddingNew);
+                        _isBeingEdited = (listCollectionView.IsEditingItem || listCollectionView.IsAddingNew);
                         UpdateLiveGroupSortFiltering();
                         break;
                 }
@@ -304,14 +304,68 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                   }
               }));
 
+
+        public bool EnableLiveGrouping
+        {
+            get { return (bool)GetValue(EnableLiveGroupingProperty); }
+            set { SetValue(EnableLiveGroupingProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for EnableLiveGrouping.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty EnableLiveGroupingProperty =
+            DependencyProperty.Register("EnableLiveGrouping", typeof(bool), typeof(GroupSortAndFilterBehavior), new PropertyMetadata(true, (s, _)=>
+            {
+                if (s is GroupSortAndFilterBehavior behavior)
+                {
+                    behavior.UpdateLiveGroupSortFiltering();
+                }
+            }));
+
+
+        public bool EnableLiveSorting
+        {
+            get { return (bool)GetValue(EnableLiveSortingProperty); }
+            set { SetValue(EnableLiveSortingProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for EnableLiveSorting.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty EnableLiveSortingProperty =
+            DependencyProperty.Register("EnableLiveSorting", typeof(bool), typeof(GroupSortAndFilterBehavior), new PropertyMetadata(true, (s, _) =>
+            {
+                if (s is GroupSortAndFilterBehavior behavior)
+                {
+                    behavior.UpdateLiveGroupSortFiltering();
+                }
+            }));
+
+
+        public bool EnableLiveFiltering
+        {
+            get { return (bool)GetValue(EnableLiveFilteringProperty); }
+            set { SetValue(EnableLiveFilteringProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for EnableLiveFiltering.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty EnableLiveFilteringProperty =
+            DependencyProperty.Register("EnableLiveFiltering", typeof(bool), typeof(GroupSortAndFilterBehavior), new PropertyMetadata(true, (s, _) =>
+            {
+                if (s is GroupSortAndFilterBehavior behavior)
+                {
+                    behavior.UpdateLiveGroupSortFiltering();
+                }
+            }));
+
         public void UpdateLiveGroupSortFiltering()
         {
             if (CollectionView is ICollectionViewLiveShaping liveShaping)
             {
-                liveShaping.IsLiveFiltering = _liveGroupSortFiltering;
-                liveShaping.IsLiveGrouping = _liveGroupSortFiltering;
-                liveShaping.IsLiveSorting = _liveGroupSortFiltering && SortDescriptions.Count >0;
-
+                liveShaping.IsLiveFiltering = !_isBeingEdited && EnableLiveFiltering;
+                liveShaping.IsLiveGrouping = !_isBeingEdited && EnableLiveGrouping && GroupDescriptions.Count >0;
+                liveShaping.IsLiveSorting = !_isBeingEdited && EnableLiveSorting && SortDescriptions.Count >0;
+            }
+            if (!_isBeingEdited)
+            {
+                CollectionView?.Refresh();
             }
         }
     }

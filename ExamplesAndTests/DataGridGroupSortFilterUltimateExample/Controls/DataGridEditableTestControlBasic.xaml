@@ -91,7 +91,7 @@
                 </ListView>
             </GroupBox>
             <GroupBox Header="Filtering" Grid.Row="2">
-                <CheckBox IsChecked="{Binding DoCompletedFiltering}">Filter Completed</CheckBox>
+                <CheckBox IsChecked="{Binding FilterOutCompleted}">Filter Completed</CheckBox>
             </GroupBox>
         </Grid>
     </Grid>

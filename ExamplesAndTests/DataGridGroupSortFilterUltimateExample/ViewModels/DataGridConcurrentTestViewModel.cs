@@ -358,15 +358,15 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
             set => SetProperty(ref _filter, value);
         }
 
-        private bool _doCompletedFiltering = false;
-        public bool DoCompletedFiltering
+        private bool _filterOutCompleted = false;
+        public bool FilterOutCompleted
         {
-            get => _doCompletedFiltering;
+            get => _filterOutCompleted;
             set
             {
-                if (SetProperty(ref _doCompletedFiltering, value))
+                if (SetProperty(ref _filterOutCompleted, value))
                 {
-                    if (_doCompletedFiltering)
+                    if (_filterOutCompleted)
                     {
                         Filter = p => p is ProjectDetails projectDetails ?
                                 projectDetails.Status == CompleteStatus.Active :
@@ -408,6 +408,27 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
         }
 
         public ObservableCollection<ProjectDetails> MultiSelectedProjectDetails { get; } = new ObservableCollection<ProjectDetails>();
+
+        private bool _enableLiveGrouping = true;
+        public bool EnableLiveGrouping
+        {
+            get => _enableLiveGrouping;
+            set => SetProperty(ref _enableLiveGrouping, value);
+        }
+
+        private bool _enableLiveSorting = true;
+        public bool EnableLiveSorting
+        {
+            get => _enableLiveSorting;
+            set => SetProperty(ref _enableLiveSorting, value);
+        }
+
+        private bool _enableLiveFiltering = true;
+        public bool EnableLiveFiltering
+        {
+            get => _enableLiveFiltering;
+            set => SetProperty(ref _enableLiveFiltering, value);
+        }
 
         #endregion Properties
     }
