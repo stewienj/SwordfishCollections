@@ -17,6 +17,12 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
     {
         private bool _isBeingEdited = false;
 
+        public GroupSortAndFilterBehavior()
+        {
+            GroupDescriptions = new ObservableCollection<GroupDescription>();
+            SortDescriptions = new ObservableCollection<SortDescription>();
+        }
+
         /// <summary>
         /// Attaches to an ItemsControl
         /// </summary>
@@ -142,9 +148,9 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
 
         private void ItemsControl_ItemsSourceChanged(object sender, EventArgs e)
         {
-            if (sender is DataGrid dataGrid && dataGrid.ItemsSource != null)
+      if (sender is ItemsControl itemsControl && itemsControl.ItemsSource != null)
             {
-                CollectionView = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource);
+        CollectionView = CollectionViewSource.GetDefaultView(itemsControl.ItemsSource);
             }
             else
             {
@@ -235,7 +241,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
               "GroupDescriptions",
               typeof(ObservableCollection<GroupDescription>),
               typeof(GroupSortAndFilterBehavior),
-              new PropertyMetadata(new ObservableCollection<GroupDescription>(), (s, e) =>
+              new PropertyMetadata(null, (s, e) =>
               {
                   // Handle when the collection changes
                   // remove event hooks from the old collection
@@ -256,7 +262,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
         public ObservableCollection<SortDescription> SortDescriptions
         {
             get { return (ObservableCollection<SortDescription>)GetValue(SortDescriptionsProperty); }
-            set { SetValue(GroupDescriptionsProperty, value); }
+            set { SetValue(SortDescriptionsProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for GroupDescriptions.  This enables animation, styling, binding, etc...
@@ -265,7 +271,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
               "SortDescriptions",
               typeof(ObservableCollection<SortDescription>),
               typeof(GroupSortAndFilterBehavior),
-              new PropertyMetadata(new ObservableCollection<SortDescription>(), (s, e) =>
+              new PropertyMetadata(null, (s, e) =>
               {
                   // Handle when the collection changes
                   // remove event hooks from the old collection
