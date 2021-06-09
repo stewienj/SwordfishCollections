@@ -22,11 +22,9 @@ namespace RetainedSelectionTest
     /// </summary>
     public partial class MainWindow : Window
     {
-        private RetainedSelectionTestViewModel _viewModel = new RetainedSelectionTestViewModel();
-
         public MainWindow()
         {
-            DataContext = _viewModel;
+            DataContext = new RetainedSelectionTestViewModel();
             InitializeComponent();
         }
     }
