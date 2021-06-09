@@ -1,0 +1,39 @@
+﻿<Window x:Class="RetainedSelectionTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RetainedSelectionTest"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox Header="DataGrid" Grid.Column="0">
+            <DataGrid x:Name="_dataGrid" ItemsSource="{Binding TestCollection.CollectionView}" SelectedValue="{Binding SelectedPerson, Mode=TwoWay}" AutoGenerateColumns="True"/>
+        </GroupBox>
+        <GroupBox Header="ListView with GridView" Grid.Column="1">
+            <ListView  ItemsSource="{Binding TestCollection.CollectionView}" SelectedValue="{Binding SelectedPerson}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="First Name" DisplayMemberBinding="{Binding FirstName}"/>
+                        <GridViewColumn Header="Last Name" DisplayMemberBinding="{Binding LastName}"/>
+                        <GridViewColumn Header="Age" DisplayMemberBinding="{Binding Age}"/>
+                        <GridViewColumn Header="Gender" DisplayMemberBinding="{Binding Gender}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <CheckBox IsChecked="{Binding ContinuouslyAddItems}" VerticalAlignment="Center" Margin="8,4">Continuously Add People</CheckBox>
+            <Button Command="{Binding AddRandomItemCommand}" VerticalAlignment="Center" Margin="8,4">Add One Person</Button>
+            <TextBlock VerticalAlignment="Center" Margin="8,4">Selected Person: <TextBlock Text="{Binding SelectedPerson.FirstName}"/> <TextBlock Text="{Binding SelectedPerson.LastName}"/></TextBlock>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -122,7 +122,7 @@ namespace EditableDataGridTest.ViewModels
 
 
         /// <summary>
-        /// The main source source collection. You can bing to TestCollection.CollectionView or bind to TestCollectionView,
+        /// The main source source collection. You can bind to TestCollection.CollectionView or bind to TestCollectionView,
         /// they are both the same thing, but TestCollectionView shows how to shorten the path to the ItemsSource source.
         /// For an editable DataGrid you can bind to TestCollection.EditableCollectionView or bind to the EditableTestCollectionView
         /// property further down. Again they are both the same thing, just the latter is a shorter path.

@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DGGroupSortFilterExampleNor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataGridGroupSortFilterUltimateExample", "ExamplesAndTests\DataGridGroupSortFilterUltimateExample\DataGridGroupSortFilterUltimateExample.csproj", "{BA119134-A2E8-4165-B38A-65EE43F6070C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetainedSelectionTest", "ExamplesAndTests\RetainedSelectionTest\RetainedSelectionTest.csproj", "{B718F642-504D-40C9-8D62-0CD959EDC4FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,18 @@ Global
 		{BA119134-A2E8-4165-B38A-65EE43F6070C}.Release|x64.Build.0 = Release|Any CPU
 		{BA119134-A2E8-4165-B38A-65EE43F6070C}.Release|x86.ActiveCfg = Release|Any CPU
 		{BA119134-A2E8-4165-B38A-65EE43F6070C}.Release|x86.Build.0 = Release|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Debug|x64.Build.0 = Debug|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Debug|x86.Build.0 = Debug|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Release|x64.ActiveCfg = Release|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Release|x64.Build.0 = Release|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Release|x86.ActiveCfg = Release|Any CPU
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -174,6 +188,7 @@ Global
 		{9E623ADE-B634-4BE5-AEB5-3543F08CCC5B} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
 		{86A7ECEC-4EA9-4FA8-AF07-4D4B9A5E3CD4} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
 		{BA119134-A2E8-4165-B38A-65EE43F6070C} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
+		{B718F642-504D-40C9-8D62-0CD959EDC4FB} = {CEF5CE51-FB33-4634-A168-7CAD4505FFF6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD39B382-7E64-41EF-A56E-9C42E39D784F}
