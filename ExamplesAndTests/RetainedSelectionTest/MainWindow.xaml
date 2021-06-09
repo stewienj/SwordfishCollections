@@ -17,6 +17,16 @@
         </Grid.RowDefinitions>
         <GroupBox Header="DataGrid" Grid.Column="0">
             <DataGrid ItemsSource="{Binding TestCollection.CollectionView}" SelectedValue="{Binding SelectedPerson}" AutoGenerateColumns="True">
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="Brown"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Style.Triggers>
