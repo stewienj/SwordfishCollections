@@ -27,6 +27,10 @@ namespace Swordfish.NET.Collections
         {
         }
 
+        public ConcurrentObservableSortedSet(IComparer<T> comparer) : base(true, ImmutableSortedSet<T>.Empty.WithComparer(comparer))
+        {
+        }
+
         /// <summary>
         /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
         /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
@@ -198,5 +202,11 @@ namespace Swordfish.NET.Collections
             }
         }
         #endregion
+
+        public virtual T this[int index]
+        {
+            get => ((ImmutableSortedSet<T>)_internalCollection)[index];
+        }
+
     }
 }

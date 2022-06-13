@@ -27,6 +27,10 @@ namespace Swordfish.NET.Collections
         {
         }
 
+        public ConcurrentObservableHashSet(IEqualityComparer<T> comparer) : base(true, ImmutableHashSet<T>.Empty.WithComparer(comparer))
+        {
+        }
+
         /// <summary>
         /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
         /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
