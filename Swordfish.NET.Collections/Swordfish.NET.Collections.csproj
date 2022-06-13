@@ -5,7 +5,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Swordfish.NET.Collections</RootNamespace>
     <AssemblyName>Swordfish.NET.Collections</AssemblyName>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>net451</TargetFrameworks>
     <Copyright>Creative Commons</Copyright>
     <Company>Swordfish Computing Pty Ltd</Company>
     <Product>Swordfish.NET.CollectionsV3</Product>
