@@ -83,7 +83,7 @@ namespace Swordfish.NET.Collections
                   wasRemoved = newCollection != _internalCollection;
                   return newCollection;
               },
-              (index) => wasRemoved ? new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index) : null
+              (index) => wasRemoved ? new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, value, index) : null
             );
             return wasRemoved;
         }
