@@ -182,6 +182,32 @@ namespace Swordfish.NET.Collections
             return localRemovedItem;
         }
 
+        public bool TryRemove(TKey key, out TValue item)
+        {
+            var outputItemAndIndex = DoReadWriteNotify(
+              // Get the list of keys and values from the internal list
+              () => _internalCollection.GetItemAndIndex(key),
+              // remove the keys from the dictionary, remove the range from the list
+              (itemAndIndex) => _internalCollection.Remove(key),
+              // Notify which items were removed
+              (itemAndIndex) => itemAndIndex != null ? new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, itemAndIndex.Item, itemAndIndex.Index) : null
+            );
+
+            // If the return container which holds the item and its index
+            // is not null then asign the item and return true, else
+            // return false.
+            if (outputItemAndIndex != null)
+            {
+                item = outputItemAndIndex.Item.Value;
+                return true;
+            }
+            else
+            {
+                item = default(TValue);
+                return false;
+            }
+        }
+
         public bool Remove(TKey key)
         {
             var retVal = DoReadWriteNotify(

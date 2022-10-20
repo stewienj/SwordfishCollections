@@ -102,6 +102,26 @@ namespace Swordfish.NET.UnitTestV3
         }
 
         [TestMethod]
+        public void TestTryRemove()
+        {
+            var testCollection = new ConcurrentObservableDictionary<string, string>();
+            for (int i = 0; i < 10; i++)
+            {
+                testCollection.Add($"Key{i}", $"Value{i}");
+            }
+            Assert.AreEqual(10, testCollection.Count);
+            Assert.IsFalse(testCollection.TryRemove("Key10", out var value));
+            for (int i = 9; i >= 0; i--)
+            {
+                string key = $"Key{i}";
+                string expectedValue = $"Value{i}";
+                Assert.IsTrue(testCollection.TryRemove(key, out var item));
+                Assert.AreEqual(expectedValue, item);
+                Assert.AreEqual(i, testCollection.Count);
+            }
+        }
+
+        [TestMethod]
         public void TestManyOperations()
         {
             // Create some random, but unique items
