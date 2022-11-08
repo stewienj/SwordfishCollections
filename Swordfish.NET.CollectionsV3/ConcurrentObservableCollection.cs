@@ -42,8 +42,25 @@ namespace Swordfish.NET.Collections
         /// </summary>
         private EditableImmutableListBridge<T> _editableCollectionView;
 
+        // ********************************************************************
+        // Constructors
+        // ********************************************************************
+        #region Constructors
+
         public ConcurrentObservableCollection() : this(true)
         {
+        }
+
+        public ConcurrentObservableCollection(IEnumerable<T> source) : this(true)
+        {
+            if (source is IList<T> list)
+            {
+                AddRange(list);
+            }
+            else
+            {
+                AddRange(source.ToList());
+            }
         }
 
         /// <summary>
@@ -63,6 +80,8 @@ namespace Swordfish.NET.Collections
                 }
             };
         }
+
+        #endregion Constructors
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs changes)
         {
