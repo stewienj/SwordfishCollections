@@ -2,6 +2,7 @@
 using Swordfish.NET.Collections;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,6 +12,17 @@ namespace Swordfish.NET.UnitTestV3
     [TestClass]
     public class ConcurrentObservableCollectionTests
     {
+        [TestMethod]
+        public void TestConstructors()
+        {
+            var collection = new ConcurrentObservableCollection<int>(Enumerable.Range(0,100));
+            Assert.AreEqual(100, collection.Count);
+            for(int i=0; i<100; ++i)
+            {
+                Assert.AreEqual(i, collection[i]);
+            }
+        }
+
         [TestMethod]
         public void ResetNotifyTest()
         {

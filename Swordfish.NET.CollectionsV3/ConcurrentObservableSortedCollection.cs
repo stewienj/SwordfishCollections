@@ -11,12 +11,23 @@ namespace Swordfish.NET.Collections
     {
         private BinarySorter<T> _sorter;
 
-        public ConcurrentObservableSortedCollection() : this(true, null) { }
-        public ConcurrentObservableSortedCollection(bool isMultithreaded) : this(isMultithreaded, null) { }
-        public ConcurrentObservableSortedCollection(IComparer<T> comparer) : this(true, comparer) { }
-        public ConcurrentObservableSortedCollection(bool isMultithreaded, IComparer<T> comparer) : base(isMultithreaded)
+        public ConcurrentObservableSortedCollection() : this(true, null, null) { }
+        public ConcurrentObservableSortedCollection(bool isMultithreaded) : this(isMultithreaded, null, null) { }
+        public ConcurrentObservableSortedCollection(IEnumerable<T> source) : this(true, source, null) { }
+        public ConcurrentObservableSortedCollection(IComparer<T> comparer) : this(true, null, comparer) { }
+        public ConcurrentObservableSortedCollection(IEnumerable<T> source, IComparer<T> comparer) : this(true, source, comparer) { }
+        public ConcurrentObservableSortedCollection(bool isMultithreaded, IComparer<T> comparer) : this(isMultithreaded, null, comparer) { }
+        public ConcurrentObservableSortedCollection(bool isMultithreaded, IEnumerable<T> source, IComparer<T> comparer) : base(isMultithreaded)
         {
             _sorter = new BinarySorter<T>(comparer);
+            if (source is IList<T> list)
+            {
+                AddRange(list);
+            }
+            else if (source != null)
+            {
+                AddRange(source.ToList());
+            }
         }
 
         protected override int IListAdd(T item)

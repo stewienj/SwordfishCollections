@@ -69,6 +69,18 @@ namespace Swordfish.NET.UnitTestV3
         }
 
         [TestMethod]
+        public void TestConstructors()
+        {
+            var collection = new ConcurrentObservableSortedCollection<int>(Enumerable.Range(0, 100).Reverse());
+            Assert.AreEqual(100, collection.Count);
+            for (int i = 0; i < 100; ++i)
+            {
+                Assert.AreEqual(i, collection[i]);
+            }
+        }
+
+
+        [TestMethod]
         public void AddTest()
         {
             ConcurrentObservableSortedCollection<int> subject = new ConcurrentObservableSortedCollection<int>();
