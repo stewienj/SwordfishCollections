@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <UseWpf>true</UseWpf>
-    <TargetFrameworks>netcoreapp3.1;net451;net46</TargetFrameworks>
+    <TargetFrameworks>net46</TargetFrameworks>
     <Copyright>Creative Commons</Copyright>
     <Company>Swordfish Computing Pty Ltd</Company>
     <Product>Swordfish.NET.TestV3</Product>
