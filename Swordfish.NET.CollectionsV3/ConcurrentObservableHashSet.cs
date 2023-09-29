@@ -17,7 +17,7 @@ namespace Swordfish.NET.Collections
     /// <typeparam name="T"></typeparam>
     [Serializable]
     public class ConcurrentObservableHashSet<T> :
-    ConcurrentObservableBase<T, ICollection<T>>,
+    ConcurrentObservableBase<T, ImmutableHashSet<T>>,
     ICollection<T>,
     ISet<T>,
     ICollection,
@@ -44,15 +44,14 @@ namespace Swordfish.NET.Collections
         public bool Add(T value)
         {
             bool wasAdded = false;
-            DoReadWriteNotify(
-              () => _internalCollection.Count,
-              (index) =>
+            DoWriteNotify(
+              () =>
               {
-                  var newCollection = ((ImmutableHashSet<T>)_internalCollection).Add(value);
+                  var newCollection = _internalCollection.Add(value);
                   wasAdded = newCollection != _internalCollection;
                   return newCollection;
               },
-              (index) => wasAdded ? new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index) : null
+              () => wasAdded ? new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value) : null
             );
             return wasAdded;
         }
@@ -65,30 +64,25 @@ namespace Swordfish.NET.Collections
         {
             // Convert to a list off the bat, as this is used multiple times and is required to be
             // an IList for NotifyCollectionChangedEventArgs
-            if (!(values is IList<T> valuesList))
-            {
-                valuesList = values.ToList();
-            }
+            var valuesList = values as IList<T> ?? values.ToList();
 
-            DoReadWriteNotify(
-              () => _internalCollection.Count,
-              (index) => ((ImmutableHashSet<T>)_internalCollection).AddRange(valuesList),
-              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)valuesList, index)
+            DoWriteNotify(
+              () => _internalCollection.AddRange(valuesList),
+              () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)valuesList)
             );
         }
 
         public bool Remove(T value)
         {
             bool wasRemoved = false;
-            DoReadWriteNotify(
-              () => _internalCollection.Count,
-              (index) =>
+            DoWriteNotify(
+              () =>
               {
-                  var newCollection = ((ImmutableHashSet<T>)_internalCollection).Remove(value);
+                  var newCollection = _internalCollection.Remove(value);
                   wasRemoved = newCollection != _internalCollection;
                   return newCollection;
               },
-              (index) => wasRemoved ? new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index) : null
+              () => wasRemoved ? new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, value) : null
             );
             return wasRemoved;
         }
@@ -98,13 +92,10 @@ namespace Swordfish.NET.Collections
         {
             // Convert to a list off the bat, as this is used multiple times and is required to be
             // an IList for NotifyCollectionChangedEventArgs
-            if (!(values is IList<T> valuesList))
-            {
-                valuesList = values.ToList();
-            }
+            var valuesList = values as IList<T> ?? values.ToList();
 
             DoWriteNotify(
-              () => ((ImmutableHashSet<T>)_internalCollection).RemoveRange(valuesList),
+              () => _internalCollection.RemoveRange(valuesList),
               () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)valuesList)
             );
         }
@@ -112,7 +103,7 @@ namespace Swordfish.NET.Collections
         /// <summary>
         /// This is the view of the colleciton that you should be binding to with your ListView/GridView control.
         /// </summary>
-        public override IList<T> CollectionView => ((IEnumerable<T>)_internalCollection).ToList();
+        public override IList<T> CollectionView => _internalCollection.ToList();
 
         public override int Count => _internalCollection.Count;
 
@@ -159,7 +150,7 @@ namespace Swordfish.NET.Collections
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            ((ICollection)_internalCollection).CopyTo(array, arrayIndex);
+            ((ICollection<T>)_internalCollection).CopyTo(array, arrayIndex);
         }
 
         void ICollection.CopyTo(Array array, int arrayIndex) => ((ICollection)_internalCollection).CopyTo(array, arrayIndex);
@@ -178,17 +169,17 @@ namespace Swordfish.NET.Collections
 
         void ISet<T>.SymmetricExceptWith(IEnumerable<T> other) => ((ISet<T>)_internalCollection).SymmetricExceptWith(other);
 
-        bool ISet<T>.IsSubsetOf(IEnumerable<T> other) => ((ISet<T>)_internalCollection).IsSubsetOf(other);
+        bool ISet<T>.IsSubsetOf(IEnumerable<T> other) => _internalCollection.IsSubsetOf(other);
 
-        bool ISet<T>.IsSupersetOf(IEnumerable<T> other) => ((ISet<T>)_internalCollection).IsSupersetOf(other);
+        bool ISet<T>.IsSupersetOf(IEnumerable<T> other) => _internalCollection.IsSupersetOf(other);
 
-        bool ISet<T>.IsProperSupersetOf(IEnumerable<T> other) => ((ISet<T>)_internalCollection).IsProperSupersetOf(other);
+        bool ISet<T>.IsProperSupersetOf(IEnumerable<T> other) => _internalCollection.IsProperSupersetOf(other);
 
-        bool ISet<T>.IsProperSubsetOf(IEnumerable<T> other) => ((ISet<T>)_internalCollection).IsProperSubsetOf(other);
+        bool ISet<T>.IsProperSubsetOf(IEnumerable<T> other) => _internalCollection.IsProperSubsetOf(other);
 
-        bool ISet<T>.Overlaps(IEnumerable<T> other) => ((ISet<T>)_internalCollection).Overlaps(other);
+        bool ISet<T>.Overlaps(IEnumerable<T> other) => _internalCollection.Overlaps(other);
 
-        bool ISet<T>.SetEquals(IEnumerable<T> other) => ((ISet<T>)_internalCollection).SetEquals(other);
+        bool ISet<T>.SetEquals(IEnumerable<T> other) => _internalCollection.SetEquals(other);
 
         // ************************************************************************
         // ISerializable Implementation
