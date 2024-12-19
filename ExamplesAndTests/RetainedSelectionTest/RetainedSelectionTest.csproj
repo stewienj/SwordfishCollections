@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net461</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
+    <TargetFrameworks>$(WinTargetFramework)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

@@ -575,7 +575,7 @@ namespace BigCsvFileViewer.Auxiliary
                 // Add in the number of seconds since 1970/1/1
                 returnValue = returnValue.AddSeconds(fileHeader.TimeDateStamp);
                 // Adjust to local timezone
-                returnValue += TimeZone.CurrentTimeZone.GetUtcOffset(returnValue);
+                returnValue = TimeZoneInfo.ConvertTimeFromUtc(returnValue, TimeZoneInfo.Local);
 
                 return returnValue;
             }

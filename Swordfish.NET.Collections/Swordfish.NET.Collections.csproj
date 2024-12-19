@@ -5,25 +5,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Swordfish.NET.Collections</RootNamespace>
     <AssemblyName>Swordfish.NET.Collections</AssemblyName>
-    <TargetFrameworks>net451</TargetFrameworks>
     <Copyright>Creative Commons</Copyright>
     <Company>Swordfish Computing Pty Ltd</Company>
     <Product>Swordfish.NET.CollectionsV3</Product>
     <Title>Swordfish.NET.CollectionsV3</Title>
     <Version Condition=" '$(PointVersion)' == '' ">2.1.0</Version>
     <Version Condition=" '$(PointVersion)' != '' ">2.$(PointVersion)</Version>
+    <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
 </Project>

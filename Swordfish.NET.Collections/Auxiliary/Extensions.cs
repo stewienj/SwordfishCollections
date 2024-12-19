@@ -428,15 +428,16 @@ namespace Swordfish.NET.Collections.Auxiliary
       return e.SelectMany(c => f(c).Flatten(f)).Concat(e);
     }
 
-    //--------------------------------------------------------------------------------------------
+#if !NET6_0_OR_GREATER
+        //--------------------------------------------------------------------------------------------
 
-    /// <summary>
-    /// Perform a deep Copy of the object.
-    /// </summary>
-    /// <typeparam name="T">The type of object being copied.</typeparam>
-    /// <param name="source">The object instance to copy.</param>
-    /// <returns>The copied object.</returns>
-    public static T SerializableClone<T>(this T source)
+        /// <summary>
+        /// Perform a deep Copy of the object.
+        /// </summary>
+        /// <typeparam name="T">The type of object being copied.</typeparam>
+        /// <param name="source">The object instance to copy.</param>
+        /// <returns>The copied object.</returns>
+        public static T SerializableClone<T>(this T source)
     {
       if (!source.GetType().IsSerializable)
       {
@@ -458,10 +459,10 @@ namespace Swordfish.NET.Collections.Auxiliary
         return (T)formatter.Deserialize(stream);
       }
     }
+#endif
+        //--------------------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------------------------
-
-    private static Dictionary<Type, Dictionary<string, object>> enumTypeToConverters = new Dictionary<Type, Dictionary<string, object>>();
+        private static Dictionary<Type, Dictionary<string, object>> enumTypeToConverters = new Dictionary<Type, Dictionary<string, object>>();
 
     /// <summary>
     /// Gets the description for the enumerated type

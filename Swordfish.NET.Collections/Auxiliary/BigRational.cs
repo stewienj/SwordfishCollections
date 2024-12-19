@@ -785,7 +785,6 @@ namespace Numerics
       }
     }
 
-    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
     void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
     {
       if (info == null)

@@ -17,12 +17,13 @@ namespace Swordfish.NET.Collections
 
         public KeyValuePair<TKey, TValue> KeyValuePair { get; }
 
-        public TKey Key { get { return KeyValuePair.Key; } }
-        public TValue Value { get { return KeyValuePair.Value; } }
+        public TKey Key => KeyValuePair.Key;
+
+        public TValue Value => KeyValuePair.Value;
+
         /// <summary>
         /// Position is a BigRational that can be used to do a binary search for a node
         /// </summary>
         internal BigRationalOld SortKey { get; }
-
     }
 }

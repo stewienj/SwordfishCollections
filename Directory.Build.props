@@ -1,0 +1,12 @@
+<Project>
+  <!-- 
+    If you want to debug this look at https://docs.microsoft.com/en-us/dotnet/core/project-sdk/overview
+    or dotnet msbuild -preprocess:output.xml <project file name>
+   
+    Here's a list of all the properties https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props
+  -->
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net48;net8.0</TargetFrameworks>
+    <WinTargetFramework>net8.0-windows</WinTargetFramework>
+  </PropertyGroup>
+</Project>

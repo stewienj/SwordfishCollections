@@ -5,15 +5,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Swordfish.NET.Collections</RootNamespace>
     <AssemblyName>Swordfish.NET.CollectionsV3</AssemblyName>
-    <TargetFrameworks>netstandard2.0;net451;net46</TargetFrameworks>
     <Copyright>Creative Commons</Copyright>
     <Company>Swordfish Computing Pty Ltd</Company>
     <Product>Swordfish.NET.CollectionsV3</Product>
     <Title>Swordfish.NET.CollectionsV3</Title>
-	<Authors>stewienj</Authors>
-	<Description>C# library for Concurrent Observable Collection, Sorted Collection, Dictionary, and Sorted Dictionary</Description>
-	<RepositoryUrl>https://github.com/stewienj/SwordfishCollections.git</RepositoryUrl>
-	<RepositoryCommit>$(GITHUB_SHA)</RepositoryCommit>
+  <Authors>stewienj</Authors>
+  <Description>C# library for Concurrent Observable Collection, Sorted Collection, Dictionary, and Sorted Dictionary</Description>
+  <RepositoryUrl>https://github.com/stewienj/SwordfishCollections.git</RepositoryUrl>
+  <RepositoryCommit>$(GITHUB_SHA)</RepositoryCommit>
     <Version Condition=" '$(PointVersion)' == '' ">3.1.0</Version>
     <Version Condition=" '$(PointVersion)' != '' ">3.$(PointVersion)</Version>
     <UserSecretsId>5d0656ca-f966-42bd-9e74-0ec774d5ccaa</UserSecretsId>

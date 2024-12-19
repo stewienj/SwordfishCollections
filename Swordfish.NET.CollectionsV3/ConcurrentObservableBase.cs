@@ -92,10 +92,9 @@ namespace Swordfish.NET.Collections
             });
         }
 
-
         protected void DoWriteNotify(Func<TInternalCollection> write, Func<NotifyCollectionChangedEventArgs> change)
         {
-            DoReadWriteNotify(() => 0, n => write(), n => change());
+            DoReadWriteNotify(() => 0, _ => write(), _ => change());
         }
 
         private TRead BodyReadWriteNotify<TRead>(TRead readValue, Func<TRead, TInternalCollection> write, params Func<TRead, NotifyCollectionChangedEventArgs>[] changes)
@@ -140,12 +139,10 @@ namespace Swordfish.NET.Collections
             return testResult;
         }
 
-
         protected bool DoTestReadWriteNotify<TRead>(
           Func<bool> test,
           Func<TRead> readTrue, Func<TRead, TInternalCollection> writeTrue, Func<TRead, NotifyCollectionChangedEventArgs> changeTrue,
-          Func<TRead> readFalse, Func<TRead, TInternalCollection> writeFalse, Func<TRead, NotifyCollectionChangedEventArgs> changeFalse
-          )
+          Func<TRead> readFalse, Func<TRead, TInternalCollection> writeFalse, Func<TRead, NotifyCollectionChangedEventArgs> changeFalse)
         {
             _lock?.EnterUpgradeableReadLock();
 

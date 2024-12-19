@@ -55,7 +55,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
 
             var toRemove = SortDescriptions.Where(sd => sd.PropertyName == sortMemberPath).FirstOrDefault();
 
-            if (toRemove == SortDescriptions.FirstOrDefault() && toRemove != null)
+            if (toRemove == SortDescriptions.FirstOrDefault())
             {
                 direction =
                   toRemove.Direction == ListSortDirection.Ascending ?
@@ -63,10 +63,7 @@ namespace DataGridGroupSortFilterUltimateExample.Auxilary
                   ListSortDirection.Ascending;
             }
 
-            if (toRemove != null)
-            {
-                SortDescriptions.Remove(toRemove);
-            }
+            SortDescriptions.Remove(toRemove);
 
             var sortDescription = new SortDescription(sortMemberPath, direction);
             SortDescriptions.Insert(0, sortDescription);
