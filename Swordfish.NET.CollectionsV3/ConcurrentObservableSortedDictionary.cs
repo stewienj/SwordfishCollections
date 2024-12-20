@@ -53,7 +53,7 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => 0,
               getIndicesAndInsert,
-              (nothing) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)pairsList)
+              (nothing) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, pairsList as IList ?? pairsList.ToList())
             );
         }
 

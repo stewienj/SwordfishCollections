@@ -1,33 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <UseWpf>true</UseWpf>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Swordfish.NET.Test</RootNamespace>
     <AssemblyName>Swordfish.NET.Test</AssemblyName>
-    <TargetFramework>net46</TargetFramework>
     <Copyright>Creative Commons</Copyright>
     <Company>Swordfish Computing Pty Ltd</Company>
     <Product>Swordfish.NET.Test</Product>
     <Title>Swordfish.NET.Test</Title>
     <Version>1.0.0</Version>
+    <TargetFrameworks>net48</TargetFrameworks>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Swordfish.NET.Collections\Swordfish.NET.Collections.csproj" />
   </ItemGroup>

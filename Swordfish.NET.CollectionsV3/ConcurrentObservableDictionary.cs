@@ -68,16 +68,10 @@ namespace Swordfish.NET.Collections
         /// </summary>
         public virtual void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
         {
-            // Convert to a list off the bat, as this is used multiple times and is required to be
-            // an IList for NotifyCollectionChangedEventArgs
-            if (!(pairs is IList<KeyValuePair<TKey, TValue>> pairsList))
-            {
-                pairsList = pairs.ToList();
-            }
             DoReadWriteNotify(
               () => _internalCollection.Count,
-              (index) => _internalCollection.AddRange(pairsList),
-              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)pairsList, index)
+              (index) => _internalCollection.AddRange(pairs),
+              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, pairs as IList ?? pairs.ToList(), index)
             );
         }
 
@@ -250,7 +244,7 @@ namespace Swordfish.NET.Collections
               (items) =>
               {
                   localRemovedItems = items;
-                  return new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items, index);
+                  return new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items as IList ?? items.ToList(), index);
               }
             );
             return localRemovedItems;
@@ -271,7 +265,7 @@ namespace Swordfish.NET.Collections
               // remove the keys from the dictionary, remove the range from the list
               (items) => _internalCollection.RemoveRange(keysList),
               // Notify which items were removed
-              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items)
+              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items as IList ?? items.ToList())
             );
         }
 
@@ -414,7 +408,7 @@ namespace Swordfish.NET.Collections
               // remove the keys from the dictionary, remove the range from the list
               (items) => ImmutableDictionaryListPair<TKey, TValue>.Empty,
               // Notify which items were removed
-              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items, 0)
+              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, 0)
             );
         }
 

@@ -61,7 +61,8 @@ namespace Swordfish.NET.Collections
             // Create the list of nodes for the internal list
             var nodes = pairs.SelectWithPreviousResult(
               firstItem => new ObservableDictionaryNode<TKey, TValue>(firstItem, endNode),
-              (previousNode, pair) => new ObservableDictionaryNode<TKey, TValue>(pair, previousNode));
+              (previousNode, pair) => new ObservableDictionaryNode<TKey, TValue>(pair, previousNode))
+                .ToList();
 
             // create the key/value pairs for the internal dictionary
             var dictionaryEntries = nodes.Select(node => KeyValuePair.Create(node.Key, node));
@@ -151,7 +152,9 @@ namespace Swordfish.NET.Collections
             var nodesToRemove = keys.Where(key => Dictionary.ContainsKey(key)).Select(key => Dictionary[key]);
             if (nodesToRemove.Any())
             {
-                return new ImmutableDictionaryListPair<TKey, TValue>(Dictionary.RemoveRange(keys), List.RemoveRange(nodesToRemove));
+                var newDictionary = Dictionary.RemoveRange(keys);
+                var newList = List.RemoveRange(nodesToRemove);
+                return new ImmutableDictionaryListPair<TKey, TValue>(newDictionary, newList);
             }
 
             else

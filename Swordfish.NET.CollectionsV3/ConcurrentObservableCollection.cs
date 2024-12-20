@@ -114,7 +114,7 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => ImmutableList.Count,
               (index) => ImmutableList.AddRange(items),
-              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)items, index)
+              (index) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items as IList ?? items.ToList(), index)
             );
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Swordfish.NET.Collections
         public virtual void InsertRange(int index, IList<T> items) =>
             DoWriteNotify(
               () => ImmutableList.InsertRange(index, items),
-              () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)items, index)
+              () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items as IList ?? items.ToList(), index)
             );
 
         /// <summary>
@@ -134,21 +134,21 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => ImmutableList.GetRange(index, count),
               (items) => ImmutableList.RemoveRange(index, count),
-              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items, index)
+              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, index)
             );
 
         public void RemoveRange(IList<T> items) =>
             DoWriteNotify(
               () => ImmutableList.RemoveRange(items),
-              () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items)
+              () => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items as IList ?? items.ToList())
             );
 
         public virtual void Reset(IList<T> items) =>
             DoReadWriteNotify(
               () => ImmutableList.ToArray(),
               (oldItems) => ImmutableList<T>.Empty.AddRange(items),
-              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)oldItems, 0),
-              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)items, 0)
+              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, 0),
+              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items as IList ?? items.ToList(), 0)
             );
 
         public T[] ToArray() => ImmutableList.ToArray();
@@ -258,7 +258,7 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => ImmutableList.ToArray(),
               (items) => ImmutableList.Clear(),
-              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)items, 0)
+              (items) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, 0)
             );
 
         public bool Contains(T item) => ImmutableList.Contains(item);

@@ -55,7 +55,7 @@ namespace Swordfish.NET.Collections
             DoReadWriteNotify(
               () => 0,
               getIndicesAndInsert,
-              (nothing) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)items.ToList())
+              (nothing) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items as IList ?? items.ToList())
             );
         }
 
@@ -65,8 +65,8 @@ namespace Swordfish.NET.Collections
               // Should be quicker than sorting 1 by 1 on insert.
               () => ImmutableList.ToArray(),
               (oldItems) => ImmutableList<T>.Empty.AddRange(items.OrderBy(x => x, _sorter).ToList()),
-              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (IList)oldItems, 0),
-              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)items, 0)
+              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, 0),
+              (oldItems) => new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items as IList ?? items.ToList(), 0)
             );
 
         public override void Insert(int index, T item)

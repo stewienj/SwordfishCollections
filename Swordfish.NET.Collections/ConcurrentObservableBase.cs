@@ -8,27 +8,25 @@
 // Last Revised: September 2012
 
 using System;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
-using System.Collections.Specialized;
-using System.Threading;
-using System.Windows.Threading;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
 
-namespace Swordfish.NET.Collections {
+namespace Swordfish.NET.Collections
+{
 
-  /// <summary>
-  /// This class provides the base for concurrent collections that 
-  /// can be bound to user interface elements
-  /// </summary>
-  /// <typeparam name="T"></typeparam>
-  /// <remarks>
-  /// </remarks>
-  [Serializable]
+    /// <summary>
+    /// This class provides the base for concurrent collections that 
+    /// can be bound to user interface elements
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <remarks>
+    /// </remarks>
+    [Serializable]
   public abstract class ConcurrentObservableBase<T> :
     IObservable<NotifyCollectionChangedEventArgs>,
     INotifyCollectionChanged,
