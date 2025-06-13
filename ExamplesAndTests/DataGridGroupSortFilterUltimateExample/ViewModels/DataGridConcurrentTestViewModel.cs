@@ -132,7 +132,7 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
                         if (newItem != null)
                         {
                             // Turn off GroupDescriptionOption
-                            var option = GroupDescriptionOptions.Where(o => o.PropertyName == newItem.PropertyName).FirstOrDefault();
+                            var option = GroupDescriptionOptions.FirstOrDefault(o => o.PropertyName == newItem.PropertyName);
                             if (option != null)
                             {
                                 option.IsActive = true;
@@ -145,7 +145,7 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
                         if (oldItem != null)
                         {
                             // Turn off GroupDescriptionOption
-                            var option = GroupDescriptionOptions.Where(o => o.PropertyName == oldItem.PropertyName).FirstOrDefault();
+                            var option = GroupDescriptionOptions.FirstOrDefault(o => o.PropertyName == oldItem.PropertyName);
                             if (option!=null)
                             {
                                 option.IsActive = false;
@@ -174,7 +174,7 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
                         if (newItem != null)
                         {
                             // Turn off SortDescriptionOption
-                            var option = SortDescriptionOptions.Where(o => o.PropertyName == newItem.Value.PropertyName).FirstOrDefault();
+                            var option = SortDescriptionOptions.FirstOrDefault(o => o.PropertyName == newItem.Value.PropertyName);
                             if (option != null)
                             {
                                 option.IsActive = true;
@@ -188,7 +188,7 @@ namespace DataGridGroupSortFilterUltimateExample.ViewModels
                         if (oldItem != null)
                         {
                             // Turn off GroupDescriptionOption
-                            var option = SortDescriptionOptions.Where(o => o.PropertyName == oldItem.Value.PropertyName).FirstOrDefault();
+                            var option = SortDescriptionOptions.FirstOrDefault(o => o.PropertyName == oldItem.Value.PropertyName);
                             if (option != null)
                             {
                                 option.IsActive = false;

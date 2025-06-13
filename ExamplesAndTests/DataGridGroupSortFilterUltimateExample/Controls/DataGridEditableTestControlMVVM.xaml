@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/DataGridGroupSortFilterUltimateExample;component/Resources/GroupStyles.xaml"/>
+                <ResourceDictionary Source="/DataGridGroupSortFilterUltimateExample;component/Resources/GroupStyles.xaml"/>
                 <ResourceDictionary>
                     <Style TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
                         <Setter Property="HeaderTemplate">
@@ -218,7 +218,6 @@
                     </ListView.View>
                 </ListView>
             </GroupBox>
-
 
             <!-- Completed Filter Toggle -->
             
