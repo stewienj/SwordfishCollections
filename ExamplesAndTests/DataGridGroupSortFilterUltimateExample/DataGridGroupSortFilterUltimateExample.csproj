@@ -4,13 +4,8 @@
     <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\Thumbs_Up.ico</ApplicationIcon>
-    <LangVersion>preview</LangVersion>
     <TargetFrameworks>$(WinTargetFramework)</TargetFrameworks>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Page Remove="Resources\GroupStyles.xaml" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
@@ -18,12 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Swordfish.NET.CollectionsV3\Swordfish.NET.CollectionsV3.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Resources\GroupStyles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Resource>
   </ItemGroup>
 
 </Project>
