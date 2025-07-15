@@ -225,6 +225,44 @@ namespace Swordfish.NET.UnitTestV3
             Assert.IsTrue(CollectionsAreEqual(initial, returnedArgs.OldItems));
         }
 
+        [TestMethod]
+        public void Test_ConcurrentObservableCollection_ExceptionAbsorbedByDefault()
+        {
+            var collection = new ConcurrentObservableCollection<int>();
+            collection.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => throw new NotImplementedException();
+            collection.Add(1);
+            Assert.AreEqual(1, collection.Count);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotImplementedException))]
+        public void Test_ConcurrentObservableCollection_ExceptionNotAbsorbed()
+        {
+            var collection = new ConcurrentObservableCollection<int>();
+            collection.ExceptionEventHandler = null;
+            collection.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => throw new NotImplementedException();
+            collection.Add(1);
+            Assert.AreEqual(1, collection.Count);
+        }
+
+        [TestMethod]
+        public void Test_ConcurrentObservableCollection_ExceptionEventHandler()
+        {
+            var collection = new ConcurrentObservableCollection<int>();
+            var exception = new NotImplementedException();
+            collection.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => throw exception;
+            bool exceptionThrown = false;
+            collection.ExceptionEventHandler += (s, e) =>
+            {
+                exceptionThrown = true;
+                Assert.AreEqual(collection, s);
+                Assert.AreEqual(exception, e);
+            };
+            collection.Add(1);
+            Assert.AreEqual(1, collection.Count);
+            Assert.IsTrue(exceptionThrown);
+        }
+
         bool CollectionsAreEqual(IEnumerable<int> collectionA, IList collectionB) =>
             collectionA.Zip(collectionB.OfType<int>(), (a, b) => a == b).All(c => c);
     }

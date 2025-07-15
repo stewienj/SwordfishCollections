@@ -53,9 +53,7 @@ namespace Swordfish.NET.Collections
         /// <param name="e">The <see cref="System.Collections.Specialized.NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
         protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            NotifyCollectionChangedEventHandler h = CollectionChanged;
-            if (h != null)
-                h(this, e);
+            CollectionChanged?.Invoke(this,e);
         }
 
         /// <summary>
