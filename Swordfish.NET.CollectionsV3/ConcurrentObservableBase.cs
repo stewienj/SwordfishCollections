@@ -177,6 +177,14 @@ namespace Swordfish.NET.Collections
         /// </summary>
         public bool AllowDirectBindingToView { get; set; } = false;
 
+        /// <summary>
+        /// This is used for handling exceptions in CollectionChanged event handlers.
+        /// By default, the exception event handler does nothing and quietly swallows the exception.
+        /// Setting this to null causes exceptions to be bubbled up to the caller that
+        /// modified the collection.
+        /// </summary>
+        public EventHandler<Exception> ExceptionEventHandler { get; set; } = (_1, _2) => { };
+
         // ************************************************************************
         // INotifyCollectionChanged Implementation
         // ************************************************************************
@@ -188,9 +196,13 @@ namespace Swordfish.NET.Collections
             {
                 _collectionChanged?.Invoke(this, changes);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-
+                // if there is no ExceptionEventHandler, rethrow the exception
+                if (ExceptionEventHandler is null)
+                    throw;
+                else
+                    ExceptionEventHandler?.Invoke(this, exception);
             }
         }
 
