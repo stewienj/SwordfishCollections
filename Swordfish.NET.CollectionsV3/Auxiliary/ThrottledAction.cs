@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections.Auxiliary
 {
-    internal class ThrottledAction
+    internal class ThrottledAction : IDisposable
     {
-        private Action _action;
+        private readonly Action _action;
         private TimeSpan _timeBetweenInvokations;
-        private Task _actionTask = Task.Run(() => { });
+        private Task _actionTask = Task.CompletedTask;
         private int _actionsQueued = 0;
+        private bool _disposedValue;
 
         public ThrottledAction(Action action, TimeSpan timeBetweenInvokations)
         {
@@ -17,17 +18,66 @@ namespace Swordfish.NET.Collections.Auxiliary
             _timeBetweenInvokations = timeBetweenInvokations;
         }
 
-        public void InvokeAction()
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _actionTask = Task.CompletedTask;
+                }
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Invokes the action on another thread at the appropriate time in the future
+        /// Returns true if the action was queued
+        /// </summary>
+        public bool InvokeAction() => InvokeAction(_action);
+
+        /// <summary>
+        /// Invokes the action on another thread at the appropriate time in the future
+        /// Returns true if the action was queued
+        /// </summary>
+        public bool InvokeAction(Action action)
         {
             if (_actionsQueued < 1)
             {
+                //Interlocked gaurantees that a single thread is accessing the ref value at a time
                 Interlocked.Increment(ref _actionsQueued);
-                _actionTask = _actionTask.ContinueWith((t) =>
+                Interlocked.Exchange(ref _actionTask, _actionTask.ContinueWith(_ =>
                 {
                     Interlocked.Decrement(ref _actionsQueued);
-                    _action();
-                    Thread.Sleep(_timeBetweenInvokations);
-                });
+                    try
+                    {
+                        action?.Invoke();
+                    }
+                    finally
+                    {
+                        // Release any external objects held by this task
+                        action = null;
+
+                        // Threadsafe method of waiting
+                        using (var manualResetEvent = new ManualResetEvent(false))
+                        {
+                            manualResetEvent.WaitOne(_timeBetweenInvokations);
+                        }
+                    }
+                }));
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }

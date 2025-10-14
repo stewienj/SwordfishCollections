@@ -12,7 +12,6 @@
     <PackageReference Include="MSTest.TestAdapter" />
     <PackageReference Include="MSTest.TestFramework" />
     <PackageReference Include="System.ValueTuple" />
-    <PackageReference Include="FluentAssertions" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Swordfish.NET.CollectionsV3\Swordfish.NET.CollectionsV3.csproj" />

@@ -243,7 +243,7 @@ namespace Swordfish.NET.UnitTestV3
             boxes.Add(redBox, "red");
 
             var blueBox = new Box(4, 3, 4);
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsExactly<ArgumentException>(
                 action: () => boxes.Add(blueBox, "blue"),
                 message: "An item with the same key has already been added. Key: (4, 3, 4)");
 

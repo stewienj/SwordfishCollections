@@ -34,7 +34,7 @@ namespace Swordfish.NET.UnitTestV3
         {
             var collection = new ConcurrentObservableSortedSet<TestClass>();
             collection.Add(new TestClass { SomeInt = 1, SomeString = "Two" });
-            Assert.ThrowsException<ArgumentException>
+            Assert.ThrowsExactly<ArgumentException>
             (
                 () => collection.Add(new TestClass { SomeInt = 2, SomeString = "Three" })
             );

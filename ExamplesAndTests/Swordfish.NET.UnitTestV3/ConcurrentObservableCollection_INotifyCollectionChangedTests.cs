@@ -235,13 +235,16 @@ namespace Swordfish.NET.UnitTestV3
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotImplementedException))]
         public void Test_ConcurrentObservableCollection_ExceptionNotAbsorbed()
         {
             var collection = new ConcurrentObservableCollection<int>();
             collection.ExceptionEventHandler = null;
-            collection.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => throw new NotImplementedException();
-            collection.Add(1);
+            collection.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => throw new NotImplementedException("Foo");
+
+            Assert.ThrowsExactly<NotImplementedException>(
+                action: () => collection.Add(1),
+                message: "Foo");
+
             Assert.AreEqual(1, collection.Count);
         }
 
