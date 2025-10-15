@@ -8,7 +8,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections
 {
@@ -47,11 +46,18 @@ namespace Swordfish.NET.Collections
         // ********************************************************************
         #region Constructors
 
-        public ConcurrentObservableCollection() : this(true)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ConcurrentObservableCollection() : this(true, true)
         {
         }
 
-        public ConcurrentObservableCollection(IEnumerable<T> source) : this(true)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="source">Items to populate collection with</param>
+        public ConcurrentObservableCollection(IEnumerable<T> source) : this()
         {
             if (source is IList<T> list)
             {
@@ -64,12 +70,11 @@ namespace Swordfish.NET.Collections
         }
 
         /// <summary>
-        /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
-        /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
-        /// it the default.
+        /// Constructor.
         /// </summary>
-        /// <param name="isThreadSafe"></param>
-        public ConcurrentObservableCollection(bool isMultithreaded) : base(isMultithreaded, ImmutableList<T>.Empty)
+        /// <param name="isMultithreaded">Whether collection supports updates from multiple threads</param>
+        /// <param name="throttleViewChanged">Whether property change events for <see cref="CollectionView"/> are throttled</param>
+        public ConcurrentObservableCollection(bool isMultithreaded = true, bool throttleViewChanged = true) : base(isMultithreaded, throttleViewChanged, ImmutableList<T>.Empty)
         {
             _editableCollectionView = EditableImmutableListBridge<T>.Empty(this);
             PropertyChanged += (s, e) =>
@@ -81,7 +86,7 @@ namespace Swordfish.NET.Collections
             };
         }
 
-        #endregion Constructors
+#endregion Constructors
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs changes)
         {

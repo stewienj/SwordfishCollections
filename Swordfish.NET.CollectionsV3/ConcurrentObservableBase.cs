@@ -48,7 +48,7 @@ namespace Swordfish.NET.Collections
     private StackFrame[] _stackFrames;
 #endif
 
-        protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection)
+        protected ConcurrentObservableBase(bool isMultithreaded, bool throttleViewChanged, TInternalCollection initialCollection)
         {
             // If compiled as debug, then store the stack trace as an aid to working out which object this is in case of a binding error.
             // This is non performant, so only use this in debug builds.
@@ -76,7 +76,15 @@ namespace Swordfish.NET.Collections
 #endif
             _lock = isMultithreaded ? new ReaderWriterLockSlim() : null;
             _internalCollection = initialCollection;
-            _viewChanged = new ThrottledAction(() => RaisePropertyChanged(nameof(CollectionView), nameof(Count)), TimeSpan.FromMilliseconds(20));
+
+            if (throttleViewChanged)
+            {
+                _viewChanged = new ThrottledAction(() => RaisePropertyChanged(nameof(CollectionView), nameof(Count)), TimeSpan.FromMilliseconds(20));
+            }
+            else
+            {
+                _viewChanged = null;
+            }
         }
 
         /// <summary>
@@ -111,8 +119,16 @@ namespace Swordfish.NET.Collections
             }
             _lock?.ExitWriteLock();
             _lock?.ExitUpgradeableReadLock();
-            _viewChanged.InvokeAction();
-            return readValue;
+
+            if (_viewChanged != null)
+            {
+                _viewChanged.InvokeAction();
+            }
+            else
+            {
+                RaisePropertyChanged(nameof(CollectionView), nameof(Count));
+            }
+        return readValue;
         }
 
         protected TRead DoReadWriteNotify<TRead>(Func<TRead> read, Func<TRead, TInternalCollection> write, params Func<TRead, NotifyCollectionChangedEventArgs>[] changes)
@@ -244,6 +260,7 @@ namespace Swordfish.NET.Collections
         protected virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("isMultithreaded", _lock != null);
+            info.AddValue("throttleViewChanged", _viewChanged != null);
         }
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -253,7 +270,7 @@ namespace Swordfish.NET.Collections
             GetObjectData(info, context);
         }
 
-        protected ConcurrentObservableBase(SerializationInfo information, StreamingContext context) : this(information.GetBoolean("isMultithreaded"), null)
+        protected ConcurrentObservableBase(SerializationInfo information, StreamingContext context) : this(information.GetBoolean("isMultithreaded"), information.GetBoolean("throttleViewChanged"), null)
         {
 
         }

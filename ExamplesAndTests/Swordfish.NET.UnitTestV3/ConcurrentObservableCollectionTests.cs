@@ -60,5 +60,43 @@ namespace Swordfish.NET.UnitTestV3
             // Ensure the CollectionView property changed event has been fired
             Assert.IsTrue(autoReset.WaitOne(1000));
         }
+
+        /// <summary>
+        /// Tests that the throttleViewChanged parameter correctly changes the behaviour of the collection.
+        /// </summary>
+        [TestMethod]
+        public void TestThrottleViewChanged()
+        {
+            int propertyChangedInvocations = 0;
+            void propertyChangedHandler(object sender, PropertyChangedEventArgs args)
+            {
+                if (args.PropertyName == nameof(ConcurrentObservableCollection<int>.CollectionView))
+                {
+                    propertyChangedInvocations++;
+                }
+            }
+
+            // No throttling
+            propertyChangedInvocations = 0;
+            var noThrottleCollection = new ConcurrentObservableCollection<int>(throttleViewChanged: false);
+            noThrottleCollection.PropertyChanged += propertyChangedHandler;
+            for (int i = 0; i < 10000; i++)
+            {
+                noThrottleCollection.Add(i);
+            }
+            noThrottleCollection.PropertyChanged -= propertyChangedHandler;
+            Assert.AreEqual(noThrottleCollection.Count, propertyChangedInvocations);
+
+            // Throttling
+            propertyChangedInvocations = 0;
+            var throttleCollection = new ConcurrentObservableCollection<int>(throttleViewChanged: true);
+            throttleCollection.PropertyChanged += propertyChangedHandler;
+            for (int i = 0; i < 10000; i++)
+            {
+                throttleCollection.Add(i);
+            }
+            throttleCollection.PropertyChanged -= propertyChangedHandler;
+            Assert.IsTrue(propertyChangedInvocations < throttleCollection.Count);
+        }
     }
 }

@@ -24,18 +24,31 @@ namespace Swordfish.NET.Collections
     ICollection,
     ISerializable
     {
-        public ConcurrentObservableDictionary() : this(true)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ConcurrentObservableDictionary() : this(true, true, null)
         {
         }
 
         /// <summary>
-        /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
-        /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
-        /// it the default.
+        /// Constructor.
         /// </summary>
-        /// <param name="isThreadSafe"></param>
-        public ConcurrentObservableDictionary(bool isMultithreaded, IEqualityComparer<TKey> keyComparer = null)
+        /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
+        /// <param name="keyComparer">Custom key comparer</param>
+        public ConcurrentObservableDictionary(bool isMultithreaded, IEqualityComparer<TKey> keyComparer) : this(isMultithreaded, throttleViewChanged: true, keyComparer)
+        {
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
+        /// <param name="throttleViewChanged">Whether property change events for <see cref="CollectionView"/> are throttled</param>
+        /// <param name="keyComparer">Custom key comparer, null indicates to use default</param>
+        public ConcurrentObservableDictionary(bool isMultithreaded = true, bool throttleViewChanged = true, IEqualityComparer<TKey> keyComparer = null)
             : base(isMultithreaded,
+                  throttleViewChanged,
                   keyComparer == null
                   ? ImmutableDictionaryListPair<TKey, TValue>.Empty
                   : ImmutableDictionaryListPair<TKey, TValue>.Empty.WithComparers(keyComparer: keyComparer))
@@ -275,7 +288,7 @@ namespace Swordfish.NET.Collections
         }
 
         /// <summary>
-        /// This is the view of the colleciton that you should be binding to with your ListView/GridView control.
+        /// This is the view of the collection that you should be binding to with your ListView/GridView control.
         /// </summary>
         public override IList<KeyValuePair<TKey, TValue>> CollectionView
         {

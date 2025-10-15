@@ -23,21 +23,28 @@ namespace Swordfish.NET.Collections
     ICollection,
     ISerializable
     {
-        public ConcurrentObservableHashSet() : this(true)
-        {
-        }
-
-        public ConcurrentObservableHashSet(IEqualityComparer<T> comparer) : base(true, ImmutableHashSet<T>.Empty.WithComparer(comparer))
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ConcurrentObservableHashSet() : this(true, true, null)
         {
         }
 
         /// <summary>
-        /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
-        /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
-        /// it the default.
+        /// Constructor.
         /// </summary>
-        /// <param name="isThreadSafe"></param>
-        public ConcurrentObservableHashSet(bool isMultithreaded) : base(isMultithreaded, ImmutableHashSet<T>.Empty)
+        /// <param name="comparer">Custom item comparer</param>
+        public ConcurrentObservableHashSet(IEqualityComparer<T> comparer) : this(isMultithreaded: true, throttleViewChanged: true, comparer)
+        {
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="isMultithreaded">Whether collection supports updates from multiple threads</param>
+        /// <param name="throttleViewChanged">Whether property change events for <see cref="CollectionView"/> are throttled</param>
+        /// <param name="comparer">Custom item comparer, null indicates to use default</param>
+        public ConcurrentObservableHashSet(bool isMultithreaded = true, bool throttleViewChanged = true, IEqualityComparer<T> comparer = null) : base(isMultithreaded, throttleViewChanged, ImmutableHashSet<T>.Empty.WithComparer(comparer))
         {
         }
 
