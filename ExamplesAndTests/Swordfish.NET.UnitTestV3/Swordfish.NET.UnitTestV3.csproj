@@ -4,8 +4,10 @@
     <Copyright>Creative Commons</Copyright>
     <Company>Swordfish Computing Pty Ltd</Company>
     <Product>Swordfish.NET.TestV3</Product>
-    <Title>Swordfish.NET.TestV3</Title>
+    <Title>Swordfish.NET.UnitTestV3</Title>
     <Version>1.0.0</Version>
+    <AssemblyOriginatorKeyFile>Swordfish.NET.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />

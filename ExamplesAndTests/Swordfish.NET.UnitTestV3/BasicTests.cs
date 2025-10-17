@@ -38,7 +38,7 @@ namespace Swordfish.NET.UnitTestV3
 
 
         //Using xUnit 'Theory' for testing, can put in multiple input data and test on each
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(new int[] { 1, 2, 3 })]
         [DataRow(new int[] { 0 })]
         public void ContentTheoryTest(int[] array)

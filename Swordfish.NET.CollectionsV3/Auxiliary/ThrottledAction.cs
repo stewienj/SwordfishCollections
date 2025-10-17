@@ -6,13 +6,12 @@ namespace Swordfish.NET.Collections.Auxiliary
 {
     internal class ThrottledAction : IDisposable
     {
-        private readonly Action _action;
+        private volatile Action _action;
         private TimeSpan _timeBetweenInvokations;
         private Task _actionTask = Task.CompletedTask;
-        private int _actionsQueued = 0;
         private bool _disposedValue;
 
-        public ThrottledAction(Action action, TimeSpan timeBetweenInvokations)
+        internal ThrottledAction(Action action, TimeSpan timeBetweenInvokations)
         {
             _action = action;
             _timeBetweenInvokations = timeBetweenInvokations;
@@ -42,36 +41,36 @@ namespace Swordfish.NET.Collections.Auxiliary
         /// Invokes the action on another thread at the appropriate time in the future
         /// Returns true if the action was queued
         /// </summary>
-        public bool InvokeAction() => InvokeAction(_action);
+        public bool InvokeAction(Action action)
+        {
+            _action = action;
+            return InvokeAction();
+        }
+
+        private int _queuedCounter = 0;
 
         /// <summary>
         /// Invokes the action on another thread at the appropriate time in the future
         /// Returns true if the action was queued
         /// </summary>
-        public bool InvokeAction(Action action)
+        public bool InvokeAction()
         {
-            if (_actionsQueued < 1)
+            if (Interlocked.Increment(ref _queuedCounter) == 1)
             {
-                //Interlocked gaurantees that a single thread is accessing the ref value at a time
-                Interlocked.Increment(ref _actionsQueued);
                 Interlocked.Exchange(ref _actionTask, _actionTask.ContinueWith(_ =>
                 {
-                    Interlocked.Decrement(ref _actionsQueued);
-                    try
-                    {
-                        action?.Invoke();
-                    }
-                    finally
-                    {
-                        // Release any external objects held by this task
-                        action = null;
+                    _action?.Invoke();
 
-                        // Threadsafe method of waiting
-                        using (var manualResetEvent = new ManualResetEvent(false))
+                    // Do the throttle delay
+                    Task.Delay(_timeBetweenInvokations).ContinueWith(__ =>
+                    {
+                        // If InvokeAction has been called while being throttled
+                        // then invoke again.
+                        if (Interlocked.Exchange(ref _queuedCounter, 0) != 1)
                         {
-                            manualResetEvent.WaitOne(_timeBetweenInvokations);
+                            InvokeAction();
                         }
-                    }
+                    });
                 }));
                 return true;
             }
