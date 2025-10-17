@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Diagnostics;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Swordfish.NET.UnitTestV3
 {
@@ -61,5 +63,121 @@ namespace Swordfish.NET.UnitTestV3
             Assert.AreEqual(callCount, lastCallCountUpdated);
         }
 
+        class TestLatencyNew : ExtendedNotifyPropertyChanged
+        {
+            ThrottledAction _throttledAction;
+
+            public TestLatencyNew()
+            {
+                _throttledAction = new ThrottledAction(() => RaisePropertyChanged(nameof(StoredValue)), TimeSpan.FromMilliseconds(20));
+            }
+
+            private int _storedValue = 0;
+            public int StoredValue
+            {
+                get => _storedValue;
+                set
+                {
+                    _storedValue = value;
+                    _throttledAction.InvokeAction();
+                }
+            }
+        }
+
+        class TestLatencyOld : ExtendedNotifyPropertyChanged
+        {
+            OldThrottledAction _throttledAction;
+
+            public TestLatencyOld()
+            {
+                _throttledAction = new OldThrottledAction(() => RaisePropertyChanged(nameof(StoredValue)), TimeSpan.FromMilliseconds(20));
+            }
+
+            private int _storedValue = 0;
+            public int StoredValue
+            {
+                get => _storedValue;
+                set
+                {
+                    _storedValue = value;
+                    _throttledAction.InvokeAction();
+                }
+            }
+        }
+
+
+        [TestMethod]
+        public void TestThreadPoolLatencyNew()
+        {
+            var cancellationTokenSource = new CancellationTokenSource();
+            var startingLine = new ManualResetEvent(false);
+            for (int i = 0; i < 800; ++i)
+            {
+                // Create a new thread instead of using the threadpool
+                var thread = new Thread(new ThreadStart(() =>
+                {
+                    startingLine.WaitOne();
+                    var token = cancellationTokenSource.Token;
+                    int startValue = 0;
+                    var testNew = new TestLatencyNew();
+                    while (!token.IsCancellationRequested)
+                    {
+                        testNew.StoredValue = startValue++;
+                    }
+                }));
+                thread.Start();
+            }
+            startingLine.Set();
+
+            // Wait a bit
+            Thread.Sleep(1000);
+            var resetEvent = new ManualResetEvent(false);
+            var start = DateTime.Now;
+            Task.Run(() =>
+            {
+                resetEvent.Set();
+            });
+            resetEvent.WaitOne();
+            var duration = DateTime.Now - start;
+            cancellationTokenSource.Cancel();
+            Debug.WriteLine($"Task Run Latency = {duration}");
+        }
+
+        [TestMethod]
+        public void TestThreadPoolLatencyOld()
+        {
+            var cancellationTokenSource = new CancellationTokenSource();
+            var startingLine = new ManualResetEvent(false);
+            for (int i = 0; i < 800; ++i)
+            {
+                // Create a new thread instead of using the threadpool
+                var thread = new Thread(new ThreadStart(() =>
+                {
+                    startingLine.WaitOne();
+                    var token = cancellationTokenSource.Token;
+                    int startValue = 0;
+                    var testNew = new TestLatencyOld();
+                    while (!token.IsCancellationRequested)
+                    {
+                        testNew.StoredValue = startValue++;
+                    }
+                }));
+                thread.Start();
+            }
+            startingLine.Set();
+
+            // Wait a bit
+            Thread.Sleep(1000);
+            var resetEvent = new ManualResetEvent(false);
+            var start = DateTime.Now;
+            Task.Run(() =>
+            {
+                resetEvent.Set();
+            });
+            resetEvent.WaitOne();
+            var duration = DateTime.Now - start;
+            cancellationTokenSource.Cancel();
+            Debug.WriteLine($"Task Run Latency = {duration}");
+        }
     }
 }
