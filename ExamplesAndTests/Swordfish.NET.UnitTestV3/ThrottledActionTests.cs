@@ -40,13 +40,11 @@ namespace Swordfish.NET.UnitTestV3
         /// was invoked gets executed.
         /// </summary>
         [TestMethod]
-        // Can't get this working
-        [Ignore]
         public void TestFinalActionExecuted()
         {
             int callCount = 0;
-            int lastCallCountUpdated = 0;
             var throttledAction = new ThrottledAction(null, TimeSpan.FromMilliseconds(30));
+            int lastCallCountUpdated = 0;
 
             var start = DateTime.Now;
             while ((DateTime.Now - start) < TimeSpan.FromSeconds(1))
@@ -58,6 +56,8 @@ namespace Swordfish.NET.UnitTestV3
                 });
             }
 
+            // Wait for execution to complete
+            Thread.Sleep(40);
             Assert.AreEqual(callCount, lastCallCountUpdated);
         }
 
