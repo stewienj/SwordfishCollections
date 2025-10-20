@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections.Auxiliary
 {
-    internal class ThrottledAction : IDisposable
+    internal class ThrottledAction : IDisposable, IControlledAction
     {
-        private volatile Action _action;
+        private volatile Action _action = null;
         private TimeSpan _timeBetweenInvokations;
         private Task _actionTask = Task.CompletedTask;
         private bool _disposedValue;
@@ -16,7 +16,14 @@ namespace Swordfish.NET.Collections.Auxiliary
         /// </summary>
         private int _queuedCounter = 0;
 
-        internal ThrottledAction(Action action, TimeSpan timeBetweenInvokations)
+        public ThrottledAction() : this(TimeSpan.FromMilliseconds(20)) { }
+
+        public ThrottledAction(TimeSpan timeBetweenInvokations)
+        {
+            _timeBetweenInvokations = timeBetweenInvokations;
+        }
+
+        public ThrottledAction(Action action, TimeSpan timeBetweenInvokations)
         {
             _action = action;
             _timeBetweenInvokations = timeBetweenInvokations;
@@ -40,6 +47,11 @@ namespace Swordfish.NET.Collections.Auxiliary
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public void SetAction(Action action)
+        {
+            _action = action;
         }
 
         /// <summary>

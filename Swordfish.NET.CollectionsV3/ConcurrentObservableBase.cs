@@ -39,52 +39,46 @@ namespace Swordfish.NET.Collections
         /// A throttle for the "CollectionView" PropertyChanged event. Experimented with using throttling / not using throttling, and
         /// found there was a 25% performance gain from using throttling.
         /// </summary>
-        private ThrottledAction _viewChanged;
+        private IControlledAction _viewChanged;
 
 #if DEBUG
-    /// <summary>
-    /// When built as DEBUG, the constructor stores stack frames here which can be used to find an object
-    /// </summary>
-    private StackFrame[] _stackFrames;
+        /// <summary>
+        /// When built as DEBUG, the constructor stores stack frames here which can be used to find an object
+        /// </summary>
+        private StackFrame[] _stackFrames;
 #endif
 
-        protected ConcurrentObservableBase(bool isMultithreaded, bool throttleViewChanged, TInternalCollection initialCollection)
+        protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection, IControlledAction controlledAction)
         {
             // If compiled as debug, then store the stack trace as an aid to working out which object this is in case of a binding error.
             // This is non performant, so only use this in debug builds.
 #if DEBUG
-      // This function checks if the declaring class of a method in a stack frame inherits from the base type name passed in.
-      // Was unable to use Type.IsSubClassOf() due to the type being derived by reflection.
-      bool InheritsFrom(StackFrame stackFrame, string baseNameTest)
-      {
-        var testType = stackFrame.GetMethod().DeclaringType;
-        while(testType != null)
-        {
-          if (testType.Name == baseNameTest)
-          {
-            return true;
-          }
-          testType = testType.BaseType;
-        }
-        return false;
-      }
+            // This function checks if the declaring class of a method in a stack frame inherits from the base type name passed in.
+            // Was unable to use Type.IsSubClassOf() due to the type being derived by reflection.
+            bool InheritsFrom(StackFrame stackFrame, string baseNameTest)
+            {
+                var testType = stackFrame.GetMethod().DeclaringType;
+                while (testType != null)
+                {
+                    if (testType.Name == baseNameTest)
+                    {
+                        return true;
+                    }
+                    testType = testType.BaseType;
+                }
+                return false;
+            }
 
-      // Get all the stack frames up to the point where this object was created. Omit the constructors for this object.
-      StackTrace stackTrace = new StackTrace(true);
-      var baseName = typeof(ConcurrentObservableBase<T, TInternalCollection>).Name; ;
-      _stackFrames = stackTrace.GetFrames().SkipWhile(frame => InheritsFrom(frame, baseName)).ToArray();
+            // Get all the stack frames up to the point where this object was created. Omit the constructors for this object.
+            StackTrace stackTrace = new StackTrace(true);
+            var baseName = typeof(ConcurrentObservableBase<T, TInternalCollection>).Name; ;
+            _stackFrames = stackTrace.GetFrames().SkipWhile(frame => InheritsFrom(frame, baseName)).ToArray();
 #endif
             _lock = isMultithreaded ? new ReaderWriterLockSlim() : null;
             _internalCollection = initialCollection;
 
-            if (throttleViewChanged)
-            {
-                _viewChanged = new ThrottledAction(() => RaisePropertyChanged(nameof(CollectionView), nameof(Count)), TimeSpan.FromMilliseconds(20));
-            }
-            else
-            {
-                _viewChanged = null;
-            }
+            _viewChanged = controlledAction ?? new ThrottledAction(TimeSpan.FromMilliseconds(20));
+            _viewChanged.SetAction(() => RaisePropertyChanged(nameof(CollectionView), nameof(Count)));
         }
 
         /// <summary>
@@ -120,15 +114,8 @@ namespace Swordfish.NET.Collections
             _lock?.ExitWriteLock();
             _lock?.ExitUpgradeableReadLock();
 
-            if (_viewChanged != null)
-            {
-                _viewChanged.InvokeAction();
-            }
-            else
-            {
-                RaisePropertyChanged(nameof(CollectionView), nameof(Count));
-            }
-        return readValue;
+            _viewChanged?.InvokeAction();
+            return readValue;
         }
 
         protected TRead DoReadWriteNotify<TRead>(Func<TRead> read, Func<TRead, TInternalCollection> write, params Func<TRead, NotifyCollectionChangedEventArgs>[] changes)
@@ -234,11 +221,11 @@ namespace Swordfish.NET.Collections
                     {
                         string stackFrame = "";
 #if DEBUG
-                        if (_stackFrames!=null)
-            {
-              stackFrame = $" List created at line {_stackFrames[0].GetFileLineNumber()} in {_stackFrames[0].GetFileName()}.";
-            }
-            // Note if you find yourself here in a debug session, you can get the stack call of where this list was created in _stackFrames. You're welcome.
+                        if (_stackFrames != null)
+                        {
+                            stackFrame = $" List created at line {_stackFrames[0].GetFileLineNumber()} in {_stackFrames[0].GetFileName()}.";
+                        }
+                        // Note if you find yourself here in a debug session, you can get the stack call of where this list was created in _stackFrames. You're welcome.
 #endif
                         throw new ApplicationException($"Collection type={typeof(T).Name}, don't bind directly to {nameof(ConcurrentObservableCollection<T>)}, instead bind to {nameof(ConcurrentObservableCollection<T>)}.CollectionView. {stackFrame}");
                     }
@@ -261,6 +248,10 @@ namespace Swordfish.NET.Collections
         {
             info.AddValue("isMultithreaded", _lock != null);
             info.AddValue("throttleViewChanged", _viewChanged != null);
+            if (_viewChanged is IControlledAction action && !(_viewChanged is ThrottledAction))
+            {
+                info.AddValue("controlledActionType", action.GetType().FullName);
+            }
         }
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -270,9 +261,31 @@ namespace Swordfish.NET.Collections
             GetObjectData(info, context);
         }
 
-        protected ConcurrentObservableBase(SerializationInfo information, StreamingContext context) : this(information.GetBoolean("isMultithreaded"), information.GetBoolean("throttleViewChanged"), null)
+        protected ConcurrentObservableBase(SerializationInfo information, StreamingContext context) : this(information.GetBoolean("isMultithreaded"), null, null)
         {
-
+            // Create an instance of the IControlledAction type this was serialized with
+            var controlledActionTypeName = information.GetString("controlledActionType");
+            foreach (var assemlby in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    if (!assemlby.FullName.StartsWith("System") && !assemlby.FullName.StartsWith("Microsoft"))
+                    {
+                        var types = assemlby.GetTypes();
+                        if(types.FirstOrDefault(t => t.FullName == controlledActionTypeName) is Type controlledActionType)
+                        {
+                            if (Activator.CreateInstance(controlledActionType) is IControlledAction controlledAction)
+                            {
+                                _viewChanged = controlledAction;
+                            }
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            }
         }
         #endregion
     }

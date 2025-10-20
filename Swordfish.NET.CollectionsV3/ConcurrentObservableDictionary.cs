@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swordfish.NET.Collections.Auxiliary;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -27,7 +28,7 @@ namespace Swordfish.NET.Collections
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ConcurrentObservableDictionary() : this(true, true, null)
+        public ConcurrentObservableDictionary() : this(true, null, null)
         {
         }
 
@@ -36,7 +37,7 @@ namespace Swordfish.NET.Collections
         /// </summary>
         /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
         /// <param name="keyComparer">Custom key comparer</param>
-        public ConcurrentObservableDictionary(bool isMultithreaded, IEqualityComparer<TKey> keyComparer) : this(isMultithreaded, throttleViewChanged: true, keyComparer)
+        public ConcurrentObservableDictionary(bool isMultithreaded, IEqualityComparer<TKey> keyComparer) : this(isMultithreaded, keyComparer, controlledAction: null)
         {
         }
 
@@ -46,12 +47,12 @@ namespace Swordfish.NET.Collections
         /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
         /// <param name="throttleViewChanged">Whether property change events for <see cref="CollectionView"/> are throttled</param>
         /// <param name="keyComparer">Custom key comparer, null indicates to use default</param>
-        public ConcurrentObservableDictionary(bool isMultithreaded = true, bool throttleViewChanged = true, IEqualityComparer<TKey> keyComparer = null)
+        public ConcurrentObservableDictionary(bool isMultithreaded = true, IEqualityComparer<TKey> keyComparer = null, IControlledAction controlledAction = null)
             : base(isMultithreaded,
-                  throttleViewChanged,
                   keyComparer == null
                   ? ImmutableDictionaryListPair<TKey, TValue>.Empty
-                  : ImmutableDictionaryListPair<TKey, TValue>.Empty.WithComparers(keyComparer: keyComparer))
+                  : ImmutableDictionaryListPair<TKey, TValue>.Empty.WithComparers(keyComparer: keyComparer),
+                  controlledAction)
         {
             PropertyChanged += (s, e) =>
             {

@@ -1,4 +1,5 @@
-﻿using Swordfish.NET.Collections.EditableBridges;
+﻿using Swordfish.NET.Collections.Auxiliary;
+using Swordfish.NET.Collections.EditableBridges;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -49,7 +50,7 @@ namespace Swordfish.NET.Collections
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ConcurrentObservableCollection() : this(true, true)
+        public ConcurrentObservableCollection() : this(true, null)
         {
         }
 
@@ -74,7 +75,7 @@ namespace Swordfish.NET.Collections
         /// </summary>
         /// <param name="isMultithreaded">Whether collection supports updates from multiple threads</param>
         /// <param name="throttleViewChanged">Whether property change events for <see cref="CollectionView"/> are throttled</param>
-        public ConcurrentObservableCollection(bool isMultithreaded = true, bool throttleViewChanged = true) : base(isMultithreaded, throttleViewChanged, ImmutableList<T>.Empty)
+        public ConcurrentObservableCollection(bool isMultithreaded = true, IControlledAction controlledAction = null) : base(isMultithreaded, ImmutableList<T>.Empty, controlledAction)
         {
             _editableCollectionView = EditableImmutableListBridge<T>.Empty(this);
             PropertyChanged += (s, e) =>

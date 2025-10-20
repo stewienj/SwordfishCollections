@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swordfish.NET.Collections.Auxiliary;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -27,7 +28,7 @@ namespace Swordfish.NET.Collections
         /// Constructor.
         /// </summary>
         /// <param name="comparer">Custom item comparer</param>
-        public ConcurrentObservableSortedSet(IComparer<T> comparer) : this(isMultithreaded: true, throttleViewChanged: true, comparer)
+        public ConcurrentObservableSortedSet(IComparer<T> comparer) : this(isMultithreaded: true, comparer, controlledAction: null)
         {
         }
 
@@ -37,7 +38,7 @@ namespace Swordfish.NET.Collections
         /// <param name="isMultithreaded">Whether collection supports updates from multiple threads</param>
         /// <param name="throttleViewChanged">Whether property change events for <see cref="CollectionView"/> are throttled</param>
         /// <param name="comparer">Custom item comparer, null indicates to use default</param>
-        public ConcurrentObservableSortedSet(bool isMultithreaded = true, bool throttleViewChanged = true, IComparer<T> comparer = null) : base(isMultithreaded, throttleViewChanged, ImmutableSortedSet<T>.Empty.WithComparer(comparer))
+        public ConcurrentObservableSortedSet(bool isMultithreaded = true, IComparer<T> comparer = null, IControlledAction controlledAction = null) : base(isMultithreaded, ImmutableSortedSet<T>.Empty.WithComparer(comparer), controlledAction)
         {
 
         }

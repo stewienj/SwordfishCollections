@@ -23,13 +23,14 @@ namespace Swordfish.NET.UnitTestV3
         /// Class used for testing the thread pool latency when using the new
         /// code from ThrottledAction
         /// </summary>
-        class TestLatencyNewThrottle : ExtendedNotifyPropertyChanged
+        class TestControlledActionLatency : ExtendedNotifyPropertyChanged
         {
-            ThrottledAction _throttledAction;
+            IControlledAction _controlledAction;
 
-            public TestLatencyNewThrottle()
+            public TestControlledActionLatency(IControlledAction controlledControl)
             {
-                _throttledAction = new ThrottledAction(() => RaisePropertyChanged(nameof(StoredValue)), TimeSpan.FromMilliseconds(20));
+                _controlledAction = controlledControl;
+                _controlledAction.SetAction(() => RaisePropertyChanged(nameof(StoredValue)));
             }
 
             private int _storedValue = 0;
@@ -39,57 +40,7 @@ namespace Swordfish.NET.UnitTestV3
                 set
                 {
                     _storedValue = value;
-                    _throttledAction.InvokeAction();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Class used for testing the thread pool latency when using the old
-        /// code from ThrottledAction
-        /// </summary>
-        class TestLatencyOldThrottle : ExtendedNotifyPropertyChanged
-        {
-            OldThrottledAction _throttledAction;
-
-            public TestLatencyOldThrottle()
-            {
-                _throttledAction = new OldThrottledAction(() => RaisePropertyChanged(nameof(StoredValue)), TimeSpan.FromMilliseconds(20));
-            }
-
-            private int _storedValue = 0;
-            public int StoredValue
-            {
-                get => _storedValue;
-                set
-                {
-                    _storedValue = value;
-                    _throttledAction.InvokeAction();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Class used for testing the thread pool latency when an
-        /// action directly without a throttle
-        /// </summary>
-        class TestLatencyNoThrottle : ExtendedNotifyPropertyChanged
-        {
-            Action _action;
-
-            public TestLatencyNoThrottle()
-            {
-                _action = () => RaisePropertyChanged(nameof(StoredValue));
-            }
-
-            private int _storedValue = 0;
-            public int StoredValue
-            {
-                get => _storedValue;
-                set
-                {
-                    _storedValue = value;
-                    _action.Invoke();
+                    _controlledAction.InvokeAction();
                 }
             }
         }
@@ -111,7 +62,7 @@ namespace Swordfish.NET.UnitTestV3
 
             var start = DateTime.Now;
             int callCount = 0;
-            while((DateTime.Now-start)<TimeSpan.FromSeconds(1))
+            while ((DateTime.Now - start) < TimeSpan.FromSeconds(1))
             {
                 callCount++;
                 throttledAction.InvokeAction();
@@ -138,7 +89,7 @@ namespace Swordfish.NET.UnitTestV3
             while ((DateTime.Now - start) < TimeSpan.FromSeconds(1))
             {
                 int local = ++callCount;
-                throttledAction.InvokeAction(()=>
+                throttledAction.InvokeAction(() =>
                 {
                     Interlocked.Exchange(ref lastCallCountUpdated, local);
                 });
@@ -158,38 +109,7 @@ namespace Swordfish.NET.UnitTestV3
         [TestMethod]
         public void TestThreadPoolLatencyNewThrotle()
         {
-            var cancellationTokenSource = new CancellationTokenSource();
-            var startingLine = new ManualResetEvent(false);
-            for (int i = 0; i < 800; ++i)
-            {
-                // Create a new thread instead of using the threadpool
-                var thread = new Thread(new ThreadStart(() =>
-                {
-                    startingLine.WaitOne();
-                    var token = cancellationTokenSource.Token;
-                    int startValue = 0;
-                    var testNew = new TestLatencyNewThrottle();
-                    while (!token.IsCancellationRequested)
-                    {
-                        testNew.StoredValue = startValue++;
-                    }
-                }));
-                thread.Start();
-            }
-            startingLine.Set();
-
-            // Wait a bit
-            Thread.Sleep(1000);
-            var resetEvent = new ManualResetEvent(false);
-            var start = DateTime.Now;
-            Task.Run(() =>
-            {
-                resetEvent.Set();
-            });
-            resetEvent.WaitOne();
-            var duration = DateTime.Now - start;
-            cancellationTokenSource.Cancel();
-            Debug.WriteLine($"Task Run Latency = {duration}");
+            TestThreadLatency(new ThrottledAction(TimeSpan.FromMilliseconds(20)));
         }
 
         /// <summary>
@@ -201,38 +121,7 @@ namespace Swordfish.NET.UnitTestV3
         [TestMethod]
         public void TestThreadPoolLatencyOldThrottle()
         {
-            var cancellationTokenSource = new CancellationTokenSource();
-            var startingLine = new ManualResetEvent(false);
-            for (int i = 0; i < 800; ++i)
-            {
-                // Create a new thread instead of using the threadpool
-                var thread = new Thread(new ThreadStart(() =>
-                {
-                    startingLine.WaitOne();
-                    var token = cancellationTokenSource.Token;
-                    int startValue = 0;
-                    var testNew = new TestLatencyOldThrottle();
-                    while (!token.IsCancellationRequested)
-                    {
-                        testNew.StoredValue = startValue++;
-                    }
-                }));
-                thread.Start();
-            }
-            startingLine.Set();
-
-            // Wait a bit
-            Thread.Sleep(1000);
-            var resetEvent = new ManualResetEvent(false);
-            var start = DateTime.Now;
-            Task.Run(() =>
-            {
-                resetEvent.Set();
-            });
-            resetEvent.WaitOne();
-            var duration = DateTime.Now - start;
-            cancellationTokenSource.Cancel();
-            Debug.WriteLine($"Task Run Latency = {duration}");
+            TestThreadLatency(new OldThrottledAction(TimeSpan.FromMilliseconds(20)));
         }
 
         /// <summary>
@@ -244,8 +133,16 @@ namespace Swordfish.NET.UnitTestV3
         [TestMethod]
         public void TestThreadLatencyNoThrottle()
         {
+            TestThreadLatency(new UnthrottledAction());
+        }
+
+        private void TestThreadLatency(IControlledAction action)
+        {
             var cancellationTokenSource = new CancellationTokenSource();
             var startingLine = new ManualResetEvent(false);
+            var threads = new List<Thread>();
+            int eventCount = 0;
+            int threadsStartedCount = 0;
             for (int i = 0; i < 800; ++i)
             {
                 // Create a new thread instead of using the threadpool
@@ -254,18 +151,21 @@ namespace Swordfish.NET.UnitTestV3
                     startingLine.WaitOne();
                     var token = cancellationTokenSource.Token;
                     int startValue = 0;
-                    var testNew = new TestLatencyNoThrottle();
+                    var testNew = new TestControlledActionLatency(action);
+                    testNew.PropertyChanged += (s, e) => Interlocked.Increment(ref eventCount);
+                    Interlocked.Increment(ref threadsStartedCount);
                     while (!token.IsCancellationRequested)
                     {
                         testNew.StoredValue = startValue++;
                     }
                 }));
                 thread.Start();
+                threads.Add(thread);
             }
             startingLine.Set();
 
             // Wait a bit
-            Thread.Sleep(1000);
+            Thread.Sleep(5000);
             var resetEvent = new ManualResetEvent(false);
             var start = DateTime.Now;
             Task.Run(() =>
@@ -276,6 +176,75 @@ namespace Swordfish.NET.UnitTestV3
             var duration = DateTime.Now - start;
             cancellationTokenSource.Cancel();
             Debug.WriteLine($"Task Run Latency = {duration}");
+            Debug.WriteLine($"Events Fired = {eventCount}");
+            Debug.WriteLine($"Threads Started = {threadsStartedCount}");
+            foreach (var thread in threads)
+            {
+                thread.Join();
+            }
+        }
+
+        /// <summary>
+        /// Testing creating a ThrottledAction from the name. Relevant to serialization,
+        /// but more relevant to UnthrottledAction.
+        /// </summary>
+        [TestMethod]
+        public void TestCreatingThrottledActionFromName()
+        {
+            string typeName = typeof(ThrottledAction).FullName;
+            Type type = null;
+
+            foreach (var assemlby in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    if (!assemlby.FullName.StartsWith("System") && !assemlby.FullName.StartsWith("Microsoft"))
+                    {
+                        var types = assemlby.GetTypes();
+                        type = types.FirstOrDefault(t => t.FullName == typeName);
+                        if (type != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            }
+            Assert.IsNotNull(type, $"Couldn't create ThrottledAction from name {typeName}");
+            Assert.IsTrue(Activator.CreateInstance(type) is ThrottledAction, $"Couldn't create ThrottledAction from name {typeName}");
+        }
+
+        /// <summary>
+        /// Testing creating a ThrottledAction from the name. Relevant to serialization.
+        /// </summary>
+        [TestMethod]
+        public void TestCreatingUnthrottledActionFromName()
+        {
+            string typeName = typeof(UnthrottledAction).FullName;
+            Type type = null;
+
+            foreach (var assemlby in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    if (!assemlby.FullName.StartsWith("System") && !assemlby.FullName.StartsWith("Microsoft"))
+                    {
+                        var types = assemlby.GetTypes();
+                        type = type ?? types.FirstOrDefault(t => t.FullName == typeName);
+                        if (type != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            }
+            Assert.IsNotNull(type, $"Couldn't create UnthrottledAction from name {typeName}");
+            Assert.IsTrue(Activator.CreateInstance(type) is UnthrottledAction, $"Couldn't create UnthrottledAction from name {typeName}");
         }
 
     }

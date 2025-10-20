@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Swordfish.NET.Collections.Auxiliary;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Swordfish.NET.UnitTestV3
 {
-    internal class OldThrottledAction : IDisposable
+    internal class OldThrottledAction : IDisposable, IControlledAction
     {
-        private readonly Action _action;
+        private volatile Action _action;
         private TimeSpan _timeBetweenInvokations;
         private Task _actionTask = Task.CompletedTask;
         private int _actionsQueued = 0;
@@ -15,6 +16,11 @@ namespace Swordfish.NET.UnitTestV3
         public OldThrottledAction(Action action, TimeSpan timeBetweenInvokations)
         {
             _action = action;
+            _timeBetweenInvokations = timeBetweenInvokations;
+        }
+
+        public OldThrottledAction(TimeSpan timeBetweenInvokations)
+        {
             _timeBetweenInvokations = timeBetweenInvokations;
         }
 
@@ -36,6 +42,11 @@ namespace Swordfish.NET.UnitTestV3
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public void SetAction(Action action)
+        {
+            _action = action;
         }
 
         /// <summary>

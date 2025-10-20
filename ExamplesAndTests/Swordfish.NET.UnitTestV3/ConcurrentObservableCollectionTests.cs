@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swordfish.NET.Collections;
+using Swordfish.NET.Collections.Auxiliary;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -78,7 +79,7 @@ namespace Swordfish.NET.UnitTestV3
 
             // No throttling
             propertyChangedInvocations = 0;
-            var noThrottleCollection = new ConcurrentObservableCollection<int>(throttleViewChanged: false);
+            var noThrottleCollection = new ConcurrentObservableCollection<int>(controlledAction: new UnthrottledAction());
             noThrottleCollection.PropertyChanged += propertyChangedHandler;
             for (int i = 0; i < 10000; i++)
             {
@@ -89,7 +90,7 @@ namespace Swordfish.NET.UnitTestV3
 
             // Throttling
             propertyChangedInvocations = 0;
-            var throttleCollection = new ConcurrentObservableCollection<int>(throttleViewChanged: true);
+            var throttleCollection = new ConcurrentObservableCollection<int>(controlledAction: new ThrottledAction(TimeSpan.FromMilliseconds(20)));
             throttleCollection.PropertyChanged += propertyChangedHandler;
             for (int i = 0; i < 10000; i++)
             {
