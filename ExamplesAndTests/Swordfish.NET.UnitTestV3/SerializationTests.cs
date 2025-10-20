@@ -1,8 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swordfish.NET.Collections;
+using Swordfish.NET.Collections.Auxiliary;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 #if NETCOREAPP
 using System.Text.Json;
 #endif
@@ -29,7 +31,6 @@ namespace Swordfish.NET.UnitTestV3
             return serializer.Deserialize(stream) as T;
         }
 #endif
-
         [TestMethod]
         public void ConcurrentObservableCollectionSerializationTest()
         {
@@ -82,5 +83,32 @@ namespace Swordfish.NET.UnitTestV3
             for (int i = 0; i < 10; i++)
                 Assert.IsTrue(collection.Contains("TestItem" + (i + 1).ToString()));
         }
+#if !NETCOREAPP
+        [TestMethod]
+        public void UnthrottledActionSerializationTest()
+        {
+            var collection = new ConcurrentObservableCollection<string>(controlledAction: new UnthrottledAction());
+            collection = RoundTripSerialization(collection);
+            Assert.AreEqual(typeof(UnthrottledAction), collection.GetControlledAction().GetType());
+        }
+
+        [TestMethod]
+        public void ThrottledActionWithWaitSerializationTest()
+        {
+            var collection = new ConcurrentObservableCollection<string>(controlledAction: new ThrottledActionWithWait());
+            collection = RoundTripSerialization(collection);
+            Assert.AreEqual(typeof(ThrottledActionWithWait), collection.GetControlledAction().GetType());
+        }
+
+        [TestMethod]
+        public void ThrottledActionTaskDelaySerializationTest()
+        {
+            var collection = new ConcurrentObservableCollection<string>(controlledAction: new ThrottledActionTaskDelay());
+            collection = RoundTripSerialization(collection);
+            Assert.AreEqual(typeof(ThrottledActionTaskDelay), collection.GetControlledAction().GetType());
+        }
+
+#endif
+
     }
 }

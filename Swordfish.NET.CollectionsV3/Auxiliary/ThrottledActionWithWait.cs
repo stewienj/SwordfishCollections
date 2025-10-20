@@ -1,11 +1,10 @@
-﻿using Swordfish.NET.Collections.Auxiliary;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Swordfish.NET.UnitTestV3
+namespace Swordfish.NET.Collections.Auxiliary
 {
-    internal class OldThrottledAction : IDisposable, IControlledAction
+    internal class ThrottledActionWithWait : IDisposable, IControlledAction
     {
         private volatile Action _action;
         private TimeSpan _timeBetweenInvokations;
@@ -13,17 +12,20 @@ namespace Swordfish.NET.UnitTestV3
         private int _actionsQueued = 0;
         private bool _disposedValue;
 
-        public OldThrottledAction(Action action, TimeSpan timeBetweenInvokations)
+        public ThrottledActionWithWait(Action action, TimeSpan timeBetweenInvokations)
         {
             _action = action;
             _timeBetweenInvokations = timeBetweenInvokations;
         }
 
-        public OldThrottledAction(TimeSpan timeBetweenInvokations)
+        public ThrottledActionWithWait(TimeSpan timeBetweenInvokations)
         {
             _timeBetweenInvokations = timeBetweenInvokations;
         }
 
+        public ThrottledActionWithWait() : this(TimeSpan.FromMilliseconds(20))
+        {
+        }
 
         protected virtual void Dispose(bool disposing)
         {
@@ -76,7 +78,6 @@ namespace Swordfish.NET.UnitTestV3
                     {
                         // Release any external objects held by this task
                         action = null;
-
                         // Threadsafe method of waiting
                         using (var manualResetEvent = new ManualResetEvent(false))
                         {

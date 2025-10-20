@@ -8,6 +8,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Swordfish.NET.UnitTestV3
 {
@@ -52,10 +53,10 @@ namespace Swordfish.NET.UnitTestV3
         /// class. Also tests throughput is reasonable.
         /// </summary>
         [TestMethod]
-        public void TestTiming()
+        public void TestTimingThrottledActionWithWait()
         {
             int updateCount = 0;
-            var throttledAction = new ThrottledAction(() =>
+            var throttledAction = new ThrottledActionWithWait(() =>
             {
                 Interlocked.Increment(ref updateCount);
             }, TimeSpan.FromMilliseconds(30));
@@ -69,9 +70,68 @@ namespace Swordfish.NET.UnitTestV3
             }
 
             // Check the updates are throttled
-            Assert.IsTrue(updateCount < 40);
+            Assert.IsTrue(updateCount < 40, $"Update count should be less than 40, actual count = {updateCount}");
             // Check there is reasonable throughput
             Assert.IsTrue(callCount > 100_000);
+        }
+
+        /// <summary>
+        /// This tests that actions are being throttled by the ThrottledAction
+        /// class. Also tests throughput is reasonable.
+        /// </summary>
+        [TestMethod]
+        public void TestTimingThrottledActionTaskDelay()
+        {
+            int updateCount = 0;
+            var throttledAction = new ThrottledActionTaskDelay(() =>
+            {
+                Interlocked.Increment(ref updateCount);
+            }, TimeSpan.FromMilliseconds(30));
+
+            var start = DateTime.Now;
+            int callCount = 0;
+            while ((DateTime.Now - start) < TimeSpan.FromSeconds(1))
+            {
+                callCount++;
+                throttledAction.InvokeAction();
+            }
+
+            // Check the updates are throttled
+            Assert.IsTrue(updateCount < 40, $"Update count should be less than 40, actual count = {updateCount}");
+            // Check there is reasonable throughput
+            Assert.IsTrue(callCount > 100_000, $"Call count in low = {callCount}");
+        }
+
+
+        /// <summary>
+        /// Tests that ThrottledAction executes the last action 
+        /// invoked. Slightly different test to the one for
+        /// ThrottledActionTaskDelay because the Task Delay
+        /// version executes the actual final task.
+        /// </summary>
+        [TestMethod]
+        public void TestFinalActionExecutedThrottledActionWithWait()
+        {
+            int callCount = 0;
+            var throttledAction = new ThrottledActionWithWait(null, TimeSpan.FromMilliseconds(30));
+            DateTime lastQueueTime = DateTime.Now;
+            DateTime lastExecuteTime = DateTime.Now;
+
+            var start = DateTime.Now;
+            while ((DateTime.Now - start) < TimeSpan.FromSeconds(1))
+            {
+                int local = ++callCount;
+                throttledAction.InvokeAction(() =>
+                {
+                    lastExecuteTime = DateTime.Now;
+                });
+                lastQueueTime = DateTime.Now;
+            }
+
+            // Wait a while for execution to complete
+            Thread.Sleep(40);
+            Assert.IsTrue(lastExecuteTime > lastQueueTime);
+            Debug.WriteLine($"Last Execute Time - Last Queue Time = {lastExecuteTime - lastQueueTime}");
         }
 
         /// <summary>
@@ -79,10 +139,10 @@ namespace Swordfish.NET.UnitTestV3
         /// invoked.
         /// </summary>
         [TestMethod]
-        public void TestFinalActionExecuted()
+        public void TestFinalActionExecutedThrottledActionTaskDelay()
         {
             int callCount = 0;
-            var throttledAction = new ThrottledAction(null, TimeSpan.FromMilliseconds(30));
+            var throttledAction = new ThrottledActionTaskDelay(null, TimeSpan.FromMilliseconds(30));
             int lastCallCountUpdated = 0;
 
             var start = DateTime.Now;
@@ -100,6 +160,7 @@ namespace Swordfish.NET.UnitTestV3
             Assert.AreEqual(callCount, lastCallCountUpdated);
         }
 
+
         /// <summary>
         /// When this was written the implementation of ThrottledAction
         /// had been changed. This tests the threadpool latency when
@@ -107,9 +168,9 @@ namespace Swordfish.NET.UnitTestV3
         /// out to the console, not actually used in a test.
         /// </summary>
         [TestMethod]
-        public void TestThreadPoolLatencyNewThrotle()
+        public void TestThreadPoolLatencyThrottledActionWithWait()
         {
-            TestThreadLatency(new ThrottledAction(TimeSpan.FromMilliseconds(20)));
+            TestThreadLatency(()=>new ThrottledActionWithWait(TimeSpan.FromMilliseconds(20)));
         }
 
         /// <summary>
@@ -119,9 +180,9 @@ namespace Swordfish.NET.UnitTestV3
         /// out to the console, not actually used in a test.
         /// </summary>
         [TestMethod]
-        public void TestThreadPoolLatencyOldThrottle()
+        public void TestThreadPoolLatencyThrottledActionTaskDelay()
         {
-            TestThreadLatency(new OldThrottledAction(TimeSpan.FromMilliseconds(20)));
+            TestThreadLatency(()=>new ThrottledActionTaskDelay(TimeSpan.FromMilliseconds(20)));
         }
 
         /// <summary>
@@ -131,19 +192,20 @@ namespace Swordfish.NET.UnitTestV3
         /// out to the console, not actually used in a test.
         /// </summary>
         [TestMethod]
-        public void TestThreadLatencyNoThrottle()
+        public void TestThreadPoolLatencyUnthrottledAction()
         {
-            TestThreadLatency(new UnthrottledAction());
+            TestThreadLatency(()=>new UnthrottledAction());
         }
 
-        private void TestThreadLatency(IControlledAction action)
+        private void TestThreadLatency(Func<IControlledAction> actionFactory)
         {
             var cancellationTokenSource = new CancellationTokenSource();
             var startingLine = new ManualResetEvent(false);
             var threads = new List<Thread>();
+            var threadCounter = new ConcurrentDictionary<int, int>();
             int eventCount = 0;
             int threadsStartedCount = 0;
-            for (int i = 0; i < 800; ++i)
+            for (int i = 0; i < 100; ++i)
             {
                 // Create a new thread instead of using the threadpool
                 var thread = new Thread(new ThreadStart(() =>
@@ -151,8 +213,12 @@ namespace Swordfish.NET.UnitTestV3
                     startingLine.WaitOne();
                     var token = cancellationTokenSource.Token;
                     int startValue = 0;
-                    var testNew = new TestControlledActionLatency(action);
-                    testNew.PropertyChanged += (s, e) => Interlocked.Increment(ref eventCount);
+                    var testNew = new TestControlledActionLatency(actionFactory());
+                    testNew.PropertyChanged += (s, e) =>
+                    {
+                        Interlocked.Increment(ref eventCount);
+                        threadCounter[Thread.CurrentThread.ManagedThreadId] = 0;
+                    };
                     Interlocked.Increment(ref threadsStartedCount);
                     while (!token.IsCancellationRequested)
                     {
@@ -165,7 +231,7 @@ namespace Swordfish.NET.UnitTestV3
             startingLine.Set();
 
             // Wait a bit
-            Thread.Sleep(5000);
+            Thread.Sleep(2000);
             var resetEvent = new ManualResetEvent(false);
             var start = DateTime.Now;
             Task.Run(() =>
@@ -175,9 +241,10 @@ namespace Swordfish.NET.UnitTestV3
             resetEvent.WaitOne();
             var duration = DateTime.Now - start;
             cancellationTokenSource.Cancel();
-            Debug.WriteLine($"Task Run Latency = {duration}");
-            Debug.WriteLine($"Events Fired = {eventCount}");
-            Debug.WriteLine($"Threads Started = {threadsStartedCount}");
+            Trace.WriteLine($"Task Run Latency = {duration}");
+            Trace.WriteLine($"Events Fired = {eventCount}");
+            Trace.WriteLine($"Threads Started = {threadsStartedCount}");
+            Trace.WriteLine($"Threads Executed On = {threadCounter.Count}");
             foreach (var thread in threads)
             {
                 thread.Join();
@@ -189,9 +256,9 @@ namespace Swordfish.NET.UnitTestV3
         /// but more relevant to UnthrottledAction.
         /// </summary>
         [TestMethod]
-        public void TestCreatingThrottledActionFromName()
+        public void TestCreatingThrottledActionWithWaitFromName()
         {
-            string typeName = typeof(ThrottledAction).FullName;
+            string typeName = typeof(ThrottledActionWithWait).FullName;
             Type type = null;
 
             foreach (var assemlby in AppDomain.CurrentDomain.GetAssemblies())
@@ -213,8 +280,41 @@ namespace Swordfish.NET.UnitTestV3
                 }
             }
             Assert.IsNotNull(type, $"Couldn't create ThrottledAction from name {typeName}");
-            Assert.IsTrue(Activator.CreateInstance(type) is ThrottledAction, $"Couldn't create ThrottledAction from name {typeName}");
+            Assert.IsTrue(Activator.CreateInstance(type) is ThrottledActionWithWait, $"Couldn't create ThrottledAction from name {typeName}");
         }
+
+        /// <summary>
+        /// Testing creating a ThrottledAction from the name. Relevant to serialization,
+        /// but more relevant to UnthrottledAction.
+        /// </summary>
+        [TestMethod]
+        public void TestCreatingThrottledActionTaskDelayFromName()
+        {
+            string typeName = typeof(ThrottledActionTaskDelay).FullName;
+            Type type = null;
+
+            foreach (var assemlby in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    if (!assemlby.FullName.StartsWith("System") && !assemlby.FullName.StartsWith("Microsoft"))
+                    {
+                        var types = assemlby.GetTypes();
+                        type = types.FirstOrDefault(t => t.FullName == typeName);
+                        if (type != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            }
+            Assert.IsNotNull(type, $"Couldn't create ThrottleThrottledActionTaskDelaydAction from name {typeName}");
+            Assert.IsTrue(Activator.CreateInstance(type) is ThrottledActionTaskDelay, $"Couldn't create ThrottledActionTaskDelay from name {typeName}");
+        }
+
 
         /// <summary>
         /// Testing creating a ThrottledAction from the name. Relevant to serialization.

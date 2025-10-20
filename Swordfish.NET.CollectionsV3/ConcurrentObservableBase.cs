@@ -94,6 +94,11 @@ namespace Swordfish.NET.Collections
             });
         }
 
+        /// <summary>
+        ///  Used for unit testing
+        /// </summary>
+        internal IControlledAction GetControlledAction() => _viewChanged;
+
         protected void DoWriteNotify(Func<TInternalCollection> write, Func<NotifyCollectionChangedEventArgs> change)
         {
             DoReadWriteNotify(() => 0, _ => write(), _ => change());
@@ -248,10 +253,7 @@ namespace Swordfish.NET.Collections
         {
             info.AddValue("isMultithreaded", _lock != null);
             info.AddValue("throttleViewChanged", _viewChanged != null);
-            if (_viewChanged is IControlledAction action && !(_viewChanged is ThrottledAction))
-            {
-                info.AddValue("controlledActionType", action.GetType().FullName);
-            }
+            info.AddValue("controlledActionType", _viewChanged.GetType().FullName);
         }
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
