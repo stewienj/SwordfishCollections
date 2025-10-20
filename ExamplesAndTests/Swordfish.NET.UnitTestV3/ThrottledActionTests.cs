@@ -14,6 +14,92 @@ namespace Swordfish.NET.UnitTestV3
     [TestClass]
     public class ThrottledActionTests
     {
+        // ********************************************************************
+        // Nested Classes
+        // ********************************************************************
+        #region Nested Classes
+
+        /// <summary>
+        /// Class used for testing the thread pool latency when using the new
+        /// code from ThrottledAction
+        /// </summary>
+        class TestLatencyNewThrottle : ExtendedNotifyPropertyChanged
+        {
+            ThrottledAction _throttledAction;
+
+            public TestLatencyNewThrottle()
+            {
+                _throttledAction = new ThrottledAction(() => RaisePropertyChanged(nameof(StoredValue)), TimeSpan.FromMilliseconds(20));
+            }
+
+            private int _storedValue = 0;
+            public int StoredValue
+            {
+                get => _storedValue;
+                set
+                {
+                    _storedValue = value;
+                    _throttledAction.InvokeAction();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Class used for testing the thread pool latency when using the old
+        /// code from ThrottledAction
+        /// </summary>
+        class TestLatencyOldThrottle : ExtendedNotifyPropertyChanged
+        {
+            OldThrottledAction _throttledAction;
+
+            public TestLatencyOldThrottle()
+            {
+                _throttledAction = new OldThrottledAction(() => RaisePropertyChanged(nameof(StoredValue)), TimeSpan.FromMilliseconds(20));
+            }
+
+            private int _storedValue = 0;
+            public int StoredValue
+            {
+                get => _storedValue;
+                set
+                {
+                    _storedValue = value;
+                    _throttledAction.InvokeAction();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Class used for testing the thread pool latency when an
+        /// action directly without a throttle
+        /// </summary>
+        class TestLatencyNoThrottle : ExtendedNotifyPropertyChanged
+        {
+            Action _action;
+
+            public TestLatencyNoThrottle()
+            {
+                _action = () => RaisePropertyChanged(nameof(StoredValue));
+            }
+
+            private int _storedValue = 0;
+            public int StoredValue
+            {
+                get => _storedValue;
+                set
+                {
+                    _storedValue = value;
+                    _action.Invoke();
+                }
+            }
+        }
+
+        #endregion Nested Classes
+
+        /// <summary>
+        /// This tests that actions are being throttled by the ThrottledAction
+        /// class. Also tests throughput is reasonable.
+        /// </summary>
         [TestMethod]
         public void TestTiming()
         {
@@ -38,8 +124,8 @@ namespace Swordfish.NET.UnitTestV3
         }
 
         /// <summary>
-        /// Throttled Action ensures the last action that
-        /// was invoked gets executed.
+        /// Tests that ThrottledAction executes the last action 
+        /// invoked.
         /// </summary>
         [TestMethod]
         public void TestFinalActionExecuted()
@@ -58,56 +144,19 @@ namespace Swordfish.NET.UnitTestV3
                 });
             }
 
-            // Wait for execution to complete
+            // Wait a while for execution to complete
             Thread.Sleep(40);
             Assert.AreEqual(callCount, lastCallCountUpdated);
         }
 
-        class TestLatencyNew : ExtendedNotifyPropertyChanged
-        {
-            ThrottledAction _throttledAction;
-
-            public TestLatencyNew()
-            {
-                _throttledAction = new ThrottledAction(() => RaisePropertyChanged(nameof(StoredValue)), TimeSpan.FromMilliseconds(20));
-            }
-
-            private int _storedValue = 0;
-            public int StoredValue
-            {
-                get => _storedValue;
-                set
-                {
-                    _storedValue = value;
-                    _throttledAction.InvokeAction();
-                }
-            }
-        }
-
-        class TestLatencyOld : ExtendedNotifyPropertyChanged
-        {
-            OldThrottledAction _throttledAction;
-
-            public TestLatencyOld()
-            {
-                _throttledAction = new OldThrottledAction(() => RaisePropertyChanged(nameof(StoredValue)), TimeSpan.FromMilliseconds(20));
-            }
-
-            private int _storedValue = 0;
-            public int StoredValue
-            {
-                get => _storedValue;
-                set
-                {
-                    _storedValue = value;
-                    _throttledAction.InvokeAction();
-                }
-            }
-        }
-
-
+        /// <summary>
+        /// When this was written the implementation of ThrottledAction
+        /// had been changed. This tests the threadpool latency when
+        /// using the new implementation. The latency will be written
+        /// out to the console, not actually used in a test.
+        /// </summary>
         [TestMethod]
-        public void TestThreadPoolLatencyNew()
+        public void TestThreadPoolLatencyNewThrotle()
         {
             var cancellationTokenSource = new CancellationTokenSource();
             var startingLine = new ManualResetEvent(false);
@@ -119,7 +168,7 @@ namespace Swordfish.NET.UnitTestV3
                     startingLine.WaitOne();
                     var token = cancellationTokenSource.Token;
                     int startValue = 0;
-                    var testNew = new TestLatencyNew();
+                    var testNew = new TestLatencyNewThrottle();
                     while (!token.IsCancellationRequested)
                     {
                         testNew.StoredValue = startValue++;
@@ -143,8 +192,14 @@ namespace Swordfish.NET.UnitTestV3
             Debug.WriteLine($"Task Run Latency = {duration}");
         }
 
+        /// <summary>
+        /// When this was written the implementation of ThrottledAction
+        /// had been changed. This tests the threadpool latency when
+        /// using the old implementation. The latency will be written
+        /// out to the console, not actually used in a test.
+        /// </summary>
         [TestMethod]
-        public void TestThreadPoolLatencyOld()
+        public void TestThreadPoolLatencyOldThrottle()
         {
             var cancellationTokenSource = new CancellationTokenSource();
             var startingLine = new ManualResetEvent(false);
@@ -156,7 +211,7 @@ namespace Swordfish.NET.UnitTestV3
                     startingLine.WaitOne();
                     var token = cancellationTokenSource.Token;
                     int startValue = 0;
-                    var testNew = new TestLatencyOld();
+                    var testNew = new TestLatencyOldThrottle();
                     while (!token.IsCancellationRequested)
                     {
                         testNew.StoredValue = startValue++;
@@ -179,5 +234,49 @@ namespace Swordfish.NET.UnitTestV3
             cancellationTokenSource.Cancel();
             Debug.WriteLine($"Task Run Latency = {duration}");
         }
+
+        /// <summary>
+        /// When this was written the implementation of ThrottledAction
+        /// had been changed. This tests the threadpool latency when
+        /// using no throttling. The latency will be written
+        /// out to the console, not actually used in a test.
+        /// </summary>
+        [TestMethod]
+        public void TestThreadLatencyNoThrottle()
+        {
+            var cancellationTokenSource = new CancellationTokenSource();
+            var startingLine = new ManualResetEvent(false);
+            for (int i = 0; i < 800; ++i)
+            {
+                // Create a new thread instead of using the threadpool
+                var thread = new Thread(new ThreadStart(() =>
+                {
+                    startingLine.WaitOne();
+                    var token = cancellationTokenSource.Token;
+                    int startValue = 0;
+                    var testNew = new TestLatencyNoThrottle();
+                    while (!token.IsCancellationRequested)
+                    {
+                        testNew.StoredValue = startValue++;
+                    }
+                }));
+                thread.Start();
+            }
+            startingLine.Set();
+
+            // Wait a bit
+            Thread.Sleep(1000);
+            var resetEvent = new ManualResetEvent(false);
+            var start = DateTime.Now;
+            Task.Run(() =>
+            {
+                resetEvent.Set();
+            });
+            resetEvent.WaitOne();
+            var duration = DateTime.Now - start;
+            cancellationTokenSource.Cancel();
+            Debug.WriteLine($"Task Run Latency = {duration}");
+        }
+
     }
 }
