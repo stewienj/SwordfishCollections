@@ -242,3 +242,19 @@ the DataGrid control with the dummy row being displayed indicating a new item ca
 added to the collection from the DataGrid control.
 
 ![Screenshot of the EditableDataGridTest example](Documentation/EditableDataGridTestScreenshot.png)
+
+# Constructors added in Version 3.4.0
+
+3.4.0 had some changes under the hood, and added some optional constructor parameters, so I thought it deserved a whole point version increment.
+The changes were implemented because of issue #45, and this comment goes into some detail https://github.com/stewienj/SwordfishCollections/issues/45#issuecomment-3424549787
+
+The concurrent observable collections have a CollectionView property that provides an immutable snapshot of the
+collection, note the objects within the collection are still mutable. The collection fires the PropertyChanged event with the
+CollectionView name as the parameter when the collection changes. However it doesn't fire this event every time the collection
+changes, but rather it is throttled to a default maximum of 50 times a second (minimum 20 millisecond delay between each
+PropertyChanged event). The CollectionView property is what you bind to in the View. The new constructor parameters allow you
+to specify a throttled action implementation. You can roll your own class that inherits from `IControlledAction` or you can
+pass an instance of one of the existing throttle controls:
+- `ThrottledActionTaskDelay` - most performant, and the default since version 3.4.0
+- `ThrottledActionWithWait ` - the default implementation prior to version 3.4.0
+- `UnthrottledAction` - doesn't do any throttling and fires the PropertyChanged event on the same thread that changed the collection.

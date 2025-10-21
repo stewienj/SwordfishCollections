@@ -7,7 +7,7 @@ namespace Swordfish.NET.Collections.Auxiliary
     /// <summary>
     /// An implementation of ThrottledAction that uses a TaskDelay for the throttle
     /// </summary>
-    internal class ThrottledActionTaskDelay : IControlledAction
+    public class ThrottledActionTaskDelay : IControlledAction
     {
         private volatile Action _action = null;
         private TimeSpan _timeBetweenInvokations;

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections.Auxiliary
 {
-    internal class ThrottledActionWithWait : IDisposable, IControlledAction
+    public class ThrottledActionWithWait : IDisposable, IControlledAction
     {
         private volatile Action _action;
         private TimeSpan _timeBetweenInvokations;

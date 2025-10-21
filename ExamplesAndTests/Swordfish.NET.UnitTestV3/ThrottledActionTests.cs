@@ -1,8 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Swordfish.NET.Collections;
 using Swordfish.NET.Collections.Auxiliary;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -158,6 +160,43 @@ namespace Swordfish.NET.UnitTestV3
             Assert.AreEqual(callCount, lastCallCountUpdated);
         }
 
+        /// <summary>
+        /// Tests that the controlledAction parameter correctly changes the behaviour of the collection.
+        /// </summary>
+        [TestMethod]
+        public void TestControlledActionParamter()
+        {
+            int propertyChangedInvocations = 0;
+            void propertyChangedHandler(object sender, PropertyChangedEventArgs args)
+            {
+                if (args.PropertyName == nameof(ConcurrentObservableCollection<int>.CollectionView))
+                {
+                    propertyChangedInvocations++;
+                }
+            }
+
+            // No throttling
+            propertyChangedInvocations = 0;
+            var noThrottleCollection = new ConcurrentObservableCollection<int>(controlledAction: new UnthrottledAction());
+            noThrottleCollection.PropertyChanged += propertyChangedHandler;
+            for (int i = 0; i < 10000; i++)
+            {
+                noThrottleCollection.Add(i);
+            }
+            noThrottleCollection.PropertyChanged -= propertyChangedHandler;
+            Assert.AreEqual(noThrottleCollection.Count, propertyChangedInvocations);
+
+            // Throttling
+            propertyChangedInvocations = 0;
+            var throttleCollection = new ConcurrentObservableCollection<int>(controlledAction: new ThrottledActionTaskDelay(TimeSpan.FromMilliseconds(20)));
+            throttleCollection.PropertyChanged += propertyChangedHandler;
+            for (int i = 0; i < 10000; i++)
+            {
+                throttleCollection.Add(i);
+            }
+            throttleCollection.PropertyChanged -= propertyChangedHandler;
+            Assert.IsTrue(propertyChangedInvocations < throttleCollection.Count);
+        }
 
         /// <summary>
         /// When this was written the implementation of ThrottledAction
