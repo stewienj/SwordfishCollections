@@ -4,7 +4,6 @@ using Swordfish.NET.Collections.Auxiliary;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Xml.Serialization;
 #if NETCOREAPP
 using System.Text.Json;
 #endif

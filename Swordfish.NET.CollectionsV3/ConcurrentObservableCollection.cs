@@ -50,7 +50,7 @@ namespace Swordfish.NET.Collections
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ConcurrentObservableCollection() : this(true, null)
+        public ConcurrentObservableCollection() : this(isMultithreaded: true, controlledAction: null)
         {
         }
 
@@ -74,7 +74,7 @@ namespace Swordfish.NET.Collections
         /// Constructor.
         /// </summary>
         /// <param name="isMultithreaded">Whether collection supports updates from multiple threads</param>
-        /// <param name="throttleViewChanged">Whether property change events for <see cref="CollectionView"/> are throttled</param>
+        /// <param name="controlledAction">Override the ThottledAction with an implementation of IControlledAction</param>
         public ConcurrentObservableCollection(bool isMultithreaded = true, IControlledAction controlledAction = null) : base(isMultithreaded, ImmutableList<T>.Empty, controlledAction)
         {
             _editableCollectionView = EditableImmutableListBridge<T>.Empty(this);
@@ -178,9 +178,9 @@ namespace Swordfish.NET.Collections
         /// </summary>
         public void BeginEditingItem()
         {
-            _lock.EnterWriteLock();
+            _lock?.EnterWriteLock();
             _editableCollectionView.FreezeUpdates = true;
-            _lock.ExitWriteLock();
+            _lock?.ExitWriteLock();
         }
 
         /// <summary>
@@ -193,9 +193,9 @@ namespace Swordfish.NET.Collections
         public void EndedEditingItem()
         {
             // Clear flag
-            _lock.EnterWriteLock();
+            _lock?.EnterWriteLock();
             _editableCollectionView.FreezeUpdates = false;
-            _lock.ExitWriteLock();
+            _lock?.ExitWriteLock();
         }
 
         /// <summary>

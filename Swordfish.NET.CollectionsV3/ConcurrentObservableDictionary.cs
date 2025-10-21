@@ -37,6 +37,15 @@ namespace Swordfish.NET.Collections
         /// </summary>
         /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
         /// <param name="keyComparer">Custom key comparer</param>
+        public ConcurrentObservableDictionary(IEqualityComparer<TKey> keyComparer) : this(true, keyComparer, controlledAction: null)
+        {
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
+        /// <param name="keyComparer">Custom key comparer</param>
         public ConcurrentObservableDictionary(bool isMultithreaded, IEqualityComparer<TKey> keyComparer) : this(isMultithreaded, keyComparer, controlledAction: null)
         {
         }
@@ -45,8 +54,8 @@ namespace Swordfish.NET.Collections
         /// Constructor.
         /// </summary>
         /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
-        /// <param name="throttleViewChanged">Whether property change events for <see cref="CollectionView"/> are throttled</param>
         /// <param name="keyComparer">Custom key comparer, null indicates to use default</param>
+        ///         /// <param name="controlledAction">Override the ThottledAction with an implementation of IControlledAction</param>
         public ConcurrentObservableDictionary(bool isMultithreaded = true, IEqualityComparer<TKey> keyComparer = null, IControlledAction controlledAction = null)
             : base(isMultithreaded,
                   keyComparer == null

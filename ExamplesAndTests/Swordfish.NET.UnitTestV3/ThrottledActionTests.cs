@@ -1,14 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Swordfish.NET.Collections;
-using System.Linq;
 using Swordfish.NET.Collections.Auxiliary;
-using System.Reflection;
-using System.Diagnostics;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 namespace Swordfish.NET.UnitTestV3
 {

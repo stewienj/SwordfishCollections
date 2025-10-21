@@ -27,7 +27,7 @@ namespace Swordfish.NET.Collections
         /// <summary>
         /// Constructor.
         /// </summary>
-        public ConcurrentObservableHashSet() : this(true, null, null)
+        public ConcurrentObservableHashSet() : this(isMultithreaded: true, comparer: null, controlledAction: null)
         {
         }
 
@@ -43,8 +43,8 @@ namespace Swordfish.NET.Collections
         /// Constructor.
         /// </summary>
         /// <param name="isMultithreaded">Whether collection supports updates from multiple threads</param>
-        /// <param name="throttleViewChanged">Whether property change events for <see cref="CollectionView"/> are throttled</param>
         /// <param name="comparer">Custom item comparer, null indicates to use default</param>
+        /// <param name="controlledAction">Override the ThottledAction with an implementation of IControlledAction</param>
         public ConcurrentObservableHashSet(bool isMultithreaded = true, IEqualityComparer<T> comparer = null, IControlledAction controlledAction = null) : base(isMultithreaded, ImmutableHashSet<T>.Empty.WithComparer(comparer), controlledAction)
         {
         }

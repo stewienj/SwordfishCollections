@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -48,7 +47,16 @@ namespace Swordfish.NET.Collections
         private StackFrame[] _stackFrames;
 #endif
 
-        protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection, IControlledAction controlledAction)
+        /// <summary>
+        /// Separate constructor for overriding the ThrottledAction/IControlledAction implementation.
+        /// </summary>
+        protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection, IControlledAction controlledAction) : this(isMultithreaded, initialCollection)
+        {
+            _viewChanged = controlledAction ?? new ThrottledAction(TimeSpan.FromMilliseconds(20));
+            _viewChanged.SetAction(() => RaisePropertyChanged(nameof(CollectionView), nameof(Count)));
+        }
+
+        protected ConcurrentObservableBase(bool isMultithreaded, TInternalCollection initialCollection)
         {
             // If compiled as debug, then store the stack trace as an aid to working out which object this is in case of a binding error.
             // This is non performant, so only use this in debug builds.
@@ -76,9 +84,6 @@ namespace Swordfish.NET.Collections
 #endif
             _lock = isMultithreaded ? new ReaderWriterLockSlim() : null;
             _internalCollection = initialCollection;
-
-            _viewChanged = controlledAction ?? new ThrottledAction(TimeSpan.FromMilliseconds(20));
-            _viewChanged.SetAction(() => RaisePropertyChanged(nameof(CollectionView), nameof(Count)));
         }
 
         /// <summary>
