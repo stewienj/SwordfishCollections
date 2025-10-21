@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+#if DEBUG
+using System.Diagnostics;
+#endif
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
