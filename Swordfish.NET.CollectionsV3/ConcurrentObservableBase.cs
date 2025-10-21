@@ -257,7 +257,6 @@ namespace Swordfish.NET.Collections
         protected virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("isMultithreaded", _lock != null);
-            info.AddValue("throttleViewChanged", _viewChanged != null);
             info.AddValue("controlledActionType", _viewChanged.GetType().FullName);
         }
 
