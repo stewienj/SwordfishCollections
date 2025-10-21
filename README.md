@@ -12,7 +12,8 @@ Swordfish.NET.CollectionsV3 is a library that provides Concurrent, Observable co
 
 - [Collection Types](#collection-types)
 - [Usage (CollectionView)](#usage-collectionview)
-- [Usage (EditableCollectionView) - v3.3.0 onwards](#usage-editablecollectionview---v330-onwards)
+- [Usage (EditableCollectionView) - v3.3.0 onwards](#usage-editablecollectionview-v330)
+- [Constructors added - v3.4.0 onwards](#constructors-added-v340)
 
 # Collection Types
 
@@ -142,7 +143,7 @@ public class ExampleViewModel : INotifyPropertyChanged
 
 ```
 
-# Usage (EditableCollectionView) - v3.3.0 onwards
+# Usage (EditableCollectionView) - v3.3.0 onwards {#usage-editablecollectionview-v330}
 
 The `EditableCollectionView` property is new for version 3.3.0 and is only on
 ConcurrentObservableCollection, I will add it to other collections if there is any
@@ -243,7 +244,7 @@ added to the collection from the DataGrid control.
 
 ![Screenshot of the EditableDataGridTest example](Documentation/EditableDataGridTestScreenshot.png)
 
-# Constructors added in Version 3.4.0
+# Constructors added - v3.4.0 onwards {#constructors-added-v340}
 
 3.4.0 had some changes under the hood, and added some optional constructor parameters, so I thought it deserved a whole point version increment.
 The changes were implemented because of issue #45, and this comment goes into some detail https://github.com/stewienj/SwordfishCollections/issues/45#issuecomment-3424549787
