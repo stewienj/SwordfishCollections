@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swordfish.NET.Collections.Auxiliary;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -23,21 +24,28 @@ namespace Swordfish.NET.Collections
     ICollection,
     ISerializable
     {
-        public ConcurrentObservableHashSet() : this(true)
-        {
-        }
-
-        public ConcurrentObservableHashSet(IEqualityComparer<T> comparer) : base(true, ImmutableHashSet<T>.Empty.WithComparer(comparer))
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ConcurrentObservableHashSet() : this(isMultithreaded: true, comparer: null, controlledAction: null)
         {
         }
 
         /// <summary>
-        /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
-        /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
-        /// it the default.
+        /// Constructor.
         /// </summary>
-        /// <param name="isThreadSafe"></param>
-        public ConcurrentObservableHashSet(bool isMultithreaded) : base(isMultithreaded, ImmutableHashSet<T>.Empty)
+        /// <param name="comparer">Custom item comparer</param>
+        public ConcurrentObservableHashSet(IEqualityComparer<T> comparer) : this(isMultithreaded: true, comparer, controlledAction: null)
+        {
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="isMultithreaded">Whether collection supports updates from multiple threads</param>
+        /// <param name="comparer">Custom item comparer, null indicates to use default</param>
+        /// <param name="controlledAction">Override the ThottledAction with an implementation of IControlledAction</param>
+        public ConcurrentObservableHashSet(bool isMultithreaded = true, IEqualityComparer<T> comparer = null, IControlledAction controlledAction = null) : base(isMultithreaded, ImmutableHashSet<T>.Empty.WithComparer(comparer), controlledAction)
         {
         }
 

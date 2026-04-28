@@ -21,19 +21,13 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       
     - name: Checkout SwordfishCollections
-      uses: actions/checkout@v2.1.0
+      uses: actions/checkout@v5.0.0
 
     - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2.0.0
   
-    - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1.0.5
-    
-    - name: Restore NuGet Packages
-      run: nuget restore Swordfish.NET.Collections.sln
-
     - name: Build NuGet Packages
-      run: msbuild Swordfish.NET.Collections.sln -t:pack -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:Platform="Any CPU" -p:Configuration="Release" -p:PointVersion=${{ github.event.release.tag_name }}
+      run: msbuild -restore Swordfish.NET.Collections.sln -t:pack -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:Platform="Any CPU" -p:Configuration="Release" -p:PointVersion=${{ github.event.release.tag_name }}
 
     - name: Publish V3 Nuget Package
       run: dotnet nuget push **/release/Swordfish.NET.CollectionsV3.3.*.nupkg --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json

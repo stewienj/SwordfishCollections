@@ -20,19 +20,13 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       
     - name: Checkout SwordfishCollections
-      uses: actions/checkout@v2.1.0
+      uses: actions/checkout@v5.0.0
 
     - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v1
-  
-    - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1.0.5
-    
-    - name: Restore NuGet Packages
-      run: nuget restore Swordfish.NET.Collections.sln
+      uses: microsoft/setup-msbuild@v2.0.0
       
     - name: Build Debug DLL
-      run: msbuild Swordfish.NET.Collections.sln -p:Configuration=Debug
+      run: msbuild -restore Swordfish.NET.Collections.sln -p:Configuration=Debug
 
     - name: Build Release DLL
-      run: msbuild Swordfish.NET.Collections.sln -p:Configuration=Release
+      run: msbuild -restore Swordfish.NET.Collections.sln -p:Configuration=Release

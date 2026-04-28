@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swordfish.NET.Collections.Auxiliary;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -24,21 +25,43 @@ namespace Swordfish.NET.Collections
     ICollection,
     ISerializable
     {
-        public ConcurrentObservableDictionary() : this(true)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ConcurrentObservableDictionary() : this(true, null, null)
         {
         }
 
         /// <summary>
-        /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
-        /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
-        /// it the default.
+        /// Constructor.
         /// </summary>
-        /// <param name="isThreadSafe"></param>
-        public ConcurrentObservableDictionary(bool isMultithreaded, IEqualityComparer<TKey> keyComparer = null)
+        /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
+        /// <param name="keyComparer">Custom key comparer</param>
+        public ConcurrentObservableDictionary(IEqualityComparer<TKey> keyComparer) : this(true, keyComparer, controlledAction: null)
+        {
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
+        /// <param name="keyComparer">Custom key comparer</param>
+        public ConcurrentObservableDictionary(bool isMultithreaded, IEqualityComparer<TKey> keyComparer) : this(isMultithreaded, keyComparer, controlledAction: null)
+        {
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="isMultithreaded">Whether dictionary supports updates from multiple threads</param>
+        /// <param name="keyComparer">Custom key comparer, null indicates to use default</param>
+        ///         /// <param name="controlledAction">Override the ThottledAction with an implementation of IControlledAction</param>
+        public ConcurrentObservableDictionary(bool isMultithreaded = true, IEqualityComparer<TKey> keyComparer = null, IControlledAction controlledAction = null)
             : base(isMultithreaded,
                   keyComparer == null
                   ? ImmutableDictionaryListPair<TKey, TValue>.Empty
-                  : ImmutableDictionaryListPair<TKey, TValue>.Empty.WithComparers(keyComparer: keyComparer))
+                  : ImmutableDictionaryListPair<TKey, TValue>.Empty.WithComparers(keyComparer: keyComparer),
+                  controlledAction)
         {
             PropertyChanged += (s, e) =>
             {
@@ -275,7 +298,7 @@ namespace Swordfish.NET.Collections
         }
 
         /// <summary>
-        /// This is the view of the colleciton that you should be binding to with your ListView/GridView control.
+        /// This is the view of the collection that you should be binding to with your ListView/GridView control.
         /// </summary>
         public override IList<KeyValuePair<TKey, TValue>> CollectionView
         {

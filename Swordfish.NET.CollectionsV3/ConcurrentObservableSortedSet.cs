@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Swordfish.NET.Collections.Auxiliary;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -23,22 +24,23 @@ namespace Swordfish.NET.Collections
     ICollection,
     ISerializable
     {
-        public ConcurrentObservableSortedSet() : this(true)
-        {
-        }
-
-        public ConcurrentObservableSortedSet(IComparer<T> comparer) : base(true, ImmutableSortedSet<T>.Empty.WithComparer(comparer))
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="comparer">Custom item comparer</param>
+        public ConcurrentObservableSortedSet(IComparer<T> comparer) : this(isMultithreaded: true, comparer, controlledAction: null)
         {
         }
 
         /// <summary>
-        /// Constructructor. Takes an optional isMultithreaded argument where when true allows you to update the collection
-        /// from multiple threads. In testing there didn't seem to be any performance hit from turning this on, so I made
-        /// it the default.
+        /// Constructor.
         /// </summary>
-        /// <param name="isThreadSafe"></param>
-        public ConcurrentObservableSortedSet(bool isMultithreaded) : base(isMultithreaded, ImmutableSortedSet<T>.Empty)
+        /// <param name="isMultithreaded">Whether collection supports updates from multiple threads</param>
+        /// <param name="comparer">Custom item comparer, null indicates to use default</param>
+        /// <param name="controlledAction">Override the ThottledAction with an implementation of IControlledAction</param>
+        public ConcurrentObservableSortedSet(bool isMultithreaded = true, IComparer<T> comparer = null, IControlledAction controlledAction = null) : base(isMultithreaded, ImmutableSortedSet<T>.Empty.WithComparer(comparer), controlledAction)
         {
+
         }
 
         public bool Add(T value)
