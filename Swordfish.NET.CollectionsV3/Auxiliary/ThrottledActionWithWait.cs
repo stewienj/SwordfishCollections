@@ -4,6 +4,10 @@ using System.Threading.Tasks;
 
 namespace Swordfish.NET.Collections.Auxiliary
 {
+    /// <summary>
+    /// Original throttled action code, note it fails one of the tests.
+    /// Not using now.
+    /// </summary>
     public class ThrottledActionWithWait : IDisposable, IControlledAction
     {
         private volatile Action _action;

@@ -73,6 +73,7 @@ namespace Swordfish.NET.UnitTestV3
             Assert.IsTrue(updateCount < 40, $"Update count should be less than 40, actual count = {updateCount}");
             // Check there is reasonable throughput
             Assert.IsTrue(callCount > 100_000);
+            Debug.WriteLine($"Call count = {callCount}");
         }
 
         /// <summary>
@@ -99,18 +100,16 @@ namespace Swordfish.NET.UnitTestV3
             // Check the updates are throttled
             Assert.IsTrue(updateCount < 40, $"Update count should be less than 40, actual count = {updateCount}");
             // Check there is reasonable throughput
-            Assert.IsTrue(callCount > 100_000, $"Call count in low = {callCount}");
+            Assert.IsTrue(callCount > 100_000, $"Call count is low = {callCount}");
+            Debug.WriteLine($"Call count = {callCount}");
         }
-
 
         /// <summary>
         /// Tests that ThrottledAction executes the last action 
-        /// invoked. Slightly different test to the one for
-        /// ThrottledActionTaskDelay because the Task Delay
-        /// version executes the actual final task.
+        /// invoked using timing.
         /// </summary>
         [TestMethod]
-        public void TestFinalActionExecutedThrottledActionWithWait()
+        public void TestFinalActionExecuteByTimeThrottledActionWithWait()
         {
             int callCount = 0;
             var throttledAction = new ThrottledActionWithWait(null, TimeSpan.FromMilliseconds(30));
@@ -136,10 +135,65 @@ namespace Swordfish.NET.UnitTestV3
 
         /// <summary>
         /// Tests that ThrottledAction executes the last action 
-        /// invoked.
+        /// invoked using timing.
         /// </summary>
         [TestMethod]
-        public void TestFinalActionExecutedThrottledActionTaskDelay()
+        public void TestFinalActionExecuteByTimeThrottledActionTaskDelay()
+        {
+            int callCount = 0;
+            var throttledAction = new ThrottledActionTaskDelay(null, TimeSpan.FromMilliseconds(30));
+            DateTime lastQueueTime = DateTime.Now;
+            DateTime lastExecuteTime = DateTime.Now;
+
+            var start = DateTime.Now;
+            while ((DateTime.Now - start) < TimeSpan.FromSeconds(1))
+            {
+                int local = ++callCount;
+                throttledAction.InvokeAction(() =>
+                {
+                    lastExecuteTime = DateTime.Now;
+                });
+                lastQueueTime = DateTime.Now;
+            }
+
+            // Wait a while for execution to complete
+            Thread.Sleep(40);
+            Assert.IsTrue(lastExecuteTime > lastQueueTime);
+            Debug.WriteLine($"Last Execute Time - Last Queue Time = {lastExecuteTime - lastQueueTime}");
+        }
+
+        /// <summary>
+        /// Tests that ThrottledAction executes the last action 
+        /// invoked using call count.
+        /// </summary>
+        [TestMethod]
+        public void TestFinalActionExecutedByCounterThrottledActionWithWait()
+        {
+            int callCount = 0;
+            var throttledAction = new ThrottledActionWithWait(null, TimeSpan.FromMilliseconds(30));
+            int lastCallCountUpdated = 0;
+
+            var start = DateTime.Now;
+            while ((DateTime.Now - start) < TimeSpan.FromSeconds(1))
+            {
+                int local = ++callCount;
+                throttledAction.InvokeAction(() =>
+                {
+                    Interlocked.Exchange(ref lastCallCountUpdated, local);
+                });
+            }
+
+            // Wait a while for execution to complete
+            Thread.Sleep(40);
+            Assert.AreEqual(callCount, lastCallCountUpdated);
+        }
+
+        /// <summary>
+        /// Tests that ThrottledAction executes the last action 
+        /// invoked using call count.
+        /// </summary>
+        [TestMethod]
+        public void TestFinalActionExecutedByCounterThrottledActionTaskDelay()
         {
             int callCount = 0;
             var throttledAction = new ThrottledActionTaskDelay(null, TimeSpan.FromMilliseconds(30));
@@ -186,16 +240,31 @@ namespace Swordfish.NET.UnitTestV3
             noThrottleCollection.PropertyChanged -= propertyChangedHandler;
             Assert.AreEqual(noThrottleCollection.Count, propertyChangedInvocations);
 
-            // Throttling
-            propertyChangedInvocations = 0;
-            var throttleCollection = new ConcurrentObservableCollection<int>(controlledAction: new ThrottledActionTaskDelay(TimeSpan.FromMilliseconds(20)));
-            throttleCollection.PropertyChanged += propertyChangedHandler;
-            for (int i = 0; i < 10000; i++)
             {
-                throttleCollection.Add(i);
+                // Throttling with ThrottledActionWithWait
+                propertyChangedInvocations = 0;
+                var throttleCollection = new ConcurrentObservableCollection<int>(controlledAction: new ThrottledActionWithWait(TimeSpan.FromMilliseconds(20)));
+                throttleCollection.PropertyChanged += propertyChangedHandler;
+                for (int i = 0; i < 10000; i++)
+                {
+                    throttleCollection.Add(i);
+                }
+                throttleCollection.PropertyChanged -= propertyChangedHandler;
+                Assert.IsTrue(propertyChangedInvocations < throttleCollection.Count);
             }
-            throttleCollection.PropertyChanged -= propertyChangedHandler;
-            Assert.IsTrue(propertyChangedInvocations < throttleCollection.Count);
+
+            {
+                // Throttling with ThrottledActionTaskDelay
+                propertyChangedInvocations = 0;
+                var throttleCollection = new ConcurrentObservableCollection<int>(controlledAction: new ThrottledActionTaskDelay(TimeSpan.FromMilliseconds(20)));
+                throttleCollection.PropertyChanged += propertyChangedHandler;
+                for (int i = 0; i < 10000; i++)
+                {
+                    throttleCollection.Add(i);
+                }
+                throttleCollection.PropertyChanged -= propertyChangedHandler;
+                Assert.IsTrue(propertyChangedInvocations < throttleCollection.Count);
+            }
         }
 
         /// <summary>
@@ -316,7 +385,7 @@ namespace Swordfish.NET.UnitTestV3
                 {
                 }
             }
-            Assert.IsNotNull(type, $"Couldn't create ThrottledAction from name {typeName}");
+            Assert.IsNotNull(type, $"Couldn't create ThrottledActionWithWait from name {typeName}");
             Assert.IsTrue(Activator.CreateInstance(type) is ThrottledActionWithWait, $"Couldn't create ThrottledAction from name {typeName}");
         }
 
@@ -348,10 +417,9 @@ namespace Swordfish.NET.UnitTestV3
                 {
                 }
             }
-            Assert.IsNotNull(type, $"Couldn't create ThrottleThrottledActionTaskDelaydAction from name {typeName}");
+            Assert.IsNotNull(type, $"Couldn't create ThrottleThrottledActionTaskDelay from name {typeName}");
             Assert.IsTrue(Activator.CreateInstance(type) is ThrottledActionTaskDelay, $"Couldn't create ThrottledActionTaskDelay from name {typeName}");
         }
-
 
         /// <summary>
         /// Testing creating a ThrottledAction from the name. Relevant to serialization.
